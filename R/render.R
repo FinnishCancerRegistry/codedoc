@@ -97,6 +97,20 @@ render_codedoc <- function(
   use_render_arg_list <- default_render_arg_list
   use_render_arg_list[names(render_arg_list)] <- render_arg_list
   use_render_arg_list[["input"]] <- tmp_rmd_file_path
+  if (!is.environment(use_render_arg_list[["envir"]])) {
+    use_render_arg_list[["envir"]] <- new.env(parent = parent.frame(1L))
+  }
+  use_render_arg_list[["envir"]][["key_df"]] <- key_df
+  use_render_arg_list[["envir"]][["comment_block_by_key"]] <- structure(
+    key_df[["comment_block"]],
+    names = key_df[["key"]]
+  )
+  use_render_arg_list[["envir"]][["codedoc_text"]] <- function(key) {
+    dbc::assert_is_character_nonNA_atom(key)
+    dbc::assert_atom_is_in_set(key, set = key_df[["key"]])
+    paste0(use_render_arg_list[["envir"]][["comment_block_by_key"]][[key]],
+           collapse = "\n")
+  }
   do.call(rmarkdown::render, use_render_arg_list)
 }
 

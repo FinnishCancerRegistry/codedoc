@@ -1,0 +1,15 @@
+---
+title: "Documentation for processing ages"
+output: html_document
+---
+
+# Age
+
+`r codedoc_text("current_age")`
+
+
+# Age group
+
+`r codedoc_text("age_group")`
+
+
