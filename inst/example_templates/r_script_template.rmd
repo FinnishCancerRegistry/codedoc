@@ -3,13 +3,31 @@ title: "Documentation for processing ages"
 output: html_document
 ---
 
-# Age
+# Example of manually created sections
+
+## Age
 
 `r codedoc_text("current_age")`
 
 
-# Age group
+## Age group
 
 `r codedoc_text("age_group")`
 
+
+# Example of generated sections
+
+```{r, results = "asis", echo = TRUE}
+invisible(lapply(key_df[["key"]], function(key) {
+  
+  cat(c(
+    "",
+    paste0("## ", key),
+    "",
+    codedoc_lines("age_group"),
+    ""
+  ), sep = "\n")
+  
+}))
+```
 

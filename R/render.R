@@ -3,6 +3,67 @@
 
 
 
+#' @title Example Templates
+#' @description
+#' Retrieve example codedoc templates.
+#' @param example_template_file_name `[character]` (mandatory, no default)
+#'
+#' name of example template file
+#' @name example_template
+NULL
+
+#' @rdname example_template
+#' @details
+#' - `example_template_dir_path` gets the path to the dir containing example
+#'    templates in this package
+example_template_dir_path <- function() {
+  system.file("example_templates", package = "codedoc")
+}
+
+#' @rdname example_template
+#' @details
+#' - `example_template_file_names` gets the names example template files
+example_template_file_names <- function() {
+  dir(example_template_dir_path())
+}
+
+#' @rdname example_template
+#' @details
+#' - `example_template_file_path` gets the path to an example template based on
+#'   its name
+example_template_file_path <- function(
+  example_template_file_name
+) {
+  dbc::assert_is_character_nonNA_atom(example_template_file_name)
+  example_template_file_names <- example_template_file_names()
+  dbc::assert_atom_is_in_set(
+    x = example_template_file_name,
+    set = example_template_file_names
+  )
+
+  example_template_file_path <- paste0(
+    example_template_dir_path(), "/", example_template_file_name
+  )
+  return(example_template_file_path)
+}
+
+#' @rdname example_template
+#' @details
+#' - `example_template_lines` reads the lines of an example template based on
+#'   its name
+example_template_lines <- function(
+  example_template_file_name
+) {
+  readLines(example_template_file_path(example_template_file_name))
+}
+
+
+
+
+
+
+
+
 #' @title Render Code Documentation
 #' @description
 #' Render using [rmarkdown::render] a documentation file using extracted
@@ -28,12 +89,40 @@
 #' list(output_file = "codedoc.md",
 #'      output_format = "md_document",
 #'      output_dir = getwd(),
-#'      quiet = TRUE)
+#'      quiet = TRUE,
+#'      envir = new.env(parent = parent.frame(1L)))
 #' ```
+#'
+#' where `envir` will by default be the environment where `render_codedoc` was
+#' called. `envir` is additionally always populated by these objects:
+#'
+#' - `key_df`: the user-supplied arg
+#' - `codedoc_lines`: a function with only the argument `key`, which must be
+#'   one of the keys in `key_df`; the comment lines are returned for the
+#'   corresponding key as a character vector
+#' - `codedoc_text`: as `codedoc_lines`. but instead of the lines as a character
+#'   vector (with one or more elements) this function returns exactly one
+#'   string, formed by pasting the lines together with
+#'   `paste0(lines, collapse = "\n")`; this is more convenient for rendering
+#'   text in the template (see section Template)
+#'
 #'
 #' @section Template:
 #'
-#' TODO
+#' The template file must be an Rmarkdown file (see e.g. [rmarkdown::render]).
+#' It's contents are completely up to you. You should make use the objects
+#' created into the rendering environment (see `envir` in [rmarkdown::render])
+#' by this function; see arg `render_arg_list`. The template should at a minimum
+#' have the Rmarkdown header with a title, e.g.
+#'
+#' ```
+#' ---
+#' title: My title
+#' ---
+#' ```
+#'
+#' See function [example_template] for examples.
+#'
 #' @export
 render_codedoc <- function(
   key_df,
@@ -96,23 +185,23 @@ render_codedoc <- function(
   default_render_arg_list <- list(output_file = "codedoc.md",
                                   output_format = "md_document",
                                   output_dir = getwd(),
-                                  quiet = TRUE)
+                                  quiet = TRUE,
+                                  envir = new.env(parent = parent.frame(1L)))
   use_render_arg_list <- default_render_arg_list
   use_render_arg_list[names(render_arg_list)] <- render_arg_list
   use_render_arg_list[["input"]] <- tmp_rmd_file_path
-  if (!is.environment(use_render_arg_list[["envir"]])) {
-    use_render_arg_list[["envir"]] <- new.env(parent = parent.frame(1L))
-  }
   use_render_arg_list[["envir"]][["key_df"]] <- key_df
-  use_render_arg_list[["envir"]][["comment_block_by_key"]] <- structure(
-    key_df[["comment_block"]],
-    names = key_df[["key"]]
-  )
+  lines_by_key <- structure(key_df[["comment_block"]], names = key_df[["key"]])
+  use_render_arg_list[["envir"]][["codedoc_lines"]] <- function(key) {
+    dbc::assert_is_character_nonNA_atom(key)
+    dbc::assert_atom_is_in_set(key, set = names(text_by_key))
+    lines_by_key[[key]]
+  }
+  text_by_key <- lapply(lines_by_key, paste0, collapse = "")
   use_render_arg_list[["envir"]][["codedoc_text"]] <- function(key) {
     dbc::assert_is_character_nonNA_atom(key)
-    dbc::assert_atom_is_in_set(key, set = key_df[["key"]])
-    paste0(use_render_arg_list[["envir"]][["comment_block_by_key"]][[key]],
-           collapse = "\n")
+    dbc::assert_atom_is_in_set(key, set = names(text_by_key))
+    text_by_key[[key]]
   }
   do.call(rmarkdown::render, use_render_arg_list)
 }

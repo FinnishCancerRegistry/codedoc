@@ -35,7 +35,22 @@ determined internally; the default settings set internally in this function
 are\preformatted{list(output_file = "codedoc.md",
      output_format = "md_document",
      output_dir = getwd(),
-     quiet = TRUE)
+     quiet = TRUE,
+     envir = new.env(parent = parent.frame(1L)))
+}
+
+where \code{envir} will by default be the environment where \code{render_codedoc} was
+called. \code{envir} is additionally always populated by these objects:
+\itemize{
+\item \code{key_df}: the user-supplied arg
+\item \code{codedoc_lines}: a function with only the argument \code{key}, which must be
+one of the keys in \code{key_df}; the comment lines are returned for the
+corresponding key as a character vector
+\item \code{codedoc_text}: as \code{codedoc_lines}. but instead of the lines as a character
+vector (with one or more elements) this function returns exactly one
+string, formed by pasting the lines together with
+\code{paste0(lines, collapse = "\\n")}; this is more convenient for rendering
+text in the template (see section Template)
 }}
 }
 \description{
@@ -45,6 +60,15 @@ code comment blocks.
 \section{Template}{
 
 
-TODO
+The template file must be an Rmarkdown file (see e.g. \link[rmarkdown:render]{rmarkdown::render}).
+It's contents are completely up to you. You should make use the objects
+created into the rendering environment (see \code{envir} in \link[rmarkdown:render]{rmarkdown::render})
+by this function; see arg \code{render_arg_list}. The template should at a minimum
+have the Rmarkdown header with a title, e.g.\preformatted{---
+title: My title
+---
+}
+
+See function \link{example_template} for examples.
 }
 
