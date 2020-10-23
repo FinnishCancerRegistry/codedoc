@@ -22,9 +22,11 @@
 #' @param render_arg_list `[list]` (optional, default `list()`)
 #'
 #' list of arguments passed to [rmarkdown::render]; `input` is always
-#' determined internally; the default is
+#' determined internally; the default settings set internally in this function
+#' are
 #' ```
 #' list(output_file = "codedoc.md",
+#'      output_format = "md_document",
 #'      output_dir = getwd(),
 #'      quiet = TRUE)
 #' ```
@@ -92,6 +94,7 @@ render_codedoc <- function(
   do.call(writeLines, writeLines_arg_list, quote = TRUE)
 
   default_render_arg_list <- list(output_file = "codedoc.md",
+                                  output_format = "md_document",
                                   output_dir = getwd(),
                                   quiet = TRUE)
   use_render_arg_list <- default_render_arg_list

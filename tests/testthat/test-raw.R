@@ -17,10 +17,10 @@ testthat::test_that("extract_keyed_comment_blocks works", {
     result[["first_block_line"]][1L] == 8L
   )
   testthat::expect_true(
-    result[["last_block_line"]][1L] == 9L
+    result[["last_block_line"]][1L] == 10L
   )
   testthat::expect_true(
-    result[["key"]][1L] == "age_group"
+    result[["key"]][1L] == "current_age"
   )
 
 })

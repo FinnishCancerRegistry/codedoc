@@ -31,7 +31,9 @@ file to render; \code{con} and \code{text} are always determined internally}
 \item{render_arg_list}{\verb{[list]} (optional, default \code{list()})
 
 list of arguments passed to \link[rmarkdown:render]{rmarkdown::render}; \code{input} is always
-determined internally; the default is\preformatted{list(output_file = "codedoc.md",
+determined internally; the default settings set internally in this function
+are\preformatted{list(output_file = "codedoc.md",
+     output_format = "md_document",
      output_dir = getwd(),
      quiet = TRUE)
 }}
