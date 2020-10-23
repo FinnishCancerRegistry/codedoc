@@ -4,6 +4,7 @@
 \alias{example_template}
 \alias{example_template_dir_path}
 \alias{example_template_file_names}
+\alias{example_template_file_paths}
 \alias{example_template_file_path}
 \alias{example_template_lines}
 \title{Example Templates}
@@ -11,6 +12,8 @@
 example_template_dir_path()
 
 example_template_file_names()
+
+example_template_file_paths()
 
 example_template_file_path(example_template_file_name)
 
@@ -32,6 +35,10 @@ templates in this package
 
 \itemize{
 \item \code{example_template_file_names} gets the names example template files
+}
+
+\itemize{
+\item \code{example_template_file_paths} gets the full paths to example template files
 }
 
 \itemize{
