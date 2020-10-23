@@ -63,6 +63,7 @@ extract_keyed_comment_blocks <- function(
       do.call(extract_keyed_comment_blocks, arg_list)
     })
     key_df <- do.call(rbind, key_df_list)
+    return(key_df)
   }
 
   readLines_arg_list[["con"]] <- text_file_paths
@@ -92,33 +93,39 @@ extract_keyed_comment_blocks <- function(
   key_df[["key_count"]] <- as.integer(table(key_line_df[["key"]]))
   key_df[["is_misspecified_key"]] <- key_df[["key_count"]] != 2L
 
-  if (any(key_df[["is_misspecified_key"]])) {
-    misspecified_key_set <- key_df[["key"]][key_df[["is_misspecified_key"]]]
-    stop("Following keys did not appear exactly twice in file ",
-         deparse(text_file_paths), ": ",
-         deparse(misspecified_key_set))
-  }
-
-  key_df[["first_block_line"]] <- vapply(key_df[["key"]], function(key) {
-    is_key <- key_line_df[["key"]] == key
-    key_line_df[["key_line_position"]][is_key][1L] + 1L
-  }, integer(1L))
-  key_df[["last_block_line"]] <- vapply(key_df[["key"]], function(key) {
-    is_key <- key_line_df[["key"]] == key
-    key_line_df[["key_line_position"]][is_key][2L] - 1L
-  }, integer(1L))
-
-  key_df[["comment_block"]] <- lapply(1:nrow(key_df), function(key_no) {
-    first_line_pos <- key_df[["first_block_line"]][key_no]
-    last_line_pos <- key_df[["last_block_line"]][key_no]
-    block_line_positions <- first_line_pos:last_line_pos
-    clean_comment_lines(line_df[["line"]][block_line_positions])
-  })
-
-  key_df_col_nms <- c(
+  output_key_df_col_nms <- c(
     "key", "first_block_line", "last_block_line", "comment_block"
   )
-  key_df <- cbind(text_file_path = text_file_paths, key_df[, key_df_col_nms])
+  key_df[["first_block_line"]] <- rep(NA_integer_, nrow(key_df))
+  key_df[["last_block_line"]] <- rep(NA_integer_, nrow(key_df))
+  key_df[["comment_block"]] <- rep(NA_character_, nrow(key_df))
+  if (nrow(key_df) > 0L) {
+    if (any(key_df[["is_misspecified_key"]])) {
+      misspecified_key_set <- key_df[["key"]][key_df[["is_misspecified_key"]]]
+      stop("Following keys did not appear exactly twice in file ",
+           deparse(text_file_paths), ": ",
+           deparse(misspecified_key_set))
+    }
+
+    key_df[["first_block_line"]] <- vapply(key_df[["key"]], function(key) {
+      is_key <- key_line_df[["key"]] == key
+      key_line_df[["key_line_position"]][is_key][1L] + 1L
+    }, integer(1L))
+    key_df[["last_block_line"]] <- vapply(key_df[["key"]], function(key) {
+      is_key <- key_line_df[["key"]] == key
+      key_line_df[["key_line_position"]][is_key][2L] - 1L
+    }, integer(1L))
+
+    key_df[["comment_block"]] <- lapply(1:nrow(key_df), function(key_no) {
+      first_line_pos <- key_df[["first_block_line"]][key_no]
+      last_line_pos <- key_df[["last_block_line"]][key_no]
+      block_line_positions <- first_line_pos:last_line_pos
+      clean_comment_lines(line_df[["line"]][block_line_positions])
+    })
+  }
+
+  key_df <- cbind(text_file_path = rep(text_file_paths, nrow(key_df)),
+                  key_df[, output_key_df_col_nms])
   return(key_df)
 }
 
