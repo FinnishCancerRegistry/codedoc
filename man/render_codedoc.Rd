@@ -69,6 +69,6 @@ title: My title
 ---
 }
 
-See function \link{example_template} for examples.
+See function \link{example_template_lines} for examples.
 }
 

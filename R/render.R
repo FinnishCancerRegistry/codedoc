@@ -74,7 +74,7 @@ example_template_lines <- function(
 #' @title Example Text Files
 #' @description
 #' Retrieve example text files processable by codedoc.
-#' @param example_text_filename `[character]` (mandatory, no default)
+#' @param example_text_file_name `[character]` (mandatory, no default)
 #'
 #' name of example text file
 #' @name example_text_file

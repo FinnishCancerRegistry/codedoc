@@ -1,0 +1,83 @@
+---
+title: "Basics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{codedoc_basics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Consider this simple R script:
+
+```{r, results = "asis", echo = FALSE}
+cat("```R\n")
+cat(codedoc::example_text_file_lines("r_script.R"), sep = "\n")
+cat("\n```\n")
+```
+
+Note the comment blocks starting with `@doc current_age` and `@doc age_group`.
+These specify comment blocks that this package can identify as code 
+documentation for the purpose of compiling a single aggregated document
+(html, pdf, etc. using rmarkdown::render).
+
+Any text after the `@doc` identifier is called the *key* of the comment block.
+Keys are used to identify comment blocks when compiling the documentation.
+There must be exactly two lines with `@doc my_key` for any key. Otherwise
+an error is raised.
+
+You can extract the comment blocks based on this information using
+`codedoc::extract_keyed_comment_blocks`. Here we refer to an example text
+file stored into this package.
+
+```{r}
+key_df <- codedoc::extract_keyed_comment_blocks(
+  text_file_paths = codedoc::example_text_file_path("r_script.R")
+)
+print(key_df$key)
+```
+
+```{r}
+print(key_df$comment_block)
+```
+
+You would usually not use this result directly, but rather render a 
+documentation file using it. `codedoc::render_codedoc` is designed to do just
+that. You may use a template .rmd to define the structure of your document,
+and it's contents will be taken from `key_df` (hence originally from your code).
+Here's an example template:
+
+```{r, results = "asis", echo = FALSE}
+cat("```R\n")
+cat(codedoc::example_template_lines("r_script_template.rmd"), sep = "\n")
+cat("\n```\n")
+```
+Let's now render the document using the above template and the `key_df` 
+we created.
+
+```{r}
+# we use a temp file just for the purpose of creating this vignette. in your
+# case that probably won't be necessary.
+tmp_dir_path <- tempdir()
+tmp_md_file_path <- tempfile(fileext = ".md")
+template_file_path <- codedoc::example_template_file_path("r_script_template.rmd")
+codedoc::render_codedoc(
+  key_df = key_df, 
+  template_file_path = template_file_path,
+  render_arg_list = list(output_dir = tmp_dir_path, 
+                         output_file = tmp_md_file_path)
+)
+
+```
+
+This is what the rendered .md looks like:
+
+```{r, results = "markdown", echo = FALSE}
+cat(readLines(tmp_md_file_path), sep = "\n")
+```
+
+
+As you can see, it was populated by the contents of `key_df`.
+
+This concludes the basics of using this package. Happy documenting!
+
+
