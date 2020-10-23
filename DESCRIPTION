@@ -1,0 +1,20 @@
+Package: codedoc
+Type: Package
+Title: Generate Code Documentation
+Version: 0.1.0
+Author: Joonas Miettinen <joonas.miettinen@cancer.fi>
+Imports:
+    dbc (>= 0.3.3.3)
+Maintainer: Joonas Miettinen <joonas.miettinen@cancer.fi>
+Description: Allows generation of documentation from specifically formatted
+    code comments.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Remotes:
+    github::WetRobot/dbc
+Roxygen:
+    list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Suggests: 
+    testthat
