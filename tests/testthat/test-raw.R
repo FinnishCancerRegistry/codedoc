@@ -3,12 +3,12 @@
 
 
 
-testthat::test_that("read_raw_codedocs works", {
+testthat::test_that("extract_keyed_comment_blocks works", {
 
   test_script_path <- system.file("example_text_files/r_script.R",
                                   package = "codedoc")
 
-  result <- read_raw_codedocs(
+  result <- extract_keyed_comment_blocks(
     text_file_path = test_script_path
   )
 

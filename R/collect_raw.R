@@ -2,10 +2,20 @@
 
 
 
+
+codedoc_key_line_regex <- function() "(@doc)|(@codedoc)"
+detect_codedoc_key_lines <- function(x) {
+  grepl(codedoc_key_line_regex(), x)
+}
+
+
+
+
+
 #' @title Read codedoc-formatted Code Comments
 #' @description
 #' Extracts blocks of specifically formatted comments from text file.
-#' @param text_file_path `[character]` (mandatory, no default)
+#' @param text_file_paths `[character]` (mandatory, no default)
 #'
 #' path to a text file; the file is not inspected in any way to be a text file
 #' based on file extension or any other characteristics, it is merely assumed
@@ -26,21 +36,36 @@
 #' @param readLines_arg_list `[list]` (mandatory, default `list()`)
 #'
 #' list of arguments passed to [readLines]; `con` is always set to
-#' `text_file_path`
-read_raw_codedocs <- function(
-  text_file_path,
+#' an element of `text_file_paths`
+#' @export
+extract_keyed_comment_blocks <- function(
+  text_file_paths,
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
   readLines_arg_list = list()
 ) {
-  dbc::assert_file_exists(text_file_path)
+  dbc::assert_is_character_nonNA_vector(text_file_paths)
+  dbc::assert_file_exists(text_file_paths)
   dbc::assert_is_function_with_required_argument_names(
     detect_comment_lines,
     required_argument_names = "x"
   )
+  dbc::assert_is_function_with_required_argument_names(
+    clean_comment_lines,
+    required_argument_names = "x"
+  )
   dbc::assert_is_list(readLines_arg_list)
 
-  readLines_arg_list[["con"]] <- text_file_path
+  if (length(text_file_paths) > 1L) {
+    arg_list <- mget(names(formals(extract_keyed_comment_blocks)))
+    key_df_list <- lapply(text_file_paths, function(text_file_path) {
+      arg_list[["text_file_paths"]] <- text_file_path
+      do.call(extract_keyed_comment_blocks, arg_list)
+    })
+    key_df <- do.call(rbind, key_df_list)
+  }
+
+  readLines_arg_list[["con"]] <- text_file_paths
 
   line_df <- data.frame(
     line = do.call(readLines, readLines_arg_list)
@@ -70,7 +95,7 @@ read_raw_codedocs <- function(
   if (any(key_df[["is_misspecified_key"]])) {
     misspecified_key_set <- key_df[["key"]][key_df[["is_misspecified_key"]]]
     stop("Following keys did not appear exactly twice in file ",
-         deparse(text_file_path), ": ",
+         deparse(text_file_paths), ": ",
          deparse(misspecified_key_set))
   }
 
@@ -93,16 +118,9 @@ read_raw_codedocs <- function(
   key_df_col_nms <- c(
     "key", "first_block_line", "last_block_line", "comment_block"
   )
-  key_df <- key_df[, key_df_col_nms]
+  key_df <- cbind(text_file_path = text_file_paths, key_df[, key_df_col_nms])
   return(key_df)
 }
-
-
-codedoc_key_line_regex <- function() "(@doc)|(@codedoc)"
-detect_codedoc_key_lines <- function(x) {
-  grepl(codedoc_key_line_regex(), x)
-}
-
 
 
 
