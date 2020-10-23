@@ -2,9 +2,17 @@
 % Please edit documentation in R/render.R
 \name{render_codedoc}
 \alias{render_codedoc}
+\alias{render_codedoc_}
 \title{Render Code Documentation}
 \usage{
 render_codedoc(
+  key_df,
+  template_file_path = NULL,
+  writeLines_arg_list = list(),
+  render_arg_list = list()
+)
+
+render_codedoc_(
   key_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
@@ -57,17 +65,19 @@ text in the template (see section Template)
 Render using \link[rmarkdown:render]{rmarkdown::render} a documentation file using extracted
 code comment blocks.
 }
+\details{
+\code{render_codedoc} is intended to be used directly by the user
+and not within other functions, whereas the converse holds for
+\code{render_codedoc_}. See \code{help("dbc", package = "dbc")} for a discussion
+on this distinction.
+}
 \section{Template}{
 
 
 The template file must be an Rmarkdown file (see e.g. \link[rmarkdown:render]{rmarkdown::render}).
 It's contents are completely up to you. You should make use the objects
 created into the rendering environment (see \code{envir} in \link[rmarkdown:render]{rmarkdown::render})
-by this function; see arg \code{render_arg_list}. The template should at a minimum
-have the Rmarkdown header with a title, e.g.\preformatted{---
-title: My title
----
-}
+by this function; see arg \code{render_arg_list}.
 
 See function \link{example_template_lines} for examples.
 }

@@ -28,4 +28,20 @@ age_to_age_group <- function(age) {
 }
 
 
+age_to_pension_age_indicator <- function(age) {
+
+  # @doc pension_age_indicator
+  # pension_age_indicator is created in function age_to_pension_age_indicator
+  # by detecting whether age is over 65 or not.
+  # ```{r, results = "asis"}
+  # # I wrote this here only for demonstration purposes.
+  # knitr::kable(data.frame(
+  #   pension_age_indicator = c(FALSE, TRUE),
+  #   text = c("Is too young to be pensioner", "Is of pension age")
+  # ))
+  # ```
+  # @doc pension_age_indicator
+
+}
+
 
