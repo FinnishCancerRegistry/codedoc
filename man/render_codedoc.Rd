@@ -6,21 +6,21 @@
 \title{Render Code Documentation}
 \usage{
 render_codedoc(
-  key_df,
+  block_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
   render_arg_list = list()
 )
 
 render_codedoc_(
-  key_df,
+  block_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
   render_arg_list = list()
 )
 }
 \arguments{
-\item{key_df}{\verb{[data.frame]} (mandatory, no default)
+\item{block_df}{\verb{[data.frame]} (mandatory, no default)
 
 a data.frame which must have columns \code{key}, \code{comment_block}, and
 \code{text_file_path} as in the output of \link{extract_keyed_comment_blocks}}
@@ -50,9 +50,9 @@ are\preformatted{list(output_file = "codedoc.md",
 where \code{envir} will by default be the environment where \code{render_codedoc} was
 called. \code{envir} is additionally always populated by these objects:
 \itemize{
-\item \code{key_df}: the user-supplied arg
+\item \code{block_df}: the user-supplied arg
 \item \code{codedoc_lines}: a function with only the argument \code{key}, which must be
-one of the keys in \code{key_df}; the comment lines are returned for the
+one of the keys in \code{block_df}; the comment lines are returned for the
 corresponding key as a character vector
 \item \code{codedoc_text}: as \code{codedoc_lines}. but instead of the lines as a character
 vector (with one or more elements) this function returns exactly one
@@ -78,6 +78,11 @@ The template file must be an Rmarkdown file (see e.g. \link[rmarkdown:render]{rm
 It's contents are completely up to you. You should make use the objects
 created into the rendering environment (see \code{envir} in \link[rmarkdown:render]{rmarkdown::render})
 by this function; see arg \code{render_arg_list}.
+
+Instead of using the \code{codedoc_} functions, one may simply write e.g.
+\verb{@codedoc_lines my_key} in the template file, and then the corresponding
+comment block identified by key \code{my_key} will be inserted there before
+rendering.
 
 See function \link{example_template_lines} for examples.
 }

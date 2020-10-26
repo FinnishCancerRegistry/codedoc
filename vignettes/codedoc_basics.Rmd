@@ -15,15 +15,17 @@ cat(codedoc::example_text_file_lines("r_script.R"), sep = "\n")
 cat("\n```\n")
 ```
 
-Note the comment blocks starting with `@doc current_age` and `@doc age_group`.
+Note the comment blocks starting with `@codedoc_comment_block current_age` and 
+`@codedoc_comment_block age_group`.
 These specify comment blocks that this package can identify as code 
 documentation for the purpose of compiling a single aggregated document
 (html, pdf, etc. using rmarkdown::render).
 
-Any text after the `@doc` identifier is called the *key* of the comment block.
+Any text after the `@codedoc_comment_block` identifier is called the *key* of 
+the comment block.
 Keys are used to identify comment blocks when compiling the documentation.
-There must be exactly two lines with `@doc my_key` for any key. Otherwise
-an error is raised.
+There must be an even number of lines with `@codedoc_comment_block my_key` for 
+any key. Otherwise an error is raised.
 
 You can extract the comment blocks based on this information using
 `codedoc::extract_keyed_comment_blocks`. Here we refer to an example text

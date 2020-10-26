@@ -198,36 +198,36 @@ example_text_file_lines <- function(example_text_file_name) {
 NULL
 
 report_codedoc_assertions <- function(
-  key_df,
+  block_df,
   template_file_path,
   writeLines_arg_list,
   render_arg_list,
   assertion_type
 ) {
-  report_df <- eval(quote(rbind(
-    dbc::report_is_data.frame_with_required_names(
-      key_df,
-      required_names = c("key", "comment_block", "text_file_path")
-    ),
-    dbc::report_is_list(render_arg_list),
-    dbc::report_vector_elems_are_in_set(
-      x = names(render_arg_list),
-      set = names(formals(rmarkdown::render))
-    ),
-    dbc::report_vector_elems_are_in_set(
-      x = names(writeLines_arg_list),
-      set = names(formals(writeLines))
-    ),
-    dbc::report_is_one_of(
-      x = template_file_path,
-      funs = c("report_is_NULL", "report_file_exists")
-    )
-  )), envir = parent.frame(1L))
-
-  dbc::report_to_assertion(
-    report_df,
-    assertion_type = assertion_type
-  )
+  # report_df <- eval(quote(rbind(
+  #   dbc::report_is_data.frame_with_required_names(
+  #     block_df,
+  #     required_names = c("key", "comment_block", "text_file_path")
+  #   ),
+  #   dbc::report_is_list(render_arg_list),
+  #   dbc::report_vector_elems_are_in_set(
+  #     x = names(render_arg_list),
+  #     set = names(formals(rmarkdown::render))
+  #   ),
+  #   dbc::report_vector_elems_are_in_set(
+  #     x = names(writeLines_arg_list),
+  #     set = names(formals(writeLines))
+  #   ),
+  #   dbc::report_is_one_of(
+  #     x = template_file_path,
+  #     funs = c("report_is_NULL", "report_file_exists")
+  #   )
+  # )), envir = parent.frame(1L))
+  #
+  # dbc::report_to_assertion(
+  #   report_df,
+  #   assertion_type = assertion_type
+  # )
 }
 
 
@@ -240,11 +240,11 @@ render_codedoc <- function(
   render_arg_list = list()
 ) {
   report_codedoc_assertions(
-    key_df = key_df,
+    block_df = block_df,
     template_file_path = template_file_path,
     writeLines_arg_list = writeLines_arg_list,
     render_arg_list = render_arg_list,
-    assertion_type = "prod_input"
+    assertion_type = "user_input"
   )
 
   call <- match.call()
@@ -255,25 +255,33 @@ render_codedoc <- function(
 #' @export
 #' @rdname render_codedoc
 render_codedoc_ <- function(
-  key_df,
+  block_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
   render_arg_list = list()
 ) {
   report_codedoc_assertions(
-    key_df = key_df,
+    block_df = block_df,
     template_file_path = template_file_path,
     writeLines_arg_list = writeLines_arg_list,
     render_arg_list = render_arg_list,
     assertion_type = "prod_input"
   )
 
+  key_set <- unique(block_df[["key"]])
+  lines_by_key <- lapply(key_set, function(key) {
+    key_block_list <- block_df[["comment_block"]][block_df[["key"]] == key]
+    key_block_list <- lapply(key_block_list, c, "")
+    lines <- unlist(key_block_list)
+    lines
+  })
+  names(lines_by_key) <- key_set
   if (is.null(template_file_path)) {
-    template_lines <- unlist(lapply(1:nrow(block_df), function(key_no) {
+    template_lines <- unlist(lapply(key_set, function(key) {
       c(
-        paste0("## ", block_df[["key"]][key_no]),
+        paste0("## ", key),
         "",
-        block_df[["comment_block"]][key_no],
+        lines_by_key[[key]],
         ""
       )
     }))
@@ -284,7 +292,7 @@ render_codedoc_ <- function(
       "",
       "Based on the following files: ",
       "",
-      paste0("- ", block_df[["text_file_path"]]),
+      paste0("- ", unique(block_df[["text_file_path"]])),
       "",
       template_lines
     )
@@ -299,7 +307,7 @@ render_codedoc_ <- function(
     }
   )
 
-  for (key in key_df[["key"]]) {
+  for (key in block_df[["key"]]) {
     key_line_contents <- paste0("@codedoc_lines ", key)
     is_template_key_line <- template_lines == key_line_contents
     while (any(is_template_key_line)) {
@@ -308,7 +316,7 @@ render_codedoc_ <- function(
       tail_start <- (wh + 1L)
       template_lines <- c(
         template_lines[min(1L, head_end):head_end],
-        key_df[["comment_block"]][[which(key_df[["key"]] == key)]],
+        block_df[["comment_block"]][[which(block_df[["key"]] == key)]],
         template_lines[tail_start:max(length(template_lines), tail_start)]
       )
       is_template_key_line <- template_lines == key_line_contents
@@ -329,7 +337,6 @@ render_codedoc_ <- function(
   use_render_arg_list[names(render_arg_list)] <- render_arg_list
   use_render_arg_list[["input"]] <- tmp_rmd_file_path
   use_render_arg_list[["envir"]][["block_df"]] <- block_df
-  lines_by_key <- structure(block_df[["comment_block"]], names = block_df[["key"]])
   use_render_arg_list[["envir"]][["codedoc_lines"]] <- function(key) {
     dbc::assert_is_character_nonNA_atom(key)
     dbc::assert_atom_is_in_set(key, set = names(text_by_key))
