@@ -32,20 +32,20 @@ You can extract the comment blocks based on this information using
 file stored into this package.
 
 ```{r}
-key_df <- codedoc::extract_keyed_comment_blocks(
+block_df <- codedoc::extract_keyed_comment_blocks(
   text_file_paths = codedoc::example_text_file_path("r_script.R")
 )
-print(key_df$key)
+print(block_df$key)
 ```
 
 ```{r}
-print(key_df$comment_block)
+print(block_df$comment_block)
 ```
 
 You would usually not use this result directly, but rather render a 
 documentation file using it. `codedoc::render_codedoc` is designed to do just
 that. You may use a template .rmd to define the structure of your document,
-and it's contents will be taken from `key_df` (hence originally from your code).
+and it's contents will be taken from `block_df` (hence originally from your code).
 Here's an example template:
 
 ```{r, results = "asis", echo = FALSE}
@@ -53,7 +53,7 @@ cat("```R\n")
 cat(codedoc::example_template_lines("r_script_template.rmd"), sep = "\n")
 cat("\n```\n")
 ```
-Let's now render the document using the above template and the `key_df` 
+Let's now render the document using the above template and the `block_df` 
 we created.
 
 ```{r}
@@ -63,7 +63,7 @@ tmp_dir_path <- tempdir()
 tmp_md_file_path <- tempfile(fileext = ".md")
 template_file_path <- codedoc::example_template_file_path("r_script_template.rmd")
 codedoc::render_codedoc(
-  key_df = key_df, 
+  block_df = block_df, 
   template_file_path = template_file_path,
   render_arg_list = list(output_dir = tmp_dir_path, 
                          output_file = tmp_md_file_path)
@@ -78,7 +78,7 @@ cat(readLines(tmp_md_file_path), sep = "\n")
 ```
 
 
-As you can see, it was populated by the contents of `key_df`.
+As you can see, it was populated by the contents of `block_df`.
 
 This concludes the basics of using this package. Happy documenting!
 

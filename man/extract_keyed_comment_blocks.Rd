@@ -59,9 +59,9 @@ distinction.
 }
 \examples{
 
-key_df <- codedoc::extract_keyed_comment_blocks_(
+block_df <- codedoc::extract_keyed_comment_blocks_(
   text_file_paths = codedoc::example_text_file_path("r_script.R")
 )
-print(key_df)
+print(block_df)
 
 }
