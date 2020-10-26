@@ -5,11 +5,8 @@
 
 testthat::test_that("extract_keyed_comment_blocks works", {
 
-  test_script_path <- system.file("example_text_files/r_script.R",
-                                  package = "codedoc")
-
-  result <- extract_keyed_comment_blocks(
-    text_file_path = test_script_path
+  result <- codedoc::extract_keyed_comment_blocks(
+    text_file_path = codedoc::example_text_file_path("r_script.R")
   )
 
   testthat::expect_true(is.data.frame(result))

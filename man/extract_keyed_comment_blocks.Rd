@@ -2,9 +2,17 @@
 % Please edit documentation in R/collect_raw.R
 \name{extract_keyed_comment_blocks}
 \alias{extract_keyed_comment_blocks}
+\alias{extract_keyed_comment_blocks_}
 \title{Read codedoc-formatted Code Comments}
 \usage{
 extract_keyed_comment_blocks(
+  text_file_paths,
+  detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
+  clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
+  readLines_arg_list = list()
+)
+
+extract_keyed_comment_blocks_(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
   clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
@@ -40,4 +48,20 @@ an element of \code{text_file_paths}}
 }
 \description{
 Extracts blocks of specifically formatted comments from text file.
+}
+\details{
+\code{extract_keyed_comment_blocks} is intended to be used by the user and not
+in other functions but is otherwise identical to
+\code{extract_keyed_comment_blocks_}. \code{extract_keyed_comment_blocks_} is intended
+to be used within other functions.
+See \code{help(topic = "dbc", package = "dbc")} for discussion on this
+distinction.
+}
+\examples{
+
+key_df <- codedoc::extract_keyed_comment_blocks_(
+  text_file_paths = codedoc::example_text_file_path("r_script.R")
+)
+print(key_df)
+
 }

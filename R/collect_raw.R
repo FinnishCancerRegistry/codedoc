@@ -37,6 +37,56 @@ detect_codedoc_key_lines <- function(x) {
 #'
 #' list of arguments passed to [readLines]; `con` is always set to
 #' an element of `text_file_paths`
+#' @details
+#' `extract_keyed_comment_blocks` is intended to be used by the user and not
+#' in other functions but is otherwise identical to
+#' `extract_keyed_comment_blocks_`. `extract_keyed_comment_blocks_` is intended
+#' to be used within other functions.
+#' See `help(topic = "dbc", package = "dbc")` for discussion on this
+#' distinction.
+#' @examples
+#'
+#' key_df <- codedoc::extract_keyed_comment_blocks_(
+#'   text_file_paths = codedoc::example_text_file_path("r_script.R")
+#' )
+#' print(key_df)
+#'
+#' @name extract_keyed_comment_blocks
+NULL
+
+extract_keyed_comment_blocks_assertions <- function(
+  text_file_paths,
+  detect_comment_lines,
+  clean_comment_lines,
+  readLines_arg_list,
+  assertion_type
+) {
+  report_df <- eval(
+    quote(
+      rbind(
+        dbc::report_is_character_nonNA_vector(text_file_paths),
+        dbc::report_file_exists(text_file_paths),
+        dbc::report_is_function_with_required_argument_names(
+          detect_comment_lines,
+          required_argument_names = "x"
+        ),
+        dbc::report_is_function_with_required_argument_names(
+          clean_comment_lines,
+          required_argument_names = "x"
+        ),
+        dbc::report_is_list(readLines_arg_list)
+      )
+    ),
+    envir = parent.frame(1L)
+  )
+
+  dbc::report_to_assertion(
+    report_df,
+    assertion_type = assertion_type
+  )
+}
+
+#' @rdname extract_keyed_comment_blocks
 #' @export
 extract_keyed_comment_blocks <- function(
   text_file_paths,
@@ -44,17 +94,34 @@ extract_keyed_comment_blocks <- function(
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
   readLines_arg_list = list()
 ) {
-  dbc::assert_is_character_nonNA_vector(text_file_paths)
-  dbc::assert_file_exists(text_file_paths)
-  dbc::assert_is_function_with_required_argument_names(
+  extract_keyed_comment_blocks_assertions(
+    text_file_paths,
     detect_comment_lines,
-    required_argument_names = "x"
-  )
-  dbc::assert_is_function_with_required_argument_names(
     clean_comment_lines,
-    required_argument_names = "x"
+    readLines_arg_list,
+    assertion_type = "user_input"
   )
-  dbc::assert_is_list(readLines_arg_list)
+
+  this_call <- match.call()
+  this_call[[1L]] <- quote(extract_keyed_comment_blocks_)
+  eval(this_call, envir = environment())
+}
+
+#' @rdname extract_keyed_comment_blocks
+#' @export
+extract_keyed_comment_blocks_ <- function(
+  text_file_paths,
+  detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
+  clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
+  readLines_arg_list = list()
+) {
+  extract_keyed_comment_blocks_assertions(
+    text_file_paths,
+    detect_comment_lines,
+    clean_comment_lines,
+    readLines_arg_list,
+    assertion_type = "prod_input"
+  )
 
   if (length(text_file_paths) > 1L) {
     arg_list <- mget(names(formals(extract_keyed_comment_blocks)))

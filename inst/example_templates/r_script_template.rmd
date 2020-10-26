@@ -1,9 +1,8 @@
 ---
 title: "Documentation for processing ages"
-output: html_document
 ---
 
-# Example of manually created sections
+# Example of manually created sections using functions
 
 ## Age
 
@@ -14,6 +13,19 @@ output: html_document
 
 `r codedoc_text("age_group")`
 
+# Example of manually created sections using keys
+
+## Age
+
+@codedoc_lines current_age
+
+## Age group
+
+@codedoc_lines age_group
+
+## Pension age
+
+@codedoc_lines pension_age_indicator
 
 # Example of generated sections
 

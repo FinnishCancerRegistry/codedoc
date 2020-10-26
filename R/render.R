@@ -180,41 +180,93 @@ example_text_file_lines <- function(example_text_file_name) {
 #' The template file must be an Rmarkdown file (see e.g. [rmarkdown::render]).
 #' It's contents are completely up to you. You should make use the objects
 #' created into the rendering environment (see `envir` in [rmarkdown::render])
-#' by this function; see arg `render_arg_list`. The template should at a minimum
-#' have the Rmarkdown header with a title, e.g.
+#' by this function; see arg `render_arg_list`.
 #'
-#' ```
-#' ---
-#' title: My title
-#' ---
-#' ```
+#' Instead of using the `codedoc_` functions, one may simply write e.g.
+#' `@codedoc_lines my_key` in the template file, and then the corresponding
+#' comment block identified by key `my_key` will be inserted there before
+#' rendering.
 #'
 #' See function [example_template_lines] for examples.
+#' @details
 #'
+#' `render_codedoc` is intended to be used directly by the user
+#' and not within other functions, whereas the converse holds for
+#' `render_codedoc_`. See `help("dbc", package = "dbc")` for a discussion
+#' on this distinction.
+#' @name render_codedoc
+NULL
+
+report_codedoc_assertions <- function(
+  key_df,
+  template_file_path,
+  writeLines_arg_list,
+  render_arg_list,
+  assertion_type
+) {
+  report_df <- eval(quote(rbind(
+    dbc::report_is_data.frame_with_required_names(
+      key_df,
+      required_names = c("key", "comment_block", "text_file_path")
+    ),
+    dbc::report_is_list(render_arg_list),
+    dbc::report_vector_elems_are_in_set(
+      x = names(render_arg_list),
+      set = names(formals(rmarkdown::render))
+    ),
+    dbc::report_vector_elems_are_in_set(
+      x = names(writeLines_arg_list),
+      set = names(formals(writeLines))
+    ),
+    dbc::report_is_one_of(
+      x = template_file_path,
+      funs = c("report_is_NULL", "report_file_exists")
+    )
+  )), envir = parent.frame(1L))
+
+  dbc::report_to_assertion(
+    report_df,
+    assertion_type = assertion_type
+  )
+}
+
+
 #' @export
+#' @rdname render_codedoc
 render_codedoc <- function(
   block_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
   render_arg_list = list()
 ) {
-  dbc::assert_is_data.frame_with_required_names(
-    block_df,
-    required_names = c("key", "comment_block", "text_file_path")
+  report_codedoc_assertions(
+    key_df = key_df,
+    template_file_path = template_file_path,
+    writeLines_arg_list = writeLines_arg_list,
+    render_arg_list = render_arg_list,
+    assertion_type = "prod_input"
   )
-  dbc::assert_is_list(render_arg_list)
-  dbc::assert_vector_elems_are_in_set(
-    x = names(render_arg_list),
-    set = names(formals(rmarkdown::render))
+
+  call <- match.call()
+  call[[1L]] <- quote(render_codedoc_)
+  eval(call, envir = environment())
+}
+
+#' @export
+#' @rdname render_codedoc
+render_codedoc_ <- function(
+  key_df,
+  template_file_path = NULL,
+  writeLines_arg_list = list(),
+  render_arg_list = list()
+) {
+  report_codedoc_assertions(
+    key_df = key_df,
+    template_file_path = template_file_path,
+    writeLines_arg_list = writeLines_arg_list,
+    render_arg_list = render_arg_list,
+    assertion_type = "prod_input"
   )
-  dbc::assert_vector_elems_are_in_set(
-    x = names(writeLines_arg_list),
-    set = names(formals(writeLines))
-  )
-  # dbc::assert_is_one_of(
-  #   x = template_file_path,
-  #   funs = c("assert_is_NULL", "assert_file_exists")
-  # )
 
   if (is.null(template_file_path)) {
     template_lines <- unlist(lapply(1:nrow(block_df), function(key_no) {
@@ -246,6 +298,24 @@ render_codedoc <- function(
       unlink(tmp_rmd_file_path)
     }
   )
+
+  for (key in key_df[["key"]]) {
+    key_line_contents <- paste0("@codedoc_lines ", key)
+    is_template_key_line <- template_lines == key_line_contents
+    while (any(is_template_key_line)) {
+      wh <- which(is_template_key_line)[1L]
+      head_end <- (wh - 1L)
+      tail_start <- (wh + 1L)
+      template_lines <- c(
+        template_lines[min(1L, head_end):head_end],
+        key_df[["comment_block"]][[which(key_df[["key"]] == key)]],
+        template_lines[tail_start:max(length(template_lines), tail_start)]
+      )
+      is_template_key_line <- template_lines == key_line_contents
+    }
+
+  }
+
   writeLines_arg_list[["text"]] <- template_lines
   writeLines_arg_list[["con"]] <- tmp_rmd_file_path
   do.call(writeLines, writeLines_arg_list, quote = TRUE)
