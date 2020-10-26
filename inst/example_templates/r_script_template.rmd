@@ -18,7 +18,7 @@ output: html_document
 # Example of generated sections
 
 ```{r, results = "asis", echo = TRUE}
-invisible(lapply(key_df[["key"]], function(key) {
+invisible(lapply(block_df[["key"]], function(key) {
   
   cat(c(
     "",

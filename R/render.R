@@ -136,7 +136,7 @@ example_text_file_lines <- function(example_text_file_name) {
 #' @description
 #' Render using [rmarkdown::render] a documentation file using extracted
 #' code comment blocks.
-#' @param key_df `[data.frame]` (mandatory, no default)
+#' @param block_df `[data.frame]` (mandatory, no default)
 #'
 #' a data.frame which must have columns `key`, `comment_block`, and
 #' `text_file_path` as in the output of [extract_keyed_comment_blocks]
@@ -164,9 +164,9 @@ example_text_file_lines <- function(example_text_file_name) {
 #' where `envir` will by default be the environment where `render_codedoc` was
 #' called. `envir` is additionally always populated by these objects:
 #'
-#' - `key_df`: the user-supplied arg
+#' - `block_df`: the user-supplied arg
 #' - `codedoc_lines`: a function with only the argument `key`, which must be
-#'   one of the keys in `key_df`; the comment lines are returned for the
+#'   one of the keys in `block_df`; the comment lines are returned for the
 #'   corresponding key as a character vector
 #' - `codedoc_text`: as `codedoc_lines`. but instead of the lines as a character
 #'   vector (with one or more elements) this function returns exactly one
@@ -193,13 +193,13 @@ example_text_file_lines <- function(example_text_file_name) {
 #'
 #' @export
 render_codedoc <- function(
-  key_df,
+  block_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
   render_arg_list = list()
 ) {
   dbc::assert_is_data.frame_with_required_names(
-    key_df,
+    block_df,
     required_names = c("key", "comment_block", "text_file_path")
   )
   dbc::assert_is_list(render_arg_list)
@@ -217,11 +217,11 @@ render_codedoc <- function(
   # )
 
   if (is.null(template_file_path)) {
-    template_lines <- unlist(lapply(1:nrow(key_df), function(key_no) {
+    template_lines <- unlist(lapply(1:nrow(block_df), function(key_no) {
       c(
-        paste0("## ", key_df[["key"]][key_no]),
+        paste0("## ", block_df[["key"]][key_no]),
         "",
-        key_df[["comment_block"]][key_no],
+        block_df[["comment_block"]][key_no],
         ""
       )
     }))
@@ -232,7 +232,7 @@ render_codedoc <- function(
       "",
       "Based on the following files: ",
       "",
-      paste0("- ", key_df[["text_file_path"]]),
+      paste0("- ", block_df[["text_file_path"]]),
       "",
       template_lines
     )
@@ -258,8 +258,8 @@ render_codedoc <- function(
   use_render_arg_list <- default_render_arg_list
   use_render_arg_list[names(render_arg_list)] <- render_arg_list
   use_render_arg_list[["input"]] <- tmp_rmd_file_path
-  use_render_arg_list[["envir"]][["key_df"]] <- key_df
-  lines_by_key <- structure(key_df[["comment_block"]], names = key_df[["key"]])
+  use_render_arg_list[["envir"]][["block_df"]] <- block_df
+  lines_by_key <- structure(block_df[["comment_block"]], names = block_df[["key"]])
   use_render_arg_list[["envir"]][["codedoc_lines"]] <- function(key) {
     dbc::assert_is_character_nonNA_atom(key)
     dbc::assert_atom_is_in_set(key, set = names(text_by_key))
