@@ -154,6 +154,17 @@ extract_keyed_comment_blocks_ <- function(
   )
   key_line_df[["key"]] <- gsub("(^\\s*)|(\\s*$)", "", key_line_df[["key"]])
 
+  if (nrow(key_line_df) == 0L) {
+    output_df <- data.frame(
+      text_file_path = character(0L),
+      key = character(0L),
+      first_block_line = integer(0L),
+      last_block_line = integer(0L),
+      comment_block = list()
+    )
+    return(output_df)
+  }
+
   odd <- seq(min(nrow(key_line_df), 1L), (nrow(key_line_df) - 1L), 2L)
   block_df <- data.frame(
     key = key_line_df[["key"]][odd],
@@ -164,9 +175,6 @@ extract_keyed_comment_blocks_ <- function(
   key_df[["key_count"]] <- as.integer(table(key_line_df[["key"]]))
   key_df[["is_misspecified_key"]] <- key_df[["key_count"]] %% 2L != 0L
 
-  output_df_col_nms <- c(
-    "key", "first_block_line", "last_block_line", "comment_block"
-  )
 
   if (nrow(block_df) > 0L) {
     if (any(key_df[["is_misspecified_key"]])) {
@@ -184,6 +192,9 @@ extract_keyed_comment_blocks_ <- function(
     })
   }
 
+  output_df_col_nms <- c(
+    "key", "first_block_line", "last_block_line", "comment_block"
+  )
   block_df <- cbind(text_file_path = rep(text_file_paths, nrow(block_df)),
                     block_df[, output_df_col_nms])
   return(block_df)
