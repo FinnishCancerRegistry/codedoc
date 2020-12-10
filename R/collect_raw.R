@@ -123,6 +123,14 @@ extract_keyed_comment_blocks_ <- function(
     assertion_type = "prod_input"
   )
 
+  out <- data.frame(
+    text_file_path = character(0),
+    key = character(0),
+    first_block_line = integer(0),
+    last_block_line = integer(0),
+    comment_block = vector("list", 0)
+  )
+
   if (length(text_file_paths) > 1L) {
     arg_list <- mget(names(formals(extract_keyed_comment_blocks)))
     block_df_list <- lapply(text_file_paths, function(text_file_path) {
@@ -147,6 +155,9 @@ extract_keyed_comment_blocks_ <- function(
     key_line = line_df[["line"]][line_df[["is_key_line"]]],
     key_line_position = which(line_df[["is_key_line"]])
   )
+  if (nrow(key_line_df) == 0L) {
+    return(out)
+  }
   key_line_df[["key"]] <-  sub(
     paste0("[^@]*", codedoc_key_line_regex()),
     "",
@@ -164,9 +175,6 @@ extract_keyed_comment_blocks_ <- function(
   key_df[["key_count"]] <- as.integer(table(key_line_df[["key"]]))
   key_df[["is_misspecified_key"]] <- key_df[["key_count"]] %% 2L != 0L
 
-  output_df_col_nms <- c(
-    "key", "first_block_line", "last_block_line", "comment_block"
-  )
 
   if (nrow(block_df) > 0L) {
     if (any(key_df[["is_misspecified_key"]])) {
@@ -184,9 +192,13 @@ extract_keyed_comment_blocks_ <- function(
     })
   }
 
-  block_df <- cbind(text_file_path = rep(text_file_paths, nrow(block_df)),
-                    block_df[, output_df_col_nms])
-  return(block_df)
+  output_block_df_col_nms <- c(
+    "key", "first_block_line", "last_block_line",
+    "comment_block"
+  )
+  out <- cbind(text_file_path = rep(text_file_paths, nrow(block_df)),
+               block_df[, output_block_df_col_nms])
+  return(out)
 }
 
 
