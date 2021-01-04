@@ -65,7 +65,7 @@ template_file_path <- codedoc::example_template_file_path("r_script_template.rmd
 codedoc::render_codedoc(
   block_df = block_df, 
   template_file_path = template_file_path,
-  render_arg_list = list(output_dir = tmp_dir_path, 
+  render_arg_list = list(output_dir = tmp_dir_path,
                          output_file = tmp_md_file_path)
 )
 

@@ -307,7 +307,7 @@ render_codedoc_ <- function(
     }
   )
 
-  for (key in block_df[["key"]]) {
+  for (key in unique(block_df[["key"]])) {
     key_line_contents <- paste0("@codedoc_lines ", key)
     is_template_key_line <- template_lines == key_line_contents
     while (any(is_template_key_line)) {
@@ -316,7 +316,7 @@ render_codedoc_ <- function(
       tail_start <- (wh + 1L)
       template_lines <- c(
         template_lines[min(1L, head_end):head_end],
-        block_df[["comment_block"]][[which(block_df[["key"]] == key)]],
+        lines_by_key[[key]],
         template_lines[tail_start:max(length(template_lines), tail_start)]
       )
       is_template_key_line <- template_lines == key_line_contents
@@ -339,10 +339,10 @@ render_codedoc_ <- function(
   use_render_arg_list[["envir"]][["block_df"]] <- block_df
   use_render_arg_list[["envir"]][["codedoc_lines"]] <- function(key) {
     dbc::assert_is_character_nonNA_atom(key)
-    dbc::assert_atom_is_in_set(key, set = names(text_by_key))
+    dbc::assert_atom_is_in_set(key, set = names(lines_by_key))
     lines_by_key[[key]]
   }
-  text_by_key <- lapply(lines_by_key, paste0, collapse = "")
+  text_by_key <- lapply(lines_by_key, paste0, collapse = " ")
   use_render_arg_list[["envir"]][["codedoc_text"]] <- function(key) {
     dbc::assert_is_character_nonNA_atom(key)
     dbc::assert_atom_is_in_set(key, set = names(text_by_key))

@@ -22,11 +22,17 @@ birth_date_to_current_age <- function(birth_date) {
 
 age_to_age_group <- function(age) {
 
+  # comment blocks can be nested
+  # @codedoc_comment_block age_group_definitions
+  #
+  # **below is taken from age_group comment block**
+  #
   # @codedoc_comment_block age_group
   # age_group values are formed in function **age_to_age_group**. The function
   # creates 5 age groups from age values by splitting
   # the age values at breaks `{0, 20, 40, 60, 80, Inf}`
   # @codedoc_comment_block age_group
+  # @codedoc_comment_block age_group_definitions
 
   br <- c(0, 20, 40, 60, 80, Inf)
   cut(age, breaks = br, labels = FALSE, right = FALSE)
@@ -35,6 +41,11 @@ age_to_age_group <- function(age) {
 
 age_to_pension_age_indicator <- function(age) {
 
+  # comment blocks can be nested
+  # @codedoc_comment_block age_group_definitions
+  #
+  # **below is taken from pension_age_indicator comment block**
+  #
   # @codedoc_comment_block pension_age_indicator
   # pension_age_indicator is created in function age_to_pension_age_indicator
   # by detecting whether age is over 65 or not.
@@ -46,6 +57,8 @@ age_to_pension_age_indicator <- function(age) {
   # ))
   # ```
   # @codedoc_comment_block pension_age_indicator
+  # @codedoc_comment_block age_group_definitions
+
   age >= 65.0
 }
 

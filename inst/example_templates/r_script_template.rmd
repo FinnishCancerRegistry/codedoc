@@ -30,13 +30,13 @@ title: "Documentation for processing ages"
 # Example of generated sections
 
 ```{r, results = "asis", echo = TRUE}
-invisible(lapply(block_df[["key"]], function(key) {
+invisible(lapply(unique(block_df[["key"]]), function(key) {
   
   cat(c(
     "",
     paste0("## ", key),
     "",
-    codedoc_lines("age_group"),
+    codedoc_lines(key),
     ""
   ), sep = "\n")
   
