@@ -168,6 +168,14 @@ extract_keyed_comment_blocks_ <- function(
     order(key_line_df[["key"]], key_line_df[["key_line_position"]]),
   ]
 
+  n_by_key <- table(key_line_df[["key"]])
+  has_odd_number_of_keys <- n_by_key %% 2L != 0
+  if (any(has_odd_number_of_keys)) {
+    stop("Following keys did not appear an even number of times in file ",
+         deparse(text_file_paths), ": ",
+         deparse(names(n_by_key)[has_odd_number_of_keys]))
+  }
+
   odd <- seq(min(nrow(key_line_df), 1L), (nrow(key_line_df) - 1L), 2L)
   block_df <- data.frame(
     key = key_line_df[["key"]][odd],
