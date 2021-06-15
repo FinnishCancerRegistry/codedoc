@@ -260,6 +260,7 @@ render_codedoc_ <- function(
   writeLines_arg_list = list(),
   render_arg_list = list()
 ) {
+  requireNamespace("rmarkdown")
   report_codedoc_assertions(
     block_df = block_df,
     template_file_path = template_file_path,
@@ -328,11 +329,13 @@ render_codedoc_ <- function(
   writeLines_arg_list[["con"]] <- tmp_rmd_file_path
   do.call(writeLines, writeLines_arg_list, quote = TRUE)
 
+  # @codedoc_comment_block default_render_arg_list
   default_render_arg_list <- list(output_file = "codedoc.md",
                                   output_format = "md_document",
                                   output_dir = getwd(),
                                   quiet = TRUE,
                                   envir = new.env(parent = parent.frame(1L)))
+  # @codedoc_comment_block default_render_arg_list
   use_render_arg_list <- default_render_arg_list
   use_render_arg_list[names(render_arg_list)] <- render_arg_list
   use_render_arg_list[["input"]] <- tmp_rmd_file_path

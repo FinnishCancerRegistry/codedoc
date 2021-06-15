@@ -1,11 +1,10 @@
 Package: codedoc
 Type: Package
 Title: Generate Code Documentation
-Version: 0.1.3
+Version: 0.1.4
 Author: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Imports:
-    dbc (>= 0.3.8),
-    rmarkdown
+    dbc (>= 0.3.8)
 Maintainer: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Description: Allows generation of documentation from specifically formatted
     code comments.
@@ -18,6 +17,7 @@ Roxygen:
     list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Suggests: 
+    rmarkdown,
     testthat,
     knitr
 VignetteBuilder: knitr

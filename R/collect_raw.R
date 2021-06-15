@@ -123,14 +123,6 @@ extract_keyed_comment_blocks_ <- function(
     assertion_type = "prod_input"
   )
 
-  empty_output_df <- data.frame(
-    text_file_path = character(0),
-    key = character(0),
-    first_block_line = integer(0),
-    last_block_line = integer(0),
-    comment_block = vector("list", 0)
-  )
-
   if (length(text_file_paths) > 1L) {
     arg_list <- mget(names(formals(extract_keyed_comment_blocks)))
     block_df_list <- lapply(text_file_paths, function(text_file_path) {
@@ -144,7 +136,8 @@ extract_keyed_comment_blocks_ <- function(
   readLines_arg_list[["con"]] <- text_file_paths
 
   line_df <- data.frame(
-    line = do.call(readLines, readLines_arg_list)
+    line = do.call(readLines, readLines_arg_list),
+    stringsAsFactors = FALSE
   )
   line_df[["is_comment_line"]] <- detect_comment_lines(line_df[["line"]])
   line_df[["is_key_line"]] <- detect_codedoc_key_lines(line_df[["line"]])
@@ -153,17 +146,27 @@ extract_keyed_comment_blocks_ <- function(
 
   key_line_df <- data.frame(
     key_line = line_df[["line"]][line_df[["is_key_line"]]],
-    key_line_position = which(line_df[["is_key_line"]])
+    key_line_position = which(line_df[["is_key_line"]]),
+    stringsAsFactors = FALSE
   )
   if (nrow(key_line_df) == 0L) {
+    empty_output_df <- data.frame(
+      text_file_path = character(0),
+      key = character(0),
+      first_block_line = integer(0),
+      last_block_line = integer(0),
+      comment_block = vector("list", 0)
+    )
     return(empty_output_df)
   }
-  key_line_df[["key"]] <-  sub(
+  key_line_df[["key"]] <- sub(
     paste0("[^@]*", codedoc_key_line_regex()),
     "",
     key_line_df[["key_line"]]
   )
   key_line_df[["key"]] <- gsub("(^\\s*)|(\\s*$)", "", key_line_df[["key"]])
+  # sorting to ensure nested blocks dont mix up the order --- we want start
+  # and stop lines to be after another for each block.
   key_line_df <- key_line_df[
     order(key_line_df[["key"]], key_line_df[["key_line_position"]]),
   ]
@@ -178,6 +181,7 @@ extract_keyed_comment_blocks_ <- function(
 
   odd <- seq(min(nrow(key_line_df), 1L), (nrow(key_line_df) - 1L), 2L)
   block_df <- data.frame(
+    text_file_path = rep(text_file_paths, length(odd)),
     key = key_line_df[["key"]][odd],
     first_block_line = key_line_df[["key_line_position"]][odd] + 1L,
     last_block_line = key_line_df[["key_line_position"]][odd + 1L] - 1L
@@ -186,33 +190,31 @@ extract_keyed_comment_blocks_ <- function(
   key_df[["key_count"]] <- as.integer(table(key_line_df[["key"]]))
   key_df[["is_misspecified_key"]] <- key_df[["key_count"]] %% 2L != 0L
 
-
-  if (nrow(block_df) > 0L) {
-    if (any(key_df[["is_misspecified_key"]])) {
-      misspecified_key_set <- key_df[["key"]][key_df[["is_misspecified_key"]]]
-      stop("Following keys did not appear an even number of times in file ",
-           deparse(text_file_paths), ": ",
-           deparse(misspecified_key_set))
-    }
-    block_df[["comment_block"]] <- lapply(1:nrow(block_df), function(key_no) {
-      first_line_pos <- block_df[["first_block_line"]][key_no]
-      last_line_pos <- block_df[["last_block_line"]][key_no]
-      block_line_positions <- first_line_pos:last_line_pos
-      lines <- line_df[["line"]][block_line_positions]
-      lines <- clean_comment_lines(lines)
-      line_is_key_line <- line_df[["is_key_line"]][block_line_positions]
-      lines <- lines[!line_is_key_line]
-      lines[]
-    })
+  if (nrow(block_df) == 0L) {
+    print(key_line_df)
+    stop("Internal error: nrow(block_df) == 0; if you see this, complain to ",
+         "the package maintainer; key_line_df printed above.")
   }
+  if (any(key_df[["is_misspecified_key"]])) {
+    misspecified_key_set <- key_df[["key"]][key_df[["is_misspecified_key"]]]
+    stop("Following keys did not appear an even number of times in file ",
+          deparse(text_file_paths), ": ",
+          deparse(misspecified_key_set))
+  }
+  block_df[["comment_block"]] <- lapply(1:nrow(block_df), function(key_no) {
+    first_line_pos <- block_df[["first_block_line"]][key_no]
+    last_line_pos <- block_df[["last_block_line"]][key_no]
+    block_line_positions <- first_line_pos:last_line_pos
+    lines <- line_df[["line"]][block_line_positions]
+    lines <- clean_comment_lines(lines)
+    line_is_key_line <- line_df[["is_key_line"]][block_line_positions]
+    lines <- lines[!line_is_key_line]
+    lines
+  })
 
-  output_block_df_col_nms <- c(
-    "key", "first_block_line", "last_block_line",
-    "comment_block"
-  )
-  out <- cbind(text_file_path = rep(text_file_paths, nrow(block_df)),
-               block_df[, output_block_df_col_nms])
-  return(out)
+  o <- order(block_df[["first_block_line"]], block_df[["last_block_line"]])
+  block_df <- block_df[o, ]
+  return(block_df)
 }
 
 
