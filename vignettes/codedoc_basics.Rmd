@@ -62,11 +62,14 @@ we created.
 tmp_dir_path <- tempdir()
 tmp_md_file_path <- tempfile(fileext = ".md")
 template_file_path <- codedoc::example_template_file_path("r_script_template.rmd")
+fun_env <- new.env()
+source(codedoc::example_text_file_path("r_script.R"), local = fun_env)
 codedoc::render_codedoc(
   block_df = block_df, 
   template_file_path = template_file_path,
   render_arg_list = list(output_dir = tmp_dir_path,
-                         output_file = tmp_md_file_path)
+                         output_file = tmp_md_file_path,
+                         envir = fun_env)
 )
 
 ```
