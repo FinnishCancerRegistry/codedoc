@@ -9,14 +9,16 @@ extract_keyed_comment_blocks(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
   clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
-  readLines_arg_list = list()
+  readLines_arg_list = list(),
+  string_interpolation_eval_env = parent.frame(1L)
 )
 
 extract_keyed_comment_blocks_(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
   clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
-  readLines_arg_list = list()
+  readLines_arg_list = list(),
+  string_interpolation_eval_env = parent.frame(1L)
 )
 }
 \arguments{
@@ -45,6 +47,13 @@ the default removes any substrings matching regex \code{"^\\\\s*[#*]\\\\s*"}}
 
 list of arguments passed to \link{readLines}; \code{con} is always set to
 an element of \code{text_file_paths}}
+
+\item{string_interpolation_eval_env}{\verb{[environment]}
+(mandatory, default \code{parent.frame(1L)})
+
+environment where string interpolation expressions are evaluated. by default
+this is the environment where \code{extract_keyed_comment_blocks} or
+\code{extract_keyed_comment_blocks_} is called. see Details for more information.}
 }
 \description{
 Extracts blocks of specifically formatted comments from text file.
@@ -56,6 +65,40 @@ in other functions but is otherwise identical to
 to be used within other functions.
 See \code{help(topic = "dbc", package = "dbc")} for discussion on this
 distinction.
+
+Both insertion of comment blocks into other comment blocks and simple string
+interpolation is possible. Insertion is performed before any interpolation.
+
+Insertion of comment blocks into other comment blocks is implemented
+as follows:
+\itemize{
+\item lines with insert keys are detected using regex
+"@codedoc_insert_comment_block"
+\item all lines are passed through a maximum of ten times. this means
+that a recursion depth of ten is the maximum. recursion can occur
+if a comment block is inserted which in turn has one or more
+insert keys.
+\item insert keys are collected by removing the regex given above,
+anything preceding it, and all whitespaces after it
+\item each line with an insert key is effectively replaced with
+all lines in the comment block of that key (e.g. line with key
+"my_key" is replaced with all lines in comment block with key
+"my_key"). this is run separately for each detected insert key.
+\item the result is still a character vector, but here the insert keys
+have been replaced with lines from the comment blocks under those keys
+}
+
+Simple string interpolation is implemented
+as follows:
+\itemize{
+\item interpolation expressions are detected using regex
+\verb{\\$\\\{[^\}]*\\\}}
+\item each collected unique expression is evaluated using eval()
+\item if an expression produces an object of length more than one,
+separate elements are pasted together with one whitespace as a
+separator
+\item each expressions' results are inserted back into text using gsub
+}
 }
 \examples{
 

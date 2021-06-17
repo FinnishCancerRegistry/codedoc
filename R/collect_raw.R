@@ -37,6 +37,12 @@ detect_codedoc_key_lines <- function(x) {
 #'
 #' list of arguments passed to [readLines]; `con` is always set to
 #' an element of `text_file_paths`
+#' @param string_interpolation_eval_env `[environment]`
+#' (mandatory, default `parent.frame(1L)`)
+#'
+#' environment where string interpolation expressions are evaluated. by default
+#' this is the environment where `extract_keyed_comment_blocks` or
+#' `extract_keyed_comment_blocks_` is called. see Details for more information.
 #' @details
 #' `extract_keyed_comment_blocks` is intended to be used by the user and not
 #' in other functions but is otherwise identical to
@@ -44,6 +50,12 @@ detect_codedoc_key_lines <- function(x) {
 #' to be used within other functions.
 #' See `help(topic = "dbc", package = "dbc")` for discussion on this
 #' distinction.
+#'
+#' Both insertion of comment blocks into other comment blocks and simple string
+#' interpolation is possible. Insertion is performed before any interpolation.
+#'
+#' @eval codedoc_insert_comment_blocks_details()
+#' @eval string_interpolation_details()
 #' @examples
 #'
 #' block_df <- codedoc::extract_keyed_comment_blocks_(
@@ -92,7 +104,8 @@ extract_keyed_comment_blocks <- function(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
-  readLines_arg_list = list()
+  readLines_arg_list = list(),
+  string_interpolation_eval_env = parent.frame(1L)
 ) {
   extract_keyed_comment_blocks_assertions(
     text_file_paths,
@@ -102,9 +115,9 @@ extract_keyed_comment_blocks <- function(
     assertion_type = "user_input"
   )
 
-  this_call <- match.call()
-  this_call[[1L]] <- quote(extract_keyed_comment_blocks_)
-  eval(this_call, envir = environment())
+  call <- match.call()
+  call[[1L]] <- quote(extract_keyed_comment_blocks_)
+  eval(call, envir = environment())
 }
 
 #' @rdname extract_keyed_comment_blocks
@@ -113,7 +126,8 @@ extract_keyed_comment_blocks_ <- function(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
-  readLines_arg_list = list()
+  readLines_arg_list = list(),
+  string_interpolation_eval_env = parent.frame(1L)
 ) {
   extract_keyed_comment_blocks_assertions(
     text_file_paths,
@@ -214,8 +228,124 @@ extract_keyed_comment_blocks_ <- function(
 
   o <- order(block_df[["first_block_line"]], block_df[["last_block_line"]])
   block_df <- block_df[o, ]
+  block_df <- codedoc_insert_comment_blocks(block_df)
+  block_df[["comment_block"]] <- lapply(
+    block_df[["comment_block"]],
+    string_interpolation,
+    env = string_interpolation_eval_env
+  )
   return(block_df)
 }
+
+
+
+
+
+codedoc_insert_comment_block_regex <- function() {
+  "@codedoc_insert_comment_block"
+}
+codedoc_insert_comment_blocks <- function(block_df) {
+  dbc::assert_is_data.frame_with_required_names(
+    block_df,
+    required_names = c("comment_block", "key")
+  )
+  re <- codedoc_insert_comment_block_regex()
+
+  block_df[["comment_block"]] <- lapply(
+    block_df[["comment_block"]],
+    function(lines) {
+      # @codedoc_comment_block codedoc_insert_comment_blocks_details
+      #
+      # - lines with insert keys are detected using regex
+      #   "${codedoc_insert_comment_block_regex()}"
+      #
+      # @codedoc_comment_block codedoc_insert_comment_blocks_details
+      is_insert_line <- grepl(re, lines)
+      tick <- 0L
+      while (any(is_insert_line)) {
+        # @codedoc_comment_block codedoc_insert_comment_blocks_details
+        #
+        # - all lines are passed through a maximum of ten times. this means
+        #   that a recursion depth of ten is the maximum. recursion can occur
+        #   if a comment block is inserted which in turn has one or more
+        #   insert keys.
+        #
+        # @codedoc_comment_block codedoc_insert_comment_blocks_details
+        tick <- tick + 1L
+        if (tick == 10L) {
+          stop("hit 10 passes in while loop when inserting comment blocks; ",
+               "do you have self-referencing in a comment block?")
+        }
+        # @codedoc_comment_block codedoc_insert_comment_blocks_details
+        #
+        # - insert keys are collected by removing the regex given above,
+        #   anything preceding it, and all whitespaces after it
+        #
+        # @codedoc_comment_block codedoc_insert_comment_blocks_details
+        insert_key_by_line <- sub(
+          paste0(".*", re, "[ ]*"),
+          "",
+          lines
+        )
+        insert_key_by_line[!is_insert_line] <- NA_character_
+        for (wh in which(is_insert_line)) {
+          insert_key <- insert_key_by_line[wh]
+          if (!insert_key %in% block_df[["key"]]) {
+            stop("found insert key which has not match in collected comment ",
+                 "block keys. invalid key: ", deparse(insert_key),
+                 "; collected keys: ", deparse(block_df[["key"]]))
+          }
+          # @codedoc_comment_block codedoc_insert_comment_blocks_details
+          #
+          # - each line with an insert key is effectively replaced with
+          #   all lines in the comment block of that key (e.g. line with key
+          #   "my_key" is replaced with all lines in comment block with key
+          #   "my_key"). this is run separately for each detected insert key.
+          #
+          # @codedoc_comment_block codedoc_insert_comment_blocks_details
+          add_lines <- unlist(
+            block_df[["comment_block"]][block_df[["key"]] == insert_key]
+          )
+          head_lines <- character(0L)
+          if (wh > 1L) {
+            head_lines <- lines[1L:(wh - 1L)]
+          }
+          tail_lines <- character(0L)
+          if (wh < length(lines)) {
+            tail_lines <- lines[(wh + 1L):length(lines)]
+          }
+          lines <- c(head_lines, add_lines, tail_lines)
+        }
+
+        is_insert_line <- grepl(re, lines)
+      }
+      # @codedoc_comment_block codedoc_insert_comment_blocks_details
+      #
+      # - the result is still a character vector, but here the insert keys
+      #   have been replaced with lines from the comment blocks under those keys
+      #
+      # @codedoc_comment_block codedoc_insert_comment_blocks_details
+      return(lines)
+    }
+  )
+
+  return(block_df)
+}
+codedoc_insert_comment_blocks_details <- function() {
+  block_df <- codedoc::extract_keyed_comment_blocks_(
+    text_file_paths = "R/collect_raw.R"
+  )
+  key <- "codedoc_insert_comment_blocks_details"
+  block_df <- block_df[block_df[["key"]] == key, ]
+  c(
+    "@details",
+    "Insertion of comment blocks into other comment blocks is implemented ",
+    "as follows:",
+    "",
+    unlist(block_df[["comment_block"]])
+  )
+}
+
 
 
 

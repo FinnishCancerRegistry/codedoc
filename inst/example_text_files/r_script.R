@@ -19,7 +19,9 @@ birth_date_to_current_age <- function(birth_date) {
 }
 
 
-
+age_group_breaks <- function() {
+  c(0, 20, 40, 65, 80, Inf)
+}
 age_to_age_group <- function(age) {
 
   # comment blocks can be nested
@@ -34,8 +36,7 @@ age_to_age_group <- function(age) {
   # @codedoc_comment_block age_group
   # @codedoc_comment_block age_group_definitions
 
-  br <- c(0, 20, 40, 60, 80, Inf)
-  cut(age, breaks = br, labels = FALSE, right = FALSE)
+  cut(age, breaks = age_group_breaks(), labels = FALSE, right = FALSE)
 }
 
 
@@ -48,7 +49,7 @@ age_to_pension_age_indicator <- function(age) {
   #
   # @codedoc_comment_block pension_age_indicator
   # pension_age_indicator is created in function age_to_pension_age_indicator
-  # by detecting whether age is over 65 or not.
+  # by detecting whether age at least `r pension_age()`.
   # ```{r, results = "asis"}
   # # I wrote this here only for demonstration purposes.
   # knitr::kable(data.frame(
@@ -59,7 +60,36 @@ age_to_pension_age_indicator <- function(age) {
   # @codedoc_comment_block pension_age_indicator
   # @codedoc_comment_block age_group_definitions
 
-  age >= 65.0
+  age >= pension_age()
+}
+
+pension_age <- function() {
+  # @codedoc_comment_block pension_age
+  # the pension age is set to `r pension_age()` in function pension_age().
+  # @codedoc_comment_block pension_age
+  65L
+}
+
+age_group_to_pension_age_indicator <- function(age_groups) {
+
+  # you can insert other comment blocks into another
+  #
+  # @codedoc_comment_block age_group_to_pension_age_indicator
+  #
+  # function age_group_to_pension_age_indicator() converts age groups into
+  # boolean indicators of whether pension
+  # age has been reached. age groups are assumed to be defined using
+  # age_to_age_group(), where age groups are defined as follows:
+  #
+  # @codedoc_insert_comment_block age_group_definitions
+  #
+  # the current pension age is retrieved using pension_age():
+  #
+  # @codedoc_insert_comment_block pension_age
+  #
+  # @codedoc_comment_block age_group_to_pension_age_indicator
+
+  age_group_breaks()[age_groups] >= pension_age()
 }
 
 
