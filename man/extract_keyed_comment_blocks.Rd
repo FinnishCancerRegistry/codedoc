@@ -22,7 +22,8 @@ extract_keyed_comment_blocks_(
 )
 }
 \arguments{
-\item{text_file_paths}{\verb{[character]} (mandatory, no default)
+\item{text_file_paths}{\verb{[character]}
+(mandatory, no default)
 
 path to a text file; the file is not inspected in any way to be a text file
 based on file extension or any other characteristics, it is merely assumed
@@ -43,13 +44,14 @@ of the same length as input; this function takes comment lines and should
 strip any comment characters preceding the text itself;
 the default removes any substrings matching regex \code{"^\\\\s*[#*]\\\\s*"}}
 
-\item{readLines_arg_list}{\verb{[list]} (mandatory, default \code{list()})
+\item{readLines_arg_list}{\verb{[list]}
+(optional, default \code{list()})
 
 list of arguments passed to \link{readLines}; \code{con} is always set to
 an element of \code{text_file_paths}}
 
 \item{string_interpolation_eval_env}{\verb{[environment]}
-(mandatory, default \code{parent.frame(1L)})
+(optional, default \code{parent.frame(1L)})
 
 environment where string interpolation expressions are evaluated. by default
 this is the environment where \code{extract_keyed_comment_blocks} or

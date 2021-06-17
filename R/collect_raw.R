@@ -15,7 +15,8 @@ detect_codedoc_key_lines <- function(x) {
 #' @title Read codedoc-formatted Code Comments
 #' @description
 #' Extracts blocks of specifically formatted comments from text file.
-#' @param text_file_paths `[character]` (mandatory, no default)
+#' @param text_file_paths `[character]`
+#' (mandatory, no default)
 #'
 #' path to a text file; the file is not inspected in any way to be a text file
 #' based on file extension or any other characteristics, it is merely assumed
@@ -33,12 +34,13 @@ detect_codedoc_key_lines <- function(x) {
 #' of the same length as input; this function takes comment lines and should
 #' strip any comment characters preceding the text itself;
 #' the default removes any substrings matching regex `"^\\s*[#*]\\s*"`
-#' @param readLines_arg_list `[list]` (mandatory, default `list()`)
+#' @param readLines_arg_list `[list]`
+#' (optional, default `list()`)
 #'
 #' list of arguments passed to [readLines]; `con` is always set to
 #' an element of `text_file_paths`
 #' @param string_interpolation_eval_env `[environment]`
-#' (mandatory, default `parent.frame(1L)`)
+#' (optional, default `parent.frame(1L)`)
 #'
 #' environment where string interpolation expressions are evaluated. by default
 #' this is the environment where `extract_keyed_comment_blocks` or
@@ -71,6 +73,7 @@ extract_keyed_comment_blocks_assertions <- function(
   detect_comment_lines,
   clean_comment_lines,
   readLines_arg_list,
+  string_interpolation_eval_env,
   assertion_type
 ) {
   report_df <- eval(
@@ -86,6 +89,7 @@ extract_keyed_comment_blocks_assertions <- function(
           clean_comment_lines,
           required_argument_names = "x"
         ),
+        dbc::report_is_environment(string_interpolation_eval_env),
         dbc::report_is_list(readLines_arg_list)
       )
     ),
@@ -112,11 +116,11 @@ extract_keyed_comment_blocks <- function(
     detect_comment_lines,
     clean_comment_lines,
     readLines_arg_list,
+    string_interpolation_eval_env,
     assertion_type = "user_input"
   )
-
-  call <- match.call()
-  call[[1L]] <- quote(extract_keyed_comment_blocks_)
+  call <- full_call(fun = quote(extract_keyed_comment_blocks__))
+  call[c("insert", "interpolate")] <- list(TRUE, TRUE)
   eval(call, envir = environment())
 }
 
@@ -134,16 +138,41 @@ extract_keyed_comment_blocks_ <- function(
     detect_comment_lines,
     clean_comment_lines,
     readLines_arg_list,
+    string_interpolation_eval_env,
     assertion_type = "prod_input"
   )
+  call <- full_call(fun = quote(extract_keyed_comment_blocks__))
+  call[c("insert", "interpolate")] <- list(TRUE, TRUE)
+  eval(call, envir = environment())
+}
 
+extract_keyed_comment_blocks__ <- function(
+  text_file_paths,
+  detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
+  clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
+  readLines_arg_list = list(),
+  string_interpolation_eval_env = parent.frame(1L),
+  insert = TRUE,
+  interpolate = TRUE
+) {
   if (length(text_file_paths) > 1L) {
-    arg_list <- mget(names(formals(extract_keyed_comment_blocks)))
+    call <- full_call()
+    call[c("insert", "interpolate")] <- list(FALSE, FALSE)
     block_df_list <- lapply(text_file_paths, function(text_file_path) {
-      arg_list[["text_file_paths"]] <- text_file_path
-      do.call(extract_keyed_comment_blocks, arg_list)
+      call[["text_file_paths"]] <- text_file_path
+      eval(call)
     })
     block_df <- do.call(rbind, block_df_list)
+    if (insert) {
+      block_df <- codedoc_insert_comment_blocks(block_df)
+    }
+    if (interpolate) {
+      block_df[["comment_block"]] <- lapply(
+        block_df[["comment_block"]],
+        string_interpolation,
+        env = string_interpolation_eval_env
+      )
+    }
     return(block_df)
   }
 
@@ -228,12 +257,16 @@ extract_keyed_comment_blocks_ <- function(
 
   o <- order(block_df[["first_block_line"]], block_df[["last_block_line"]])
   block_df <- block_df[o, ]
-  block_df <- codedoc_insert_comment_blocks(block_df)
-  block_df[["comment_block"]] <- lapply(
-    block_df[["comment_block"]],
-    string_interpolation,
-    env = string_interpolation_eval_env
-  )
+  if (insert) {
+    block_df <- codedoc_insert_comment_blocks(block_df)
+  }
+  if (interpolate) {
+    block_df[["comment_block"]] <- lapply(
+      block_df[["comment_block"]],
+      string_interpolation,
+      env = string_interpolation_eval_env
+    )
+  }
   return(block_df)
 }
 

@@ -92,3 +92,26 @@ string_interpolation_details <- function() {
   )
 }
 
+
+
+
+full_call <- function(
+  matched_call = eval(quote(match.call()), parent.frame(1L)),
+  fun_symbol = matched_call[[1]]
+) {
+  fun <- eval(fun_symbol)
+  full_call <- matched_call
+  formals <- formals(fun)
+  full_call[names(formals)] <- formals
+  matched_call_arg_nms <- setdiff(names(matched_call), "")
+  full_call[matched_call_arg_nms] <- matched_call[matched_call_arg_nms]
+  full_call[[1L]] <- fun_symbol
+  return(full_call)
+}
+
+
+
+
+
+
+
