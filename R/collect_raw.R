@@ -119,9 +119,15 @@ extract_keyed_comment_blocks <- function(
     string_interpolation_eval_env,
     assertion_type = "user_input"
   )
-  call <- full_call(fun = quote(extract_keyed_comment_blocks__))
-  call[c("insert", "interpolate")] <- list(TRUE, TRUE)
-  eval(call, envir = environment())
+  extract_keyed_comment_blocks__(
+    text_file_paths = text_file_paths,
+    detect_comment_lines = detect_comment_lines,
+    clean_comment_lines = clean_comment_lines,
+    readLines_arg_list = readLines_arg_list,
+    string_interpolation_eval_env = string_interpolation_eval_env,
+    insert = TRUE,
+    interpolate = TRUE
+  )
 }
 
 #' @rdname extract_keyed_comment_blocks
@@ -141,9 +147,15 @@ extract_keyed_comment_blocks_ <- function(
     string_interpolation_eval_env,
     assertion_type = "prod_input"
   )
-  call <- full_call(fun = quote(extract_keyed_comment_blocks__))
-  call[c("insert", "interpolate")] <- list(TRUE, TRUE)
-  eval(call, envir = environment())
+  extract_keyed_comment_blocks__(
+    text_file_paths = text_file_paths,
+    detect_comment_lines = detect_comment_lines,
+    clean_comment_lines = clean_comment_lines,
+    readLines_arg_list = readLines_arg_list,
+    string_interpolation_eval_env = string_interpolation_eval_env,
+    insert = TRUE,
+    interpolate = TRUE
+  )
 }
 
 extract_keyed_comment_blocks__ <- function(
