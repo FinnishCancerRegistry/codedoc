@@ -34,6 +34,13 @@ detect_codedoc_key_lines <- function(x) {
 #' of the same length as input; this function takes comment lines and should
 #' strip any comment characters preceding the text itself;
 #' the default removes any substrings matching regex `"^\\s*[#*]\\s*"`
+#' @param detect_allowed_keys `[function]`
+#' (optional, default `function(x) rep(TRUE, length(x))`)
+#'
+#' a function which takes a character vector of keys as input and returns a
+#' boolean vector of the same length, where an element is `TRUE` for keys
+#' which should be retained (those filtered out should have `FALSE`);
+#' the default keeps all keys.
 #' @param readLines_arg_list `[list]`
 #' (optional, default `list()`)
 #'
@@ -72,6 +79,7 @@ extract_keyed_comment_blocks_assertions <- function(
   text_file_paths,
   detect_comment_lines,
   clean_comment_lines,
+  detect_allowed_keys,
   readLines_arg_list,
   string_interpolation_eval_env,
   assertion_type
@@ -87,6 +95,10 @@ extract_keyed_comment_blocks_assertions <- function(
         ),
         dbc::report_is_function_with_required_argument_names(
           clean_comment_lines,
+          required_argument_names = "x"
+        ),
+        dbc::report_is_function_with_required_argument_names(
+          detect_allowed_keys,
           required_argument_names = "x"
         ),
         dbc::report_is_environment(string_interpolation_eval_env),
@@ -108,6 +120,7 @@ extract_keyed_comment_blocks <- function(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
+  detect_allowed_keys = function(x) rep(TRUE, length(x)),
   readLines_arg_list = list(),
   string_interpolation_eval_env = parent.frame(1L)
 ) {
@@ -115,6 +128,7 @@ extract_keyed_comment_blocks <- function(
     text_file_paths,
     detect_comment_lines,
     clean_comment_lines,
+    detect_allowed_keys,
     readLines_arg_list,
     string_interpolation_eval_env,
     assertion_type = "user_input"
@@ -123,6 +137,7 @@ extract_keyed_comment_blocks <- function(
     text_file_paths = text_file_paths,
     detect_comment_lines = detect_comment_lines,
     clean_comment_lines = clean_comment_lines,
+    detect_allowed_keys = detect_allowed_keys,
     readLines_arg_list = readLines_arg_list,
     string_interpolation_eval_env = string_interpolation_eval_env,
     insert = TRUE,
@@ -136,6 +151,7 @@ extract_keyed_comment_blocks_ <- function(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
+  detect_allowed_keys = function(x) rep(TRUE, length(x)),
   readLines_arg_list = list(),
   string_interpolation_eval_env = parent.frame(1L)
 ) {
@@ -143,6 +159,7 @@ extract_keyed_comment_blocks_ <- function(
     text_file_paths,
     detect_comment_lines,
     clean_comment_lines,
+    detect_allowed_keys,
     readLines_arg_list,
     string_interpolation_eval_env,
     assertion_type = "prod_input"
@@ -151,6 +168,7 @@ extract_keyed_comment_blocks_ <- function(
     text_file_paths = text_file_paths,
     detect_comment_lines = detect_comment_lines,
     clean_comment_lines = clean_comment_lines,
+    detect_allowed_keys = detect_allowed_keys,
     readLines_arg_list = readLines_arg_list,
     string_interpolation_eval_env = string_interpolation_eval_env,
     insert = TRUE,
@@ -162,6 +180,7 @@ extract_keyed_comment_blocks__ <- function(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
+  detect_allowed_keys = function(x) rep(TRUE, length(x)),
   readLines_arg_list = list(),
   string_interpolation_eval_env = parent.frame(1L),
   insert = TRUE,
@@ -220,6 +239,9 @@ extract_keyed_comment_blocks__ <- function(
     key_line_df[["key_line"]]
   )
   key_line_df[["key"]] <- gsub("(^\\s*)|(\\s*$)", "", key_line_df[["key"]])
+
+  key_line_df <- key_line_df[detect_allowed_keys(key_line_df[["key"]]), ]
+
   # sorting to ensure nested blocks dont mix up the order --- we want start
   # and stop lines to be after another for each block.
   key_line_df <- key_line_df[

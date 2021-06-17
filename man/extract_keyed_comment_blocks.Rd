@@ -9,6 +9,7 @@ extract_keyed_comment_blocks(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
   clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
+  detect_allowed_keys = function(x) rep(TRUE, length(x)),
   readLines_arg_list = list(),
   string_interpolation_eval_env = parent.frame(1L)
 )
@@ -17,6 +18,7 @@ extract_keyed_comment_blocks_(
   text_file_paths,
   detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
   clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
+  detect_allowed_keys = function(x) rep(TRUE, length(x)),
   readLines_arg_list = list(),
   string_interpolation_eval_env = parent.frame(1L)
 )
@@ -43,6 +45,14 @@ a function which takes lines of text as input and outputs a character vector
 of the same length as input; this function takes comment lines and should
 strip any comment characters preceding the text itself;
 the default removes any substrings matching regex \code{"^\\\\s*[#*]\\\\s*"}}
+
+\item{detect_allowed_keys}{\verb{[function]}
+(optional, default \code{function(x) rep(TRUE, length(x))})
+
+a function which takes a character vector of keys as input and returns a
+boolean vector of the same length, where an element is \code{TRUE} for keys
+which should be retained (those filtered out should have \code{FALSE});
+the default keeps all keys.}
 
 \item{readLines_arg_list}{\verb{[list]}
 (optional, default \code{list()})
