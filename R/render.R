@@ -148,33 +148,7 @@ example_text_file_lines <- function(example_text_file_name) {
 #'
 #' list of arguments passed to `writeLines` when writing temporary .rmd
 #' file to render; `con` and `text` are always determined internally
-#' @param render_arg_list `[list]` (optional, default `list()`)
-#'
-#' list of arguments passed to [rmarkdown::render]; `input` is always
-#' determined internally; the default settings set internally in this function
-#' are
-#' ```
-#' list(output_file = "codedoc.md",
-#'      output_format = "md_document",
-#'      output_dir = getwd(),
-#'      quiet = TRUE,
-#'      envir = new.env(parent = parent.frame(1L)))
-#' ```
-#'
-#' where `envir` will by default be the environment where `render_codedoc` was
-#' called. `envir` is additionally always populated by these objects:
-#'
-#' - `block_df`: the user-supplied arg
-#' - `codedoc_lines`: a function with only the argument `key`, which must be
-#'   one of the keys in `block_df`; the comment lines are returned for the
-#'   corresponding key as a character vector
-#' - `codedoc_text`: as `codedoc_lines`. but instead of the lines as a character
-#'   vector (with one or more elements) this function returns exactly one
-#'   string, formed by pasting the lines together with
-#'   `paste0(lines, collapse = "\n")`; this is more convenient for rendering
-#'   text in the template (see section Template)
-#'
-#'
+#' @eval render_codedoc_arg_render_arg_list()
 #' @section Template:
 #'
 #' The template file must be an Rmarkdown file (see e.g. [rmarkdown::render]).
@@ -248,7 +222,7 @@ render_codedoc <- function(
   )
 
   call <- match.call()
-  call[[1L]] <- quote(render_codedoc_)
+  call[[1L]] <- quote(render_codedoc__)
   eval(call, envir = environment())
 }
 
@@ -260,7 +234,6 @@ render_codedoc_ <- function(
   writeLines_arg_list = list(),
   render_arg_list = list()
 ) {
-  requireNamespace("rmarkdown")
   report_codedoc_assertions(
     block_df = block_df,
     template_file_path = template_file_path,
@@ -268,6 +241,19 @@ render_codedoc_ <- function(
     render_arg_list = render_arg_list,
     assertion_type = "prod_input"
   )
+
+  call <- match.call()
+  call[[1L]] <- quote(render_codedoc__)
+  eval(call, envir = environment())
+}
+
+render_codedoc__ <- function(
+  block_df,
+  template_file_path = NULL,
+  writeLines_arg_list = list(),
+  render_arg_list = list()
+) {
+  requireNamespace("rmarkdown")
 
   key_set <- unique(block_df[["key"]])
   lines_by_key <- lapply(key_set, function(key) {
@@ -301,13 +287,12 @@ render_codedoc_ <- function(
   } else {
     template_lines <- readLines(template_file_path)
   }
-  tmp_rmd_file_path <- tempfile(fileext = ".rmd")
+  tmp_rmd_file_path <- tempfile(pattern = "render_codedoc__", fileext = ".rmd")
   on.exit(
     if (file.exists(tmp_rmd_file_path)) {
       unlink(tmp_rmd_file_path)
     }
   )
-
   for (key in unique(block_df[["key"]])) {
     key_line_contents <- paste0("@codedoc_lines ", key)
     is_template_key_line <- template_lines == key_line_contents
@@ -328,17 +313,33 @@ render_codedoc_ <- function(
   writeLines_arg_list[["text"]] <- template_lines
   writeLines_arg_list[["con"]] <- tmp_rmd_file_path
   do.call(writeLines, writeLines_arg_list, quote = TRUE)
-
-  # @codedoc_comment_block default_render_arg_list
-  default_render_arg_list <- list(output_file = "codedoc.md",
-                                  output_format = "md_document",
-                                  output_dir = getwd(),
-                                  quiet = TRUE,
-                                  envir = new.env(parent = parent.frame(1L)))
-  # @codedoc_comment_block default_render_arg_list
+  # @codedoc_comment_block default_render_arg_list_1
+  default_render_arg_list <- list(
+    output_file = "codedoc.md",
+    output_format = "md_document",
+    output_dir = getwd(),
+    quiet = TRUE,
+    envir = new.env(parent = parent.frame(1L)),
+    knit_root_dir = if (is.null(template_file_path)) getwd() else
+      normalizePath(dirname(template_file_path))
+  )
+  # @codedoc_comment_block default_render_arg_list_1
   use_render_arg_list <- default_render_arg_list
   use_render_arg_list[names(render_arg_list)] <- render_arg_list
   use_render_arg_list[["input"]] <- tmp_rmd_file_path
+  # @codedoc_comment_block default_render_arg_list_2
+  # `envir` is always populated by these objects:
+  #
+  # - `block_df`: the user-supplied arg
+  # - `codedoc_lines`: a function with only the argument `key`, which must be
+  #   one of the keys in `block_df`; the comment lines are returned for the
+  #   corresponding key as a character vector
+  # - `codedoc_text`: as `codedoc_lines`. but instead of the lines as a
+  #   character vector (with one or more elements) this function returns exactly
+  #   one string, formed by pasting the lines together with
+  #   `paste0(lines, collapse = "\n")`; this is more convenient for rendering
+  #   text in the template (see section Template)
+  # @codedoc_comment_block default_render_arg_list_2
   use_render_arg_list[["envir"]][["block_df"]] <- block_df
   use_render_arg_list[["envir"]][["codedoc_lines"]] <- function(key) {
     dbc::assert_is_character_nonNA_atom(key)
@@ -354,7 +355,29 @@ render_codedoc_ <- function(
   do.call(rmarkdown::render, use_render_arg_list)
 }
 
-
+render_codedoc_arg_render_arg_list <- function() {
+  block_df <- codedoc::extract_keyed_comment_blocks_(
+    text_file_paths = "R/render.R",
+    detect_allowed_keys = function(x) grepl("default_render_arg_list", x)
+  )
+  wh_1 <- which(block_df[["key"]] == "default_render_arg_list_1")
+  wh_2 <- which(block_df[["key"]] == "default_render_arg_list_2")
+  lines <- c(
+    "@param render_arg_list `[list]` (optional, default `list()`)",
+    "list of arguments passed to [rmarkdown::render]; `input` is always",
+    "determined internally; the default settings set internally in this function",
+    "are",
+    "```",
+    block_df[["comment_block"]][[wh_1]],
+    "```",
+    "",
+    "where `envir` will by default be the environment where `render_codedoc` was",
+    "called.",
+    "",
+    block_df[["comment_block"]][[wh_2]]
+  )
+  return(lines)
+}
 
 
 

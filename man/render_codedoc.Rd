@@ -37,26 +37,31 @@ list of arguments passed to \code{writeLines} when writing temporary .rmd
 file to render; \code{con} and \code{text} are always determined internally}
 
 \item{render_arg_list}{\verb{[list]} (optional, default \code{list()})
-
 list of arguments passed to \link[rmarkdown:render]{rmarkdown::render}; \code{input} is always
 determined internally; the default settings set internally in this function
-are\preformatted{list(output_file = "codedoc.md",
-     output_format = "md_document",
-     output_dir = getwd(),
-     quiet = TRUE,
-     envir = new.env(parent = parent.frame(1L)))
+are\preformatted{  default_render_arg_list <- list(
+    output_file = "codedoc.md",
+    output_format = "md_document",
+    output_dir = getwd(),
+    quiet = TRUE,
+    envir = new.env(parent = parent.frame(1L)),
+    knit_root_dir = if (is.null(template_file_path)) getwd() else
+      normalizePath(dirname(template_file_path))
+  )
 }
 
 where \code{envir} will by default be the environment where \code{render_codedoc} was
-called. \code{envir} is additionally always populated by these objects:
+called.
+
+\code{envir} is always populated by these objects:
 \itemize{
 \item \code{block_df}: the user-supplied arg
 \item \code{codedoc_lines}: a function with only the argument \code{key}, which must be
 one of the keys in \code{block_df}; the comment lines are returned for the
 corresponding key as a character vector
-\item \code{codedoc_text}: as \code{codedoc_lines}. but instead of the lines as a character
-vector (with one or more elements) this function returns exactly one
-string, formed by pasting the lines together with
+\item \code{codedoc_text}: as \code{codedoc_lines}. but instead of the lines as a
+character vector (with one or more elements) this function returns exactly
+one string, formed by pasting the lines together with
 \code{paste0(lines, collapse = "\\n")}; this is more convenient for rendering
 text in the template (see section Template)
 }}
