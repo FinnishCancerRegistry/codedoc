@@ -240,10 +240,11 @@ extract_keyed_comment_blocks__ <- function(
   )
   key_line_df[["key"]] <- gsub("(^\\s*)|(\\s*$)", "", key_line_df[["key"]])
 
-  key_line_df <- key_line_df[detect_allowed_keys(key_line_df[["key"]]), ]
+  # is_allowed_key <- detect_allowed_keys(key_line_df[["key"]])
+  # key_line_df <- key_line_df[is_allowed_key, ]
 
-  # sorting to ensure nested blocks dont mix up the order --- we want start
-  # and stop lines to be after another for each block.
+  # sorting to ensure nested blocks don't mix up the order --- we want start
+  # and stop lines to be after one another for each block.
   key_line_df <- key_line_df[
     order(key_line_df[["key"]], key_line_df[["key_line_position"]]),
   ]
@@ -291,9 +292,14 @@ extract_keyed_comment_blocks__ <- function(
 
   o <- order(block_df[["first_block_line"]], block_df[["last_block_line"]])
   block_df <- block_df[o, ]
+  is_allowed_key <- detect_allowed_keys(block_df[["key"]])
   if (insert) {
-    block_df <- codedoc_insert_comment_blocks(block_df)
+    block_df <- codedoc_insert_comment_blocks(
+      block_df,
+      is_allowed_key
+    )
   }
+  block_df <- block_df[is_allowed_key, ]
   if (interpolate) {
     block_df[["comment_block"]] <- lapply(
       block_df[["comment_block"]],
@@ -311,15 +317,19 @@ extract_keyed_comment_blocks__ <- function(
 codedoc_insert_comment_block_regex <- function() {
   "@codedoc_insert_comment_block"
 }
-codedoc_insert_comment_blocks <- function(block_df) {
-  dbc::assert_is_data.frame_with_required_names(
+codedoc_insert_comment_blocks <- function(
+  block_df,
+  subset
+) {
+  dbc::assert_prod_input_is_data.frame_with_required_names(
     block_df,
     required_names = c("comment_block", "key")
   )
+  dbc::assert_prod_input_is_logical_nonNA_vector(subset)
   re <- codedoc_insert_comment_block_regex()
 
-  block_df[["comment_block"]] <- lapply(
-    block_df[["comment_block"]],
+  block_df[["comment_block"]][subset] <- lapply(
+    block_df[["comment_block"]][subset],
     function(lines) {
       # @codedoc_comment_block codedoc_insert_comment_blocks_details
       #
