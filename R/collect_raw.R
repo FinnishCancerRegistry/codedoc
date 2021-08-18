@@ -343,22 +343,23 @@ codedoc_insert_comment_blocks <- function(block_df) {
           stop("hit 10 passes in while loop when inserting comment blocks; ",
                "do you have self-referencing in a comment block?")
         }
-        # @codedoc_comment_block codedoc_insert_comment_blocks_details
-        #
-        # - insert keys are collected by removing the regex given above,
-        #   anything preceding it, and all whitespaces after it
-        #
-        # @codedoc_comment_block codedoc_insert_comment_blocks_details
-        insert_key_by_line <- sub(
-          paste0(".*", re, "[ ]*"),
-          "",
-          lines
-        )
-        insert_key_by_line[!is_insert_line] <- NA_character_
-        for (wh in which(is_insert_line)) {
+        for (i in 1:sum(is_insert_line)) {
+          # @codedoc_comment_block codedoc_insert_comment_blocks_details
+          #
+          # - insert keys are collected by removing the regex given above,
+          #   anything preceding it, and all whitespaces after it
+          #
+          # @codedoc_comment_block codedoc_insert_comment_blocks_details
+          insert_key_by_line <- sub(
+            paste0(".*", re, "[ ]*"),
+            "",
+            lines
+          )
+          insert_key_by_line[!is_insert_line] <- NA_character_
+          wh <- which(is_insert_line)[1L]
           insert_key <- insert_key_by_line[wh]
           if (!insert_key %in% block_df[["key"]]) {
-            stop("found insert key which has not match in collected comment ",
+            stop("found insert key which has no match in collected comment ",
                  "block keys. invalid key: ", deparse(insert_key),
                  "; collected keys: ", deparse(block_df[["key"]]))
           }
@@ -382,9 +383,8 @@ codedoc_insert_comment_blocks <- function(block_df) {
             tail_lines <- lines[(wh + 1L):length(lines)]
           }
           lines <- c(head_lines, add_lines, tail_lines)
+          is_insert_line <- grepl(re, lines)
         }
-
-        is_insert_line <- grepl(re, lines)
       }
       # @codedoc_comment_block codedoc_insert_comment_blocks_details
       #
