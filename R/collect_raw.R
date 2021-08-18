@@ -195,7 +195,10 @@ extract_keyed_comment_blocks__ <- function(
     })
     block_df <- do.call(rbind, block_df_list)
     if (insert) {
-      block_df <- codedoc_insert_comment_blocks(block_df)
+      block_df <- codedoc_insert_comment_blocks(
+        block_df = block_df,
+        subset = is_allowed_key
+      )
     }
     if (interpolate) {
       block_df[["comment_block"]] <- lapply(
@@ -295,8 +298,8 @@ extract_keyed_comment_blocks__ <- function(
   is_allowed_key <- detect_allowed_keys(block_df[["key"]])
   if (insert) {
     block_df <- codedoc_insert_comment_blocks(
-      block_df,
-      is_allowed_key
+      block_df = block_df,
+      subset = is_allowed_key
     )
   }
   block_df <- block_df[is_allowed_key, ]
