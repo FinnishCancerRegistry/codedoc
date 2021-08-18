@@ -194,12 +194,14 @@ extract_keyed_comment_blocks__ <- function(
       eval(call)
     })
     block_df <- do.call(rbind, block_df_list)
+    is_allowed_key <- detect_allowed_keys(block_df[["key"]])
     if (insert) {
       block_df <- codedoc_insert_comment_blocks(
         block_df = block_df,
         subset = is_allowed_key
       )
     }
+    block_df <- block_df[is_allowed_key, ]
     if (interpolate) {
       block_df[["comment_block"]] <- lapply(
         block_df[["comment_block"]],
@@ -242,9 +244,6 @@ extract_keyed_comment_blocks__ <- function(
     key_line_df[["key_line"]]
   )
   key_line_df[["key"]] <- gsub("(^\\s*)|(\\s*$)", "", key_line_df[["key"]])
-
-  # is_allowed_key <- detect_allowed_keys(key_line_df[["key"]])
-  # key_line_df <- key_line_df[is_allowed_key, ]
 
   # sorting to ensure nested blocks don't mix up the order --- we want start
   # and stop lines to be after one another for each block.
