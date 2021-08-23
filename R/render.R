@@ -220,10 +220,12 @@ render_codedoc <- function(
     render_arg_list = render_arg_list,
     assertion_type = "user_input"
   )
-
-  call <- match.call()
-  call[[1L]] <- quote(render_codedoc__)
-  eval(call, envir = environment())
+  render_codedoc__(
+    block_df = block_df,
+    template_file_path = template_file_path,
+    writeLines_arg_list = writeLines_arg_list,
+    render_arg_list = render_arg_list
+  )
 }
 
 #' @export
@@ -241,10 +243,12 @@ render_codedoc_ <- function(
     render_arg_list = render_arg_list,
     assertion_type = "prod_input"
   )
-
-  call <- match.call()
-  call[[1L]] <- quote(render_codedoc__)
-  eval(call, envir = environment())
+  render_codedoc__(
+    block_df = block_df,
+    template_file_path = template_file_path,
+    writeLines_arg_list = writeLines_arg_list,
+    render_arg_list = render_arg_list
+  )
 }
 
 render_codedoc__ <- function(
