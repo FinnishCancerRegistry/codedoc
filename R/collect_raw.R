@@ -42,7 +42,7 @@ detect_codedoc_key_lines <- function(x) {
 #' which should be retained (those filtered out should have `FALSE`);
 #' the default keeps all keys.
 #' @param readLines_arg_list `[list]`
-#' (optional, default `list()`)
+#' (optional, default `list(warn = FALSE)`)
 #'
 #' list of arguments passed to [readLines]; `con` is always set to
 #' an element of `text_file_paths`
@@ -121,7 +121,7 @@ extract_keyed_comment_blocks <- function(
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
   detect_allowed_keys = function(x) rep(TRUE, length(x)),
-  readLines_arg_list = list(),
+  readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L)
 ) {
   extract_keyed_comment_blocks_assertions(
@@ -152,7 +152,7 @@ extract_keyed_comment_blocks_ <- function(
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
   detect_allowed_keys = function(x) rep(TRUE, length(x)),
-  readLines_arg_list = list(),
+  readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L)
 ) {
   extract_keyed_comment_blocks_assertions(
@@ -181,7 +181,7 @@ extract_keyed_comment_blocks__ <- function(
   detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
   clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
   detect_allowed_keys = function(x) rep(TRUE, length(x)),
-  readLines_arg_list = list(),
+  readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L),
   insert = TRUE,
   interpolate = TRUE

@@ -10,7 +10,7 @@ extract_keyed_comment_blocks(
   detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
   clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
   detect_allowed_keys = function(x) rep(TRUE, length(x)),
-  readLines_arg_list = list(),
+  readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L)
 )
 
@@ -19,7 +19,7 @@ extract_keyed_comment_blocks_(
   detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
   clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
   detect_allowed_keys = function(x) rep(TRUE, length(x)),
-  readLines_arg_list = list(),
+  readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L)
 )
 }
@@ -55,7 +55,7 @@ which should be retained (those filtered out should have \code{FALSE});
 the default keeps all keys.}
 
 \item{readLines_arg_list}{\verb{[list]}
-(optional, default \code{list()})
+(optional, default \code{list(warn = FALSE)})
 
 list of arguments passed to \link{readLines}; \code{con} is always set to
 an element of \code{text_file_paths}}
@@ -104,7 +104,7 @@ Simple string interpolation is implemented
 as follows:
 \itemize{
 \item interpolation expressions are detected using regex
-\verb{\\$\\\{[^\}]*\\\}}
+\verb{[$][\{][^\}]*[\}]}
 \item each collected unique expression is evaluated using eval()
 \item if an expression produces an object of length more than one,
 separate elements are pasted together with one whitespace as a

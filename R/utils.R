@@ -13,7 +13,6 @@ string_extract_all <- function(x, pattern, ...) {
 }
 
 
-
 string_interpolation_regex <- function() {
   # @codedoc_comment_block string_interpolation_regex
   #
@@ -21,7 +20,7 @@ string_interpolation_regex <- function() {
   #   `${string_interpolation_regex()}`
   #
   # @codedoc_comment_block string_interpolation_regex
-  "\\$\\{[^}]*\\}"
+  "[$][{][^}]*[}]"
 }
 
 string_interpolation <- function(x, env) {
