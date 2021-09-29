@@ -41,6 +41,11 @@ detect_codedoc_key_lines <- function(x) {
 #' boolean vector of the same length, where an element is `TRUE` for keys
 #' which should be retained (those filtered out should have `FALSE`);
 #' the default keeps all keys.
+#'
+#' this filtering does not affect which comment blocks are read into R; instead
+#' it affects which are processed (inserting + interpolation) and which keys are
+#' returned in output. therefore, comment blocks that need to be inserted into
+#' the ones you want to retain in output are kept for the insertion phase.
 #' @param readLines_arg_list `[list]`
 #' (optional, default `list(warn = FALSE)`)
 #'
@@ -191,6 +196,7 @@ extract_keyed_comment_blocks__ <- function(
     call[c("insert", "interpolate")] <- list(FALSE, FALSE)
     block_df_list <- lapply(text_file_paths, function(text_file_path) {
       call[["text_file_paths"]] <- text_file_path
+      call[["detect_allowed_keys"]] <- function(x) rep(TRUE, length(x))
       eval(call)
     })
     block_df <- do.call(rbind, block_df_list)

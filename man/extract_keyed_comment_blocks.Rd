@@ -52,7 +52,12 @@ the default removes any substrings matching regex \code{"^\\\\s*[#*]\\\\s*"}}
 a function which takes a character vector of keys as input and returns a
 boolean vector of the same length, where an element is \code{TRUE} for keys
 which should be retained (those filtered out should have \code{FALSE});
-the default keeps all keys.}
+the default keeps all keys.
+
+this filtering does not affect which comment blocks are read into R; instead
+it affects which are processed (inserting + interpolation) and which keys are
+returned in output. therefore, comment blocks that need to be inserted into
+the ones you want to retain in output are kept for the insertion phase.}
 
 \item{readLines_arg_list}{\verb{[list]}
 (optional, default \code{list(warn = FALSE)})
