@@ -209,9 +209,20 @@ extract_keyed_comment_blocks__ <- function(
     }
     block_df <- block_df[is_allowed_key, ]
     if (interpolate) {
+      # @codedoc_comment_block string_interpolation_details
+      #
+      # String interpolation is applied after any comment block insertions.
+      # It is performed on both each `comment_block` element and on each
+      # `key`. This means that even the keys can be defined programmatically.
+      #
+      # @codedoc_comment_block string_interpolation_details
       block_df[["comment_block"]] <- lapply(
         block_df[["comment_block"]],
         string_interpolation,
+        env = string_interpolation_eval_env
+      )
+      block_df[["key"]] <- string_interpolation(
+        block_df[["key"]],
         env = string_interpolation_eval_env
       )
     }
@@ -312,6 +323,10 @@ extract_keyed_comment_blocks__ <- function(
     block_df[["comment_block"]] <- lapply(
       block_df[["comment_block"]],
       string_interpolation,
+      env = string_interpolation_eval_env
+    )
+    block_df[["key"]] <- string_interpolation(
+      block_df[["key"]],
       env = string_interpolation_eval_env
     )
   }

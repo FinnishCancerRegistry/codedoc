@@ -116,6 +116,10 @@ separate elements are pasted together with one whitespace as a
 separator
 \item each expressions' results are inserted back into text using gsub
 }
+
+String interpolation is applied after any comment block insertions.
+It is performed on both each \code{comment_block} element and on each
+\code{key}. This means that even the keys can be defined programmatically.
 }
 \examples{
 

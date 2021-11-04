@@ -78,7 +78,7 @@ string_interpolation <- function(x, env) {
 }
 string_interpolation_details <- function() {
   block_df <- codedoc::extract_keyed_comment_blocks_(
-    text_file_paths = "R/utils.R"
+    text_file_paths = c("R/utils.R", "R/collect_raw.R")
   )
   key <- "string_interpolation_details"
   block_df <- block_df[block_df[["key"]] == key, ]
