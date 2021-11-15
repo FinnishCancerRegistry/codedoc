@@ -83,12 +83,33 @@ to be used within other functions.
 See \code{help(topic = "dbc", package = "dbc")} for discussion on this
 distinction.
 
-Both insertion of comment blocks into other comment blocks and simple string
-interpolation is possible. Insertion is performed before any interpolation.
+\strong{Text extraction}
 
-Insertion of comment blocks into other comment blocks is implemented
-as follows:
+The following steps are performed to extract text data from each given
+\code{text_file_paths} path:
 \itemize{
+\item Each whole text file is read into R using \link{readLines}
+\item Comment lines are identified by calling \code{detect_comment_lines}
+\item Key lines are identified by calling \code{detect_codedoc_key_lines}
+on identified comment lines
+\item Keys are collected
+\item The number of appearances of each key is verified to be an even number
+\item Each comment block is collected from the text
+\item Comment blocks are sorted by the first and last line number of the block,
+respectively
+}
+
+All results from all given \code{text_file_paths} are collected into one
+\code{data.frame}.
+
+\strong{Comment block insertion}
+
+Comment block insertion is performed as follows:
+\itemize{
+\item Allowed keys are identified using \code{detect_allowed_keys}
+\item Insertion is performed on only the blocks with allowed keys
+(but blocks with non-allowed keys can contain data for insertion into
+blocks with allowed keys)
 \item lines with insert keys are detected using regex
 "@codedoc_insert_comment_block"
 \item all lines are passed through a maximum of ten times. this means
@@ -105,8 +126,14 @@ all lines in the comment block of that key (e.g. line with key
 have been replaced with lines from the comment blocks under those keys
 }
 
-Simple string interpolation is implemented
-as follows:
+After insertion, all data with non-allowed keys are dropped.
+
+\strong{String interpolation}
+
+String interpolation is applied after any comment block insertions.
+It is performed on both each \code{comment_block} element and on each
+\code{key}. This means that even the keys can be defined programmatically.
+Interpolation is performed as follows:
 \itemize{
 \item interpolation expressions are detected using regex
 \verb{[$][\{][^\}]*[\}]}
@@ -117,9 +144,13 @@ separator
 \item each expressions' results are inserted back into text using gsub
 }
 
-String interpolation is applied after any comment block insertions.
-It is performed on both each \code{comment_block} element and on each
-\code{key}. This means that even the keys can be defined programmatically.
+\strong{Last steps}
+
+Finally, duplicate rows in the \code{data.frame} of comment blocks are removed,
+where duplicates those with non-unique combinations of the \code{key} and
+\code{comment_block} columns. This means that the same data collected from
+two different files (or the same file) are not retained. This concludes
+comment block extraction.
 }
 \examples{
 

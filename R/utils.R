@@ -27,21 +27,21 @@ string_interpolation <- function(x, env) {
   dbc::assert_prod_input_is_character_vector(x)
   dbc::assert_prod_input_is_environment(env)
 
-  # @codedoc_comment_block string_interpolation_details
+  # @codedoc_comment_block codedoc:::string_interpolation
   #
   # @codedoc_insert_comment_block string_interpolation_regex
   #
-  # @codedoc_comment_block string_interpolation_details
+  # @codedoc_comment_block codedoc:::string_interpolation
   ip_re <- string_interpolation_regex()
   ip_exprs <- unique(unlist(string_extract_all(x = x, pattern = ip_re)))
   if (length(ip_exprs) == 0L) {
     return(x)
   }
-  # @codedoc_comment_block string_interpolation_details
+  # @codedoc_comment_block codedoc:::string_interpolation
   #
   # - each collected unique expression is evaluated using eval()
   #
-  # @codedoc_comment_block string_interpolation_details
+  # @codedoc_comment_block codedoc:::string_interpolation
   ip_expr_values <- vapply(
     ip_exprs,
     function(expr) {
@@ -49,23 +49,23 @@ string_interpolation <- function(x, env) {
       expr <- sub(pattern = "[}]$", replacement = "", x = expr)
       expr <- parse(text = expr)[[1L]]
       value <- eval(expr, envir = env)
-      # @codedoc_comment_block string_interpolation_details
+      # @codedoc_comment_block codedoc:::string_interpolation
       #
       # - if an expression produces an object of length more than one,
       #   separate elements are pasted together with one whitespace as a
       #   separator
       #
-      # @codedoc_comment_block string_interpolation_details
+      # @codedoc_comment_block codedoc:::string_interpolation
       paste0(unlist(value), collapse = " ")
     },
     character(1L)
   )
 
-  # @codedoc_comment_block string_interpolation_details
+  # @codedoc_comment_block codedoc:::string_interpolation
   #
   # - each expressions' results are inserted back into text using gsub
   #
-  # @codedoc_comment_block string_interpolation_details
+  # @codedoc_comment_block codedoc:::string_interpolation
   for (i in 1:length(ip_exprs)) {
     x <- gsub(
       pattern = ip_exprs[i],
@@ -76,23 +76,6 @@ string_interpolation <- function(x, env) {
   }
   return(x)
 }
-string_interpolation_details <- function() {
-  block_df <- codedoc::extract_keyed_comment_blocks_(
-    text_file_paths = c("R/utils.R", "R/collect_raw.R")
-  )
-  key <- "string_interpolation_details"
-  block_df <- block_df[block_df[["key"]] == key, ]
-  c(
-    "@details",
-    "Simple string interpolation is implemented ",
-    "as follows:",
-    "",
-    unlist(block_df[["comment_block"]])
-  )
-}
-
-
-
 
 full_call <- function(
   matched_call = eval(quote(match.call()), parent.frame(1L)),
