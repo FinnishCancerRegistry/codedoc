@@ -302,12 +302,18 @@ render_codedoc__ <- function(
     is_template_key_line <- template_lines == key_line_contents
     while (any(is_template_key_line)) {
       wh <- which(is_template_key_line)[1L]
-      head_end <- (wh - 1L)
-      tail_start <- (wh + 1L)
+      head_stop <- wh - 1L
+      head_start <- ifelse(head_stop == 0L, 0L, 1L)
+      head <- head_start:head_stop
+      tail_start <- wh + 1L
+      tail_start <- ifelse(wh == length(template_lines), 0L, tail_start)
+      tail_stop <- ifelse(tail_start == 0L, 0L, length(template_lines))
+      tail <- tail_start:tail_stop
+
       template_lines <- c(
-        template_lines[min(1L, head_end):head_end],
+        template_lines[head],
         lines_by_key[[key]],
-        template_lines[tail_start:max(length(template_lines), tail_start)]
+        template_lines[tail]
       )
       is_template_key_line <- template_lines == key_line_contents
     }
