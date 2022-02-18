@@ -10,6 +10,31 @@ from the midst of your code and process them into documentation.
 }
 \section{News}{
 
+\subsection{News for version 0.3.0}{
+\subsection{Object codedoc::extract_keyed_comment_blocks_ news:}{
+
+\verb{[codedoc:extract_keyed_comment_blocks]} gained arg \code{assertion_type}.
+}
+
+\subsection{Object codedoc::extract_keyed_comment_blocks_ news:}{
+
+\verb{[codedoc:extract_keyed_comment_blocks_]} marked for deprecation.
+Use \verb{[codedoc:extract_keyed_comment_blocks]}.
+}
+
+\subsection{Object codedoc::render_codedoc news:}{
+
+\verb{[codedoc:render_codedoc]} gained arg \code{assertion_type}.
+}
+
+\subsection{Object codedoc::render_codedoc_ news:}{
+
+\verb{[codedoc:render_codedoc_]} marked for deprecation.
+Use \verb{[codedoc:render_codedoc]}.
+}
+
+}
+
 \subsection{News for version 0.2.15}{
 \subsection{Object codedoc::codedoc_lines news:}{
 

@@ -40,7 +40,7 @@ codedoc_news_df <- function(
   #
   # `codedoc::codedoc_news_df` performs the following steps:
   #
-  # - `[codedoc::extract_keyed_comment_blocks_]` is called; allowed keys must
+  # - `[codedoc::extract_keyed_comment_blocks]` is called; allowed keys must
   #   begin with "news(`
   #
   # @codedoc_comment_block codedoc::codedoc_news_df
@@ -56,7 +56,7 @@ codedoc_news_df <- function(
   # - `character`: use `paste0("^news[(]\"", detect_allowed_keys, "\"")`
   # - `function`: use this function
   #
-  # This argument is passed to `[codedoc::extract_keyed_comment_blocks_]` after
+  # This argument is passed to `[codedoc::extract_keyed_comment_blocks]` after
   # any pre-processing.
   # @codedoc_comment_block codedoc::codedoc_news_df::detect_allowed_keys
   if (is.character(detect_allowed_keys)) {
@@ -66,7 +66,7 @@ codedoc_news_df <- function(
   # @codedoc_comment_block codedoc::codedoc_news_df::extract_arg_list
   # @param extract_arg_list `[NULL, list]` (default `NULL`)
   #
-  # Arguments passed to `[codedoc::extract_keyed_comment_blocks_]`.
+  # Arguments passed to `[codedoc::extract_keyed_comment_blocks]`.
   # @codedoc_comment_block codedoc::codedoc_news_df::extract_arg_list
   dbc::assert_is_one_of(
     extract_arg_list,
@@ -78,7 +78,7 @@ codedoc_news_df <- function(
   # @codedoc_comment_block codedoc::codedoc_news_df::text_file_paths
   # @param text_file_paths `[NULL, character]` (default `NULL`)
   #
-  # This argument is passed to `[codedoc::extract_keyed_comment_blocks_]`
+  # This argument is passed to `[codedoc::extract_keyed_comment_blocks]`
   # as-is.
   # @codedoc_comment_block codedoc::codedoc_news_df::text_file_paths
   assert_arg_text_file_paths(text_file_paths)

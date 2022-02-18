@@ -12,13 +12,13 @@ codedoc_lines(
 )
 }
 \arguments{
-\item{detect_allowed_keys}{see \verb{[codedoc::extract_keyed_comment_blocks_]}}
+\item{detect_allowed_keys}{see \verb{[codedoc::extract_keyed_comment_blocks]}}
 
-\item{text_file_paths}{see \verb{[codedoc::extract_keyed_comment_blocks_]}}
+\item{text_file_paths}{see \verb{[codedoc::extract_keyed_comment_blocks]}}
 
 \item{extract_arg_list}{\itemize{
 \item \code{NULL}: no additional args
-\item \code{list}: these args are passed to \verb{[codedoc::extract_keyed_comment_blocks_]}
+\item \code{list}: these args are passed to \verb{[codedoc::extract_keyed_comment_blocks]}
 }}
 
 \item{assertion_type}{see \verb{[dbc::report_to_assertion]}}

@@ -21,6 +21,7 @@
 #' list of arguments passed to `writeLines` when writing temporary .rmd
 #' file to render; `con` and `text` are always determined internally
 #' @eval render_codedoc_arg_render_arg_list()
+#' @template arg_assertion_type
 #' @section Template:
 #'
 #' The template file must be an Rmarkdown file (see e.g. [rmarkdown::render]).
@@ -43,37 +44,42 @@
 #' @name render_codedoc
 NULL
 
-report_codedoc_assertions <- function(
+render_codedoc_assertions <- function(
   block_df,
   template_file_path,
   writeLines_arg_list,
   render_arg_list,
-  assertion_type
+  call = NULL,
+  assertion_type = "input"
 ) {
-  # report_df <- eval(quote(rbind(
-  #   dbc::report_is_data.frame_with_required_names(
-  #     block_df,
-  #     required_names = c("key", "comment_block", "text_file_path")
-  #   ),
-  #   dbc::report_is_list(render_arg_list),
-  #   dbc::report_vector_elems_are_in_set(
-  #     x = names(render_arg_list),
-  #     set = names(formals(rmarkdown::render))
-  #   ),
-  #   dbc::report_vector_elems_are_in_set(
-  #     x = names(writeLines_arg_list),
-  #     set = names(formals(writeLines))
-  #   ),
-  #   dbc::report_is_one_of(
-  #     x = template_file_path,
-  #     funs = c("report_is_NULL", "report_file_exists")
-  #   )
-  # )), envir = parent.frame(1L))
-  #
-  # dbc::report_to_assertion(
-  #   report_df,
-  #   assertion_type = assertion_type
-  # )
+  call <- dbc::handle_arg_call(call)
+  dbc::assert_is_data.frame_with_required_names(
+    block_df,
+    required_names = c("key", "comment_block", "text_file_path"),
+    assertion_type = assertion_type,
+    call = call
+  )
+  dbc::assert_is_list(render_arg_list,
+                      assertion_type = assertion_type,
+                      call = call)
+  dbc::assert_vector_elems_are_in_set(
+    x = names(render_arg_list),
+    set = names(formals(rmarkdown::render)),
+    assertion_type = assertion_type,
+    call = call
+  )
+  dbc::assert_vector_elems_are_in_set(
+    x = names(writeLines_arg_list),
+    set = names(formals(writeLines)),
+    assertion_type = assertion_type,
+    call = call
+  )
+  dbc::assert_is_one_of(
+    x = template_file_path,
+    funs = c("report_is_NULL", "report_file_exists"),
+    assertion_type = assertion_type,
+    call = call
+  )
 }
 
 
@@ -83,20 +89,19 @@ render_codedoc <- function(
   block_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
-  render_arg_list = list()
+  render_arg_list = list(),
+  assertion_type = "input"
 ) {
-  report_codedoc_assertions(
-    block_df = block_df,
-    template_file_path = template_file_path,
-    writeLines_arg_list = writeLines_arg_list,
-    render_arg_list = render_arg_list,
-    assertion_type = "user_input"
-  )
+  # @codedoc_comment_block news("codedoc::render_codedoc", "2022-02-18", "0.3.0")
+  # `[codedoc:render_codedoc]` gained arg `assertion_type`.
+  # @codedoc_comment_block news("codedoc::render_codedoc", "2022-02-18", "0.3.0")
   render_codedoc__(
     block_df = block_df,
     template_file_path = template_file_path,
     writeLines_arg_list = writeLines_arg_list,
-    render_arg_list = render_arg_list
+    render_arg_list = render_arg_list,
+    assertion_type = assertion_type,
+    call = match.call()
   )
 }
 
@@ -108,18 +113,20 @@ render_codedoc_ <- function(
   writeLines_arg_list = list(),
   render_arg_list = list()
 ) {
-  report_codedoc_assertions(
-    block_df = block_df,
-    template_file_path = template_file_path,
-    writeLines_arg_list = writeLines_arg_list,
-    render_arg_list = render_arg_list,
-    assertion_type = "prod_input"
-  )
+  # @codedoc_comment_block news("codedoc::render_codedoc_", "2022-02-18", "0.3.0")
+  # `[codedoc:render_codedoc_]` marked for deprecation.
+  # Use `[codedoc:render_codedoc]`.
+  # @codedoc_comment_block news("codedoc::render_codedoc_", "2022-02-18", "0.3.0")
+  warning("codedoc::render_codedoc_ is deprecated and will be ",
+          "removed in codedoc version 0.4.0, planned for 2022-04-01. ",
+          "Use codedoc::render_codedoc.")
   render_codedoc__(
     block_df = block_df,
     template_file_path = template_file_path,
     writeLines_arg_list = writeLines_arg_list,
-    render_arg_list = render_arg_list
+    render_arg_list = render_arg_list,
+    assertion_type = "prod_input",
+    call = match.call()
   )
 }
 
@@ -127,9 +134,20 @@ render_codedoc__ <- function(
   block_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
-  render_arg_list = list()
+  render_arg_list = list(),
+  assertion_type = "input",
+  call = NULL
 ) {
   requireNamespace("rmarkdown")
+
+  render_codedoc_assertions(
+    block_df = block_df,
+    template_file_path = template_file_path,
+    writeLines_arg_list = writeLines_arg_list,
+    render_arg_list = render_arg_list,
+    assertion_type = assertion_type,
+    call = call
+  )
 
   key_set <- unique(block_df[["key"]])
   lines_by_key <- lapply(key_set, function(key) {
@@ -238,7 +256,7 @@ render_codedoc__ <- function(
 }
 
 render_codedoc_arg_render_arg_list <- function() {
-  block_df <- codedoc::extract_keyed_comment_blocks_(
+  block_df <- codedoc::extract_keyed_comment_blocks(
     text_file_paths = "R/render.R",
     detect_allowed_keys = function(x) grepl("default_render_arg_list", x)
   )

@@ -60,17 +60,17 @@ codedoc_news_for_R_package(
 \item \code{function}: use this function
 }
 
-This argument is passed to \verb{[codedoc::extract_keyed_comment_blocks_]} after
+This argument is passed to \verb{[codedoc::extract_keyed_comment_blocks]} after
 any pre-processing.}
 
 \item{text_file_paths}{\verb{[NULL, character]} (default \code{NULL})
 
-This argument is passed to \verb{[codedoc::extract_keyed_comment_blocks_]}
+This argument is passed to \verb{[codedoc::extract_keyed_comment_blocks]}
 as-is.}
 
 \item{extract_arg_list}{\verb{[NULL, list]} (default \code{NULL})
 
-Arguments passed to \verb{[codedoc::extract_keyed_comment_blocks_]}.}
+Arguments passed to \verb{[codedoc::extract_keyed_comment_blocks]}.}
 
 \item{df}{\verb{[data.frame]} (no default)
 
@@ -86,7 +86,7 @@ as an R package.
 
 \code{codedoc::codedoc_news_df} performs the following steps:
 \itemize{
-\item \verb{[codedoc::extract_keyed_comment_blocks_]} is called; allowed keys must
+\item \verb{[codedoc::extract_keyed_comment_blocks]} is called; allowed keys must
 begin with "news(`
 }
 }

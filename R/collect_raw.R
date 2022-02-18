@@ -15,37 +15,6 @@ detect_codedoc_key_lines <- function(x) {
 #' @title Read codedoc-formatted Code Comments
 #' @description
 #' Extracts blocks of specifically formatted comments from text file.
-#' @param text_file_paths `[character]`
-#' (mandatory, no default)
-#'
-#' path to a text file; the file is not inspected in any way to be a text file
-#' based on file extension or any other characteristics, it is merely assumed
-#' to be one
-#' @param detect_comment_lines `[function]`
-#' (optional, default `function(x) grepl("^\\s*[#*]", x)`)
-#'
-#' a function which takes lines of text as input and outputs a logical vector
-#' of the same length as input which is `TRUE` when the line is a comment line;
-#' the default detects lines that start with the regex `"^\\s*[#*]\\s*"`
-#' @param clean_comment_lines `[function]`
-#' (optional, default `function(x) sub("^\\s*[#*]\\s*", "", x)`)
-#'
-#' a function which takes lines of text as input and outputs a character vector
-#' of the same length as input; this function takes comment lines and should
-#' strip any comment characters preceding the text itself;
-#' the default removes any substrings matching regex `"^\\s*[#*]\\s*"`
-#' @param detect_allowed_keys `[function]`
-#' (optional, default `function(x) rep(TRUE, length(x))`)
-#'
-#' a function which takes a character vector of keys as input and returns a
-#' boolean vector of the same length, where an element is `TRUE` for keys
-#' which should be retained (those filtered out should have `FALSE`);
-#' the default keeps all keys.
-#'
-#' this filtering does not affect which comment blocks are read into R; instead
-#' it affects which are processed (inserting + interpolation) and which keys are
-#' returned in output. therefore, comment blocks that need to be inserted into
-#' the ones you want to retain in output are kept for the insertion phase.
 #' @param readLines_arg_list `[list]`
 #' (optional, default `list(warn = FALSE)`)
 #'
@@ -57,19 +26,13 @@ detect_codedoc_key_lines <- function(x) {
 #' environment where string interpolation expressions are evaluated. by default
 #' this is the environment where `extract_keyed_comment_blocks` or
 #' `extract_keyed_comment_blocks_` is called. see Details for more information.
-#' @details
-#' `extract_keyed_comment_blocks` is intended to be used by the user and not
-#' in other functions but is otherwise identical to
-#' `extract_keyed_comment_blocks_`. `extract_keyed_comment_blocks_` is intended
-#' to be used within other functions.
-#' See `help(topic = "dbc", package = "dbc")` for discussion on this
-#' distinction.
-#'
-#' @eval extract_keyed_comment_blocks__details()
+#' @eval codedoc::codedoc_lines(
+#'   detect_allowed_keys = "codedoc:::extract_keyed_comment_blocks__"
+#' )
 #'
 #' @examples
 #'
-#' block_df <- codedoc::extract_keyed_comment_blocks_(
+#' block_df <- codedoc::extract_keyed_comment_blocks(
 #'   text_file_paths = codedoc::example_text_file_path("r_script.R")
 #' )
 #' print(block_df)
@@ -77,64 +40,111 @@ detect_codedoc_key_lines <- function(x) {
 #' @name extract_keyed_comment_blocks
 NULL
 
-extract_keyed_comment_blocks_assertions <- function(
+assert_arg_text_file_paths <- function(
+  x,
+  x_nm = NULL,
+  call = NULL,
+  assertion_type = "input"
+) {
+  dbc::assert_is_one_of(
+    x,
+    x_nm = dbc::handle_arg_x_nm(x_nm),
+    funs = list(
+      dbc::report_is_NULL,
+      dbc::report_file_exists
+    ),
+    call = dbc::handle_arg_call(call),
+    assertion_type = assertion_type
+  )
+}
+
+extract_keyed_comment_blocks_assertions__ <- function(
   text_file_paths,
   detect_comment_lines,
   clean_comment_lines,
   detect_allowed_keys,
   readLines_arg_list,
   string_interpolation_eval_env,
-  assertion_type
+  assertion_type,
+  call = NULL
 ) {
-  report_df <- eval(
-    quote(
-      rbind(
-        dbc::report_is_character_nonNA_vector(text_file_paths),
-        dbc::report_file_exists(text_file_paths),
-        dbc::report_is_function_with_required_argument_names(
-          detect_comment_lines,
-          required_argument_names = "x"
-        ),
-        dbc::report_is_function_with_required_argument_names(
-          clean_comment_lines,
-          required_argument_names = "x"
-        ),
-        dbc::report_is_function_with_required_argument_names(
-          detect_allowed_keys,
-          required_argument_names = "x"
-        ),
-        dbc::report_is_environment(string_interpolation_eval_env),
-        dbc::report_is_list(readLines_arg_list)
-      )
-    ),
-    envir = parent.frame(1L)
-  )
+  call <- dbc::handle_arg_call(call)
 
-  dbc::report_to_assertion(
-    report_df,
+  assert_arg_text_file_paths(text_file_paths)
+
+  dbc::assert_is_one_of(
+    detect_comment_lines,
+    funs = list(
+      dbc::report_is_function,
+      dbc::report_is_character_nonNA_atom
+    ),
+    call = call,
     assertion_type = assertion_type
   )
+  dbc::assert_is_one_of(
+    clean_comment_lines,
+    funs = list(
+      dbc::report_is_function,
+      dbc::report_is_character_nonNA_atom
+    ),
+    call = call,
+    assertion_type = assertion_type
+  )
+  dbc::assert_is_one_of(
+    detect_allowed_keys,
+    funs = list(
+      dbc::report_is_function,
+      dbc::report_is_character_nonNA_atom
+    ),
+    call = call,
+    assertion_type = assertion_type
+  )
+  dbc::assert_is_environment(string_interpolation_eval_env, call = call,
+                             assertion_type = assertion_type)
+  dbc::assert_is_list(readLines_arg_list, call = call,
+                      assertion_type = assertion_type)
 }
 
+
+#' @eval c(
+#'   "@section Functions:",
+#'   codedoc::codedoc_lines(
+#'     detect_allowed_keys = "^codedoc:::extract_keyed_comment_blocks$"
+#'   )
+#' )
+#' @template arg_assertion_type
 #' @rdname extract_keyed_comment_blocks
 #' @export
 extract_keyed_comment_blocks <- function(
-  text_file_paths,
-  detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
-  clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
-  detect_allowed_keys = function(x) rep(TRUE, length(x)),
-  readLines_arg_list = list(warn = FALSE),
-  string_interpolation_eval_env = parent.frame(1L)
+  text_file_paths      = NULL,
+  detect_comment_lines = "^\\s*[#*]\\s*",
+  clean_comment_lines  = "^\\s*[#*]\\s*",
+  detect_allowed_keys  = "",
+  readLines_arg_list   = list(warn = FALSE),
+  string_interpolation_eval_env = parent.frame(1L),
+  assertion_type = "input"
 ) {
-  extract_keyed_comment_blocks_assertions(
-    text_file_paths,
-    detect_comment_lines,
-    clean_comment_lines,
-    detect_allowed_keys,
-    readLines_arg_list,
-    string_interpolation_eval_env,
-    assertion_type = "user_input"
-  )
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-02-17", "0.2.15")
+  # Changes to function `[codedoc::extract_keyed_comment_blocks]` arguments:
+  #
+  # - `text_file_paths`: allowed to also be `NULL`; default now `NULL`
+  # - `detect_comment_lines`: allowed to also be `character`; default now
+  #   `"^\\s*[#*]\\s*"`
+  # - `clean_comment_lines`: allowed to also be `character`; default now
+  #   `"^\\s*[#*]\\s*"`
+  # - `detect_allowed_keys`: allowed to also be `character`; default now
+  #   `""`
+  #
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-02-17", "0.2.15")
+
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-18", "0.3.0")
+  # `[codedoc:extract_keyed_comment_blocks]` gained arg `assertion_type`.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-18", "0.3.0")
+
+  # @codedoc_comment_block codedoc::extract_keyed_comment_blocks
+  # Function `[codedoc::extract_keyed_comment_blocks]` is intended for the
+  # end-user. It passes `"user_input"` to `[dbc::report_to_assertion]`.
+  # @codedoc_comment_block codedoc::extract_keyed_comment_blocks
   extract_keyed_comment_blocks__(
     text_file_paths = text_file_paths,
     detect_comment_lines = detect_comment_lines,
@@ -143,29 +153,53 @@ extract_keyed_comment_blocks <- function(
     readLines_arg_list = readLines_arg_list,
     string_interpolation_eval_env = string_interpolation_eval_env,
     insert = TRUE,
-    interpolate = TRUE
+    interpolate = TRUE,
+    assertion_type = assertion_type,
+    call = match.call()
   )
 }
 
+#' @eval c(
+#'   "@section Functions:",
+#'   codedoc::codedoc_lines(
+#'     detect_allowed_keys = "^codedoc:::extract_keyed_comment_blocks_$"
+#'   )
+#' )
 #' @rdname extract_keyed_comment_blocks
 #' @export
 extract_keyed_comment_blocks_ <- function(
-  text_file_paths,
-  detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
-  clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
-  detect_allowed_keys = function(x) rep(TRUE, length(x)),
+  text_file_paths = NULL,
+  detect_comment_lines = "^\\s*[#*]\\s*",
+  clean_comment_lines = "^\\s*[#*]\\s*",
+  detect_allowed_keys = "",
   readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L)
 ) {
-  extract_keyed_comment_blocks_assertions(
-    text_file_paths,
-    detect_comment_lines,
-    clean_comment_lines,
-    detect_allowed_keys,
-    readLines_arg_list,
-    string_interpolation_eval_env,
-    assertion_type = "prod_input"
-  )
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-17", "0.2.15")
+  # Changes to function `[codedoc::extract_keyed_comment_blocks]` arguments:
+  #
+  # - `text_file_paths`: allowed to also be `NULL`; default now `NULL`
+  # - `detect_comment_lines`: allowed to also be `character`; default now
+  #   `"^\\s*[#*]\\s*"`
+  # - `clean_comment_lines`: allowed to also be `character`; default now
+  #   `"^\\s*[#*]\\s*"`
+  # - `detect_allowed_keys`: allowed to also be `character`; default now
+  #   `""`
+  #
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-17", "0.2.15")
+
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-18", "0.3.0")
+  # `[codedoc:extract_keyed_comment_blocks_]` marked for deprecation.
+  # Use `[codedoc:extract_keyed_comment_blocks]`.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-18", "0.3.0")
+  warning("codedoc::extract_keyed_comment_blocks_ is deprecated and will be ",
+          "removed in codedoc version 0.4.0, planned for 2022-04-01. ",
+          "Use codedoc::extract_keyed_comment_blocks.")
+
+  # @codedoc_comment_block codedoc::extract_keyed_comment_blocks_
+  # Function `[codedoc::extract_keyed_comment_blocks]` is intended for the
+  # end-user. It passes `"user_input"` to `[dbc::report_to_assertion]`.
+  # @codedoc_comment_block codedoc::extract_keyed_comment_blocks_
   extract_keyed_comment_blocks__(
     text_file_paths = text_file_paths,
     detect_comment_lines = detect_comment_lines,
@@ -174,21 +208,104 @@ extract_keyed_comment_blocks_ <- function(
     readLines_arg_list = readLines_arg_list,
     string_interpolation_eval_env = string_interpolation_eval_env,
     insert = TRUE,
-    interpolate = TRUE
+    interpolate = TRUE,
+    assertion_type = "prod_input",
+    call = match.call()
+  )
+}
+
+default_text_file_paths <- function() {
+  # @codedoc_comment_block codedoc:::default_text_file_paths
+  # ```r
+  # dir(
+  #   path = getwd(),
+  #   pattern = "((r)|(rmd))$",
+  #   full.names = TRUE,
+  #   recursive = TRUE,
+  #   ignore.case = TRUE
+  # )
+  # ```
+  # @codedoc_comment_block codedoc:::default_text_file_paths
+  dir(
+    path = getwd(),
+    pattern = "((r)|(rmd))$",
+    full.names = TRUE,
+    recursive = TRUE,
+    ignore.case = TRUE
   )
 }
 
 extract_keyed_comment_blocks__ <- function(
-  text_file_paths,
-  detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
-  clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
-  detect_allowed_keys = function(x) rep(TRUE, length(x)),
+  text_file_paths = NULL,
+  detect_comment_lines = "^\\s*[#*]\\s*",
+  clean_comment_lines = "^\\s*[#*]\\s*",
+  detect_allowed_keys = "",
   readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L),
   insert = TRUE,
-  interpolate = TRUE
+  interpolate = TRUE,
+  assertion_type = "input",
+  call = NULL
 ) {
+  main_call <- dbc::handle_arg_call(call)
+  extract_keyed_comment_blocks_assertions__(
+    text_file_paths,
+    detect_comment_lines,
+    clean_comment_lines,
+    detect_allowed_keys,
+    readLines_arg_list,
+    string_interpolation_eval_env,
+    assertion_type = assertion_type,
+    call = main_call
+  )
+
+  if (is.null(text_file_paths)) {
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @param text_file_paths `[NULL, character]` (default `NULL`)
+    #
+    # - `NULL`: collect text file paths using call
+    # @codedoc_insert_comment_block codedoc:::default_text_file_paths
+    #
+    # - `character`: use these text files
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    text_file_paths <- default_text_file_paths()
+  }
+
+  if (is.character(detect_comment_lines)) {
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @param detect_comment_lines `[character, function]`
+    # (default `"^\\s*[#*]"`)
+    #
+    # - `character`: pass this string as arg `pattern` to `[grepl]`
+    # - `function`: a function which takes lines of text as input and outputs a
+    #   logical vector of the same length as input which is `TRUE` when the line
+    #   is a comment line
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    detect_comment_lines_regex <- detect_comment_lines
+    detect_comment_lines <- function(x) {
+      grepl(detect_comment_lines_regex, x)
+    }
+  }
+  if (is.character(clean_comment_lines)) {
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @param clean_comment_lines `[character, function]`
+    # (default `"^\\s*[#*]\\s*"`)
+    #
+    # - `character`: pass this string as arg `pattern` to `[sub]` call
+    #   `sub(pattern, "", x, perl = TRUE)` where `x` are the lines from a
+    #   text file
+    # - `function`: a function which takes lines of text as input and outputs a
+    #   character vector of the same length as input; this function takes comment
+    #   lines and should strip any comment characters preceding the text itself
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    clean_comment_lines_regex <- clean_comment_lines
+    clean_comment_lines <- function(x) {
+      sub(clean_comment_lines_regex, "", x, perl = TRUE)
+    }
+  }
+
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  # @details
   #
   # **Text extraction**
   #
@@ -211,6 +328,7 @@ extract_keyed_comment_blocks__ <- function(
   })
   block_df <- do.call(rbind, block_df)
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  # @details
   #
   # **Comment block insertion**
   #
@@ -219,9 +337,32 @@ extract_keyed_comment_blocks__ <- function(
   # - Allowed keys are identified using `detect_allowed_keys`
   #
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+
+  if (is.character(detect_allowed_keys)) {
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @param detect_allowed_keys `[character, function]`
+    # (optional, default `""`)
+    #
+    # - `character`: pass this string as arg `pattern` to `[grepl]`
+    # - `function`:   a function which takes a character vector of keys as input
+    #    and returns a boolean vector of the same length, where an element is
+    #    `TRUE` for keys which should be retained (those filtered out should have
+    #    `FALSE`)
+    #
+    # this filtering does not affect which comment blocks are read into R; instead
+    # it affects which are processed (inserting + interpolation) and which keys are
+    # returned in output. therefore, comment blocks that need to be inserted into
+    # the ones you want to retain in output are kept for the insertion phase.
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    detect_allowed_keys_regex <- detect_allowed_keys
+    detect_allowed_keys <- function(x) {
+      grepl(detect_allowed_keys_regex, x)
+    }
+  }
   is_allowed_key <- detect_allowed_keys(block_df[["key"]])
   if (insert) {
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @details
     #
     # - Insertion is performed on only the blocks with allowed keys
     #   (but blocks with non-allowed keys can contain data for insertion into
@@ -236,6 +377,7 @@ extract_keyed_comment_blocks__ <- function(
     )
   }
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  # @details
   #
   # After insertion, all data with non-allowed keys are dropped.
   #
@@ -243,6 +385,7 @@ extract_keyed_comment_blocks__ <- function(
   block_df <- block_df[is_allowed_key, ]
   if (interpolate) {
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @details
     #
     # **String interpolation**
     #
@@ -265,6 +408,7 @@ extract_keyed_comment_blocks__ <- function(
     )
   }
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  # @details
   #
   # **Last steps**
   #
@@ -277,19 +421,6 @@ extract_keyed_comment_blocks__ <- function(
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   block_df <- block_df[!duplicated(block_df[, c("key", "comment_block")]), ]
   return(block_df)
-}
-extract_keyed_comment_blocks__details <- function() {
-  block_df <- codedoc::extract_keyed_comment_blocks_(
-    text_file_paths = c("R/utils.R", "R/collect_raw.R"),
-    detect_allowed_keys = function(x) {
-      x == "codedoc:::extract_keyed_comment_blocks__"
-    }
-  )
-  c(
-    "@details",
-    "",
-    unlist(block_df[["comment_block"]])
-  )
 }
 
 extract_keyed_comment_blocks_from_one_file <- function(

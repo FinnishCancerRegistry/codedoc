@@ -6,53 +6,69 @@
 \title{Read codedoc-formatted Code Comments}
 \usage{
 extract_keyed_comment_blocks(
-  text_file_paths,
-  detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
-  clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
-  detect_allowed_keys = function(x) rep(TRUE, length(x)),
+  text_file_paths = NULL,
+  detect_comment_lines = "^\\\\s*[#*]\\\\s*",
+  clean_comment_lines = "^\\\\s*[#*]\\\\s*",
+  detect_allowed_keys = "",
   readLines_arg_list = list(warn = FALSE),
-  string_interpolation_eval_env = parent.frame(1L)
+  string_interpolation_eval_env = parent.frame(1L),
+  assertion_type = "input"
 )
 
 extract_keyed_comment_blocks_(
-  text_file_paths,
-  detect_comment_lines = function(x) grepl("^\\\\s*[#*]\\\\s*", x),
-  clean_comment_lines = function(x) sub("^\\\\s*[#*]\\\\s*", "", x),
-  detect_allowed_keys = function(x) rep(TRUE, length(x)),
+  text_file_paths = NULL,
+  detect_comment_lines = "^\\\\s*[#*]\\\\s*",
+  clean_comment_lines = "^\\\\s*[#*]\\\\s*",
+  detect_allowed_keys = "",
   readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L)
 )
 }
 \arguments{
-\item{text_file_paths}{\verb{[character]}
-(mandatory, no default)
+\item{text_file_paths}{\verb{[NULL, character]} (default \code{NULL})
+\itemize{
+\item \code{NULL}: collect text file paths using call
+}\if{html}{\out{<div class="sourceCode r">}}\preformatted{dir(
+path = getwd(),
+pattern = "((r)|(rmd))$",
+full.names = TRUE,
+recursive = TRUE,
+ignore.case = TRUE
+)
+}\if{html}{\out{</div>}}
+\itemize{
+\item \code{character}: use these text files
+}}
 
-path to a text file; the file is not inspected in any way to be a text file
-based on file extension or any other characteristics, it is merely assumed
-to be one}
+\item{detect_comment_lines}{\verb{[character, function]}
+(default \code{"^\\\\s*[#*]"})
+\itemize{
+\item \code{character}: pass this string as arg \code{pattern} to \verb{[grepl]}
+\item \code{function}: a function which takes lines of text as input and outputs a
+logical vector of the same length as input which is \code{TRUE} when the line
+is a comment line
+}}
 
-\item{detect_comment_lines}{\verb{[function]}
-(optional, default \code{function(x) grepl("^\\\\s*[#*]", x)})
+\item{clean_comment_lines}{\verb{[character, function]}
+(default \code{"^\\\\s*[#*]\\\\s*"})
+\itemize{
+\item \code{character}: pass this string as arg \code{pattern} to \verb{[sub]} call
+\code{sub(pattern, "", x, perl = TRUE)} where \code{x} are the lines from a
+text file
+\item \code{function}: a function which takes lines of text as input and outputs a
+character vector of the same length as input; this function takes comment
+lines and should strip any comment characters preceding the text itself
+}}
 
-a function which takes lines of text as input and outputs a logical vector
-of the same length as input which is \code{TRUE} when the line is a comment line;
-the default detects lines that start with the regex \code{"^\\\\s*[#*]\\\\s*"}}
-
-\item{clean_comment_lines}{\verb{[function]}
-(optional, default \code{function(x) sub("^\\\\s*[#*]\\\\s*", "", x)})
-
-a function which takes lines of text as input and outputs a character vector
-of the same length as input; this function takes comment lines and should
-strip any comment characters preceding the text itself;
-the default removes any substrings matching regex \code{"^\\\\s*[#*]\\\\s*"}}
-
-\item{detect_allowed_keys}{\verb{[function]}
-(optional, default \code{function(x) rep(TRUE, length(x))})
-
-a function which takes a character vector of keys as input and returns a
-boolean vector of the same length, where an element is \code{TRUE} for keys
-which should be retained (those filtered out should have \code{FALSE});
-the default keeps all keys.
+\item{detect_allowed_keys}{\verb{[character, function]}
+(optional, default \code{""})
+\itemize{
+\item \code{character}: pass this string as arg \code{pattern} to \verb{[grepl]}
+\item \code{function}:   a function which takes a character vector of keys as input
+and returns a boolean vector of the same length, where an element is
+\code{TRUE} for keys which should be retained (those filtered out should have
+\code{FALSE})
+}
 
 this filtering does not affect which comment blocks are read into R; instead
 it affects which are processed (inserting + interpolation) and which keys are
@@ -71,18 +87,13 @@ an element of \code{text_file_paths}}
 environment where string interpolation expressions are evaluated. by default
 this is the environment where \code{extract_keyed_comment_blocks} or
 \code{extract_keyed_comment_blocks_} is called. see Details for more information.}
+
+\item{assertion_type}{see \verb{[dbc::report_to_assertion]}}
 }
 \description{
 Extracts blocks of specifically formatted comments from text file.
 }
 \details{
-\code{extract_keyed_comment_blocks} is intended to be used by the user and not
-in other functions but is otherwise identical to
-\code{extract_keyed_comment_blocks_}. \code{extract_keyed_comment_blocks_} is intended
-to be used within other functions.
-See \code{help(topic = "dbc", package = "dbc")} for discussion on this
-distinction.
-
 \strong{Text extraction}
 
 The following steps are performed to extract text data from each given
@@ -107,6 +118,9 @@ All results from all given \code{text_file_paths} are collected into one
 Comment block insertion is performed as follows:
 \itemize{
 \item Allowed keys are identified using \code{detect_allowed_keys}
+}
+
+\itemize{
 \item Insertion is performed on only the blocks with allowed keys
 (but blocks with non-allowed keys can contain data for insertion into
 blocks with allowed keys)
@@ -152,9 +166,15 @@ where duplicates those with non-unique combinations of the \code{key} and
 two different files (or the same file) are not retained. This concludes
 comment block extraction.
 }
+\section{Functions}{
+
+
+
+}
+
 \examples{
 
-block_df <- codedoc::extract_keyed_comment_blocks_(
+block_df <- codedoc::extract_keyed_comment_blocks(
   text_file_paths = codedoc::example_text_file_path("r_script.R")
 )
 print(block_df)

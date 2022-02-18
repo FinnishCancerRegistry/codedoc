@@ -9,7 +9,8 @@ render_codedoc(
   block_df,
   template_file_path = NULL,
   writeLines_arg_list = list(),
-  render_arg_list = list()
+  render_arg_list = list(),
+  assertion_type = "input"
 )
 
 render_codedoc_(
@@ -65,6 +66,8 @@ one string, formed by pasting the lines together with
 \code{paste0(lines, collapse = "\\n")}; this is more convenient for rendering
 text in the template (see section Template)
 }}
+
+\item{assertion_type}{see \verb{[dbc::report_to_assertion]}}
 }
 \description{
 Render using \link[rmarkdown:render]{rmarkdown::render} a documentation file using extracted

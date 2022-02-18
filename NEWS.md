@@ -1,3 +1,24 @@
+## News for version 0.3.0
+
+### Object codedoc::extract_keyed_comment_blocks_ news:
+
+`[codedoc:extract_keyed_comment_blocks]` gained arg `assertion_type`.
+
+### Object codedoc::extract_keyed_comment_blocks_ news:
+
+`[codedoc:extract_keyed_comment_blocks_]` marked for deprecation.
+Use `[codedoc:extract_keyed_comment_blocks]`.
+
+### Object codedoc::render_codedoc news:
+
+`[codedoc:render_codedoc]` gained arg `assertion_type`.
+
+### Object codedoc::render_codedoc_ news:
+
+`[codedoc:render_codedoc_]` marked for deprecation.
+Use `[codedoc:render_codedoc]`.
+
+
 ## News for version 0.2.15
 
 ### Object codedoc::codedoc_lines news:
