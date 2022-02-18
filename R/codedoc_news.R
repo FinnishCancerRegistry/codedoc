@@ -44,6 +44,10 @@ codedoc_news_df <- function(
   #   begin with "news(`
   #
   # @codedoc_comment_block codedoc::codedoc_news_df
+
+  # @codedoc_comment_block codedoc::codedoc_news_df::assertion_type
+  # @template arg_assertion_type
+  # @codedoc_comment_block codedoc::codedoc_news_df::assertion_type
   dbc::assert_is_assertion_type(
     assertion_type,
     call = match.call(),

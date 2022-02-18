@@ -26,7 +26,3 @@ codedoc_lines(
 \description{
 Tools to extract comment blocks and return a vector of strings (lines).
 }
-\section{Functions}{
-
-}
-

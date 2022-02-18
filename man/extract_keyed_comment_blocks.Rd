@@ -169,7 +169,13 @@ comment block extraction.
 \section{Functions}{
 
 
+Function \verb{[codedoc::extract_keyed_comment_blocks]} is intended for the
+end-user. It passes \code{"user_input"} to \verb{[dbc::report_to_assertion]}.
 
+
+
+Function \verb{[codedoc::extract_keyed_comment_blocks]} is intended for the
+end-user. It passes \code{"user_input"} to \verb{[dbc::report_to_assertion]}.
 }
 
 \examples{

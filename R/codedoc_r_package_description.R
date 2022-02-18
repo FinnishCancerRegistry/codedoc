@@ -21,6 +21,9 @@ codedoc_R_package_description <- function(
   dbc::assert_is_character_nonNA_atom(
     R_package_name, assertion_type = assertion_type
   )
+  # @codedoc_comment_block codedoc::codedoc_R_package_description__::assertion_type
+  # @template arg_assertion_type
+  # @codedoc_comment_block codedoc::codedoc_R_package_description__::assertion_type
 
   # @codedoc_comment_block codedoc::codedoc_R_package_description__::R_package_name
   # @param R_package_name `[character]` (no default)

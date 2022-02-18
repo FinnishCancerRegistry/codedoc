@@ -109,7 +109,7 @@ extract_keyed_comment_blocks_assertions__ <- function(
 #' @eval c(
 #'   "@section Functions:",
 #'   codedoc::codedoc_lines(
-#'     detect_allowed_keys = "^codedoc:::extract_keyed_comment_blocks$"
+#'     detect_allowed_keys = "^codedoc::extract_keyed_comment_blocks$"
 #'   )
 #' )
 #' @template arg_assertion_type
@@ -162,7 +162,7 @@ extract_keyed_comment_blocks <- function(
 #' @eval c(
 #'   "@section Functions:",
 #'   codedoc::codedoc_lines(
-#'     detect_allowed_keys = "^codedoc:::extract_keyed_comment_blocks_$"
+#'     detect_allowed_keys = "^codedoc::extract_keyed_comment_blocks_$"
 #'   )
 #' )
 #' @rdname extract_keyed_comment_blocks

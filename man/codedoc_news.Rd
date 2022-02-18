@@ -72,6 +72,8 @@ as-is.}
 
 Arguments passed to \verb{[codedoc::extract_keyed_comment_blocks]}.}
 
+\item{assertion_type}{see \verb{[dbc::report_to_assertion]}}
+
 \item{df}{\verb{[data.frame]} (no default)
 
 \code{data.frame} as produced by \verb{[codedoc::codedoc_news_df]}.}

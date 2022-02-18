@@ -15,10 +15,6 @@ NULL
 
 #' @rdname codedoc_lines
 #' @export
-#' @eval c(
-#'   "@section Functions:",
-#'   codedoc::codedoc_lines("^codedoc::codedoc_lines$")
-#' )
 codedoc_lines <- function(
   detect_allowed_keys,
   text_file_paths = NULL,

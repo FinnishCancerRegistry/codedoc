@@ -22,6 +22,8 @@ Turned into \code{detect_allowed_keys} arg for \verb{[codedoc::codedoc_lines]} v
 \item{text_file_paths}{\verb{[character]} see \verb{[codedoc::codedoc_lines]}}
 
 \item{extract_arg_list}{\verb{[character]} see \verb{[codedoc::codedoc_lines]}}
+
+\item{assertion_type}{see \verb{[dbc::report_to_assertion]}}
 }
 \description{
 Extract \code{codedoc} comment block(s) and turn them into R package
