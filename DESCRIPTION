@@ -1,7 +1,7 @@
 Package: codedoc
 Type: Package
 Title: Generate Code Documentation
-Version: 0.2.14
+Version: 0.3.0
 Author: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Imports:
     dbc (>= 0.4.0)
