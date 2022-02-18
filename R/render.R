@@ -76,7 +76,7 @@ render_codedoc_assertions <- function(
   )
   dbc::assert_is_one_of(
     x = template_file_path,
-    funs = c("report_is_NULL", "report_file_exists"),
+    funs = list(dbc::report_is_NULL, dbc::report_file_exists),
     assertion_type = assertion_type,
     call = call
   )
