@@ -6,7 +6,10 @@
 #' description help page (roxygen) and a `README.md`.
 #' @name codedoc_R_package_description
 #' @eval c(
-#'   codedoc::codedoc_lines("^codedoc::codedoc_R_package_description__.*$")
+#'   codedoc::codedoc_lines("^codedoc::codedoc_R_package_description__.*$"),
+#'   codedoc::codedoc_roxygen_news_by_version(
+#'     "codedoc::codedoc_R_package_description"
+#'   )
 #' )
 NULL
 
@@ -51,7 +54,14 @@ codedoc_R_package_description <- function(
     extract_arg_list = extract_arg_list,
     assertion_type = assertion_type
   )
+  # @codedoc_comment_block news("codedoc::codedoc_R_package_description", "2022-03-03", "0.3.1")
+  # `[codedoc::codedoc_R_package_description]` now includes a markdown
+  # comment in the `.md` which indicates that the file was generated
+  # by `codedoc`.
+  # @codedoc_comment_block news("codedoc::codedoc_R_package_description", "2022-03-03", "0.3.1")
   md_lines <- c(
+    "",
+    markdown_comment_do_not_modify(),
     "",
     paste0("# Package `", R_package_name, "`"),
     "",
@@ -66,7 +76,7 @@ codedoc_R_package_description <- function(
   return(c(
     "@description",
     "",
-    lines,
+    lines[!grepl(markdown_comment_regex(), lines)],
     ""
   ))
 }
