@@ -193,7 +193,11 @@ codedoc_news_df_to_roxygen_news_by_version <- function(
   #
   # @codedoc_comment_block codedoc::codedoc_news_df_to_roxygen_news_by_version
   version_set <- as.numeric_version(unique(df[["version"]]))
-  version_set <- as.character(sort(version_set))
+  # @codedoc_comment_block news("codedoc::codedoc_news_df_to_roxygen_news_by_version", "2022-03-03", "0.3.1")
+  # `[codedoc::codedoc_news_df_to_roxygen_news_by_version]`:
+  # The order of versions in is now descending instead of ascending.
+  # @codedoc_comment_block news("codedoc::codedoc_news_df_to_roxygen_news_by_version", "2022-03-03", "0.3.1")
+  version_set <- as.character(rev(sort(version_set)))
   unlist(lapply(version_set, function(version) {
     row_no_set <- which(df[["version"]] == version)
     c(
