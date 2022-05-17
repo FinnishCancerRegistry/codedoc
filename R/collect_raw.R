@@ -570,7 +570,7 @@ codedoc_insert_comment_blocks <- function(
       # @codedoc_comment_block codedoc:::codedoc_insert_comment_blocks
       #
       # - lines with insert keys are detected using regex
-      #   "${codedoc_insert_comment_block_regex()}"
+      #   "${codedoc:::codedoc_insert_comment_block_regex()}"
       #
       # @codedoc_comment_block codedoc:::codedoc_insert_comment_blocks
       is_insert_line <- grepl(re, lines)

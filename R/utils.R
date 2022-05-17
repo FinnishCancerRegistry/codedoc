@@ -17,7 +17,7 @@ string_interpolation_regex <- function() {
   # @codedoc_comment_block string_interpolation_regex
   #
   # - interpolation expressions are detected using regex
-  #   `${string_interpolation_regex()}`
+  #   `${codedoc:::string_interpolation_regex()}`
   #
   # @codedoc_comment_block string_interpolation_regex
   "[$][{][^}]*[}]"
