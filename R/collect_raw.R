@@ -235,6 +235,22 @@ default_text_file_paths <- function() {
   )
 }
 
+empty_comment_block_df <- function() {
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-07-05", "0.3.2")
+  # `codedoc::extract_keyed_comment_block` ensured to return a proper empty
+  # data.frame when nothing was extracted. Column `comment_block` was
+  # previously missing.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-07-05", "0.3.2")
+  df <- data.frame(
+    text_file_path = character(0),
+    key = character(0),
+    first_block_line = integer(0),
+    last_block_line = integer(0)
+  )
+  df[["comment_block"]] <- list()
+  return(df)
+}
+
 extract_keyed_comment_blocks__ <- function(
   text_file_paths = NULL,
   detect_comment_lines = "^\\s*[#*]\\s*",
@@ -458,14 +474,7 @@ extract_keyed_comment_blocks_from_one_file <- function(
     stringsAsFactors = FALSE
   )
   if (nrow(key_line_df) == 0L) {
-    empty_output_df <- data.frame(
-      text_file_path = character(0),
-      key = character(0),
-      first_block_line = integer(0),
-      last_block_line = integer(0),
-      comment_block = vector("list", 0)
-    )
-    return(empty_output_df)
+    return(empty_comment_block_df())
   }
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks_from_one_file
   #
