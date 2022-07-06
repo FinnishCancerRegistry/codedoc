@@ -572,7 +572,6 @@ codedoc_insert_comment_blocks <- function(
   )
   dbc::assert_prod_input_is_logical_nonNA_vector(subset)
   re <- codedoc_insert_comment_block_regex()
-
   block_df[["comment_block"]][subset] <- lapply(
     block_df[["comment_block"]][subset],
     function(lines) {
@@ -605,12 +604,12 @@ codedoc_insert_comment_blocks <- function(
           #   anything preceding it, and all whitespaces after it
           #
           # @codedoc_comment_block codedoc:::codedoc_insert_comment_blocks
-          insert_key_by_line <- sub(
-            paste0(".*", re, "[ ]*"),
+          insert_key_by_line <- rep(NA_character_, length(lines))
+          insert_key_by_line[is_insert_line] <- sub(
+            paste0("^.*(", re, ")\\s*"),
             "",
-            lines
+            lines[is_insert_line]
           )
-          insert_key_by_line[!is_insert_line] <- NA_character_
           wh <- which(is_insert_line)[1L]
           insert_key <- insert_key_by_line[wh]
           if (!insert_key %in% block_df[["key"]]) {
