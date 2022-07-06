@@ -560,7 +560,7 @@ extract_keyed_comment_blocks_from_one_file <- function(
 
 
 codedoc_insert_comment_block_regex <- function() {
-  "(@codedoc_insert_comment_block)|(@codedoc_insert)"
+  "@codedoc_insert_comment_block"
 }
 codedoc_insert_comment_blocks <- function(
   block_df,
