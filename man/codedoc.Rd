@@ -10,6 +10,16 @@ from the midst of your code and process them into documentation.
 }
 \section{News}{
 
+\subsection{News for version 0.3.2}{
+\subsection{Object codedoc::extract_keyed_comment_blocks news:}{
+
+\code{codedoc::extract_keyed_comment_block} ensured to return a proper empty
+data.frame when nothing was extracted. Column \code{comment_block} was
+previously missing.
+}
+
+}
+
 \subsection{News for version 0.3.1}{
 \subsection{Object codedoc::codedoc_R_package_description news:}{
 

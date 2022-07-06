@@ -125,7 +125,7 @@ Comment block insertion is performed as follows:
 (but blocks with non-allowed keys can contain data for insertion into
 blocks with allowed keys)
 \item lines with insert keys are detected using regex
-"@codedoc_insert_comment_block"
+"(@codedoc_insert_comment_block)|(@codedoc_insert)"
 \item all lines are passed through a maximum of ten times. this means
 that a recursion depth of ten is the maximum. recursion can occur
 if a comment block is inserted which in turn has one or more
