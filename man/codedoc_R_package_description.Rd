@@ -14,7 +14,9 @@ codedoc_R_package_description(
 \arguments{
 \item{R_package_name}{\verb{[character]} (no default)
 
-Turned into \code{detect_allowed_keys} arg for \verb{[codedoc::codedoc_lines]} via\if{html}{\out{<div class="sourceCode r">}}\preformatted{detect_allowed_keys <- paste0(
+Turned into \code{detect_allowed_keys} arg for \verb{[codedoc::codedoc_lines]} via
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{detect_allowed_keys <- paste0(
 "^\\\\QR_package_description(", R_package_name, ")\\\\E$"
 )
 }\if{html}{\out{</div>}}}

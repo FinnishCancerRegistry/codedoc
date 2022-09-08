@@ -28,7 +28,9 @@ extract_keyed_comment_blocks_(
 \item{text_file_paths}{\verb{[NULL, character]} (default \code{NULL})
 \itemize{
 \item \code{NULL}: collect text file paths using call
-}\if{html}{\out{<div class="sourceCode r">}}\preformatted{dir(
+}
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{dir(
 path = getwd(),
 pattern = "((r)|(rmd))$",
 full.names = TRUE,
