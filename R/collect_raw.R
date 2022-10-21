@@ -436,6 +436,11 @@ extract_keyed_comment_blocks__ <- function(
   #
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   block_df <- block_df[!duplicated(block_df[, c("key", "comment_block")]), ]
+  bdf_order <- order(
+    block_df[["text_file_path"]],
+    block_df[["first_block_line"]]
+  )
+  block_df <- block_df[bdf_order, ]
   return(block_df)
 }
 
