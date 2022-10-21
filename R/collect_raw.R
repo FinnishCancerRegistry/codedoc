@@ -192,26 +192,9 @@ extract_keyed_comment_blocks_ <- function(
   # `[codedoc:extract_keyed_comment_blocks_]` marked for deprecation.
   # Use `[codedoc:extract_keyed_comment_blocks]`.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-18", "0.3.0")
-  warning("codedoc::extract_keyed_comment_blocks_ is deprecated and will be ",
-          "removed in codedoc version 0.4.0, planned for 2022-04-01. ",
-          "Use codedoc::extract_keyed_comment_blocks.")
 
-  # @codedoc_comment_block codedoc::extract_keyed_comment_blocks_
-  # Function `[codedoc::extract_keyed_comment_blocks]` is intended for the
-  # end-user. It passes `"user_input"` to `[dbc::report_to_assertion]`.
-  # @codedoc_comment_block codedoc::extract_keyed_comment_blocks_
-  extract_keyed_comment_blocks__(
-    text_file_paths = text_file_paths,
-    detect_comment_lines = detect_comment_lines,
-    clean_comment_lines = clean_comment_lines,
-    detect_allowed_keys = detect_allowed_keys,
-    readLines_arg_list = readLines_arg_list,
-    string_interpolation_eval_env = string_interpolation_eval_env,
-    insert = TRUE,
-    interpolate = TRUE,
-    assertion_type = "prod_input",
-    call = match.call()
-  )
+  stop("codedoc::extract_keyed_comment_blocks_ has been deprecated.",
+      "Use codedoc::extract_keyed_comment_blocks.")
 }
 
 default_text_file_paths <- function() {
