@@ -105,13 +105,6 @@ extract_keyed_comment_blocks_assertions__ <- function(
                       assertion_type = assertion_type)
 }
 
-
-#' @eval c(
-#'   "@section Functions:",
-#'   codedoc::codedoc_lines(
-#'     detect_allowed_keys = "^codedoc::extract_keyed_comment_blocks$"
-#'   )
-#' )
 #' @template arg_assertion_type
 #' @rdname extract_keyed_comment_blocks
 #' @export
@@ -137,14 +130,10 @@ extract_keyed_comment_blocks <- function(
   #
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-02-17", "0.2.15")
 
-  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-18", "0.3.0")
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-02-18", "0.3.0")
   # `[codedoc:extract_keyed_comment_blocks]` gained arg `assertion_type`.
-  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-18", "0.3.0")
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-02-18", "0.3.0")
 
-  # @codedoc_comment_block codedoc::extract_keyed_comment_blocks
-  # Function `[codedoc::extract_keyed_comment_blocks]` is intended for the
-  # end-user. It passes `"user_input"` to `[dbc::report_to_assertion]`.
-  # @codedoc_comment_block codedoc::extract_keyed_comment_blocks
   extract_keyed_comment_blocks__(
     text_file_paths = text_file_paths,
     detect_comment_lines = detect_comment_lines,
@@ -159,12 +148,7 @@ extract_keyed_comment_blocks <- function(
   )
 }
 
-#' @eval c(
-#'   "@section Functions:",
-#'   codedoc::codedoc_lines(
-#'     detect_allowed_keys = "^codedoc::extract_keyed_comment_blocks_$"
-#'   )
-#' )
+
 #' @rdname extract_keyed_comment_blocks
 #' @export
 extract_keyed_comment_blocks_ <- function(
@@ -193,6 +177,10 @@ extract_keyed_comment_blocks_ <- function(
   # Use `[codedoc:extract_keyed_comment_blocks]`.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-02-18", "0.3.0")
 
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-10-21", "0.3.3")
+  # `[codedoc:extract_keyed_comment_blocks_]` no longer usable and always
+  # raises an error. Use `[codedoc:extract_keyed_comment_blocks]`.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2022-10-21", "0.3.3")
   stop("codedoc::extract_keyed_comment_blocks_ has been deprecated.",
       "Use codedoc::extract_keyed_comment_blocks.")
 }
@@ -414,16 +402,30 @@ extract_keyed_comment_blocks__ <- function(
   # Finally, duplicate rows in the `data.frame` of comment blocks are removed,
   # where duplicates those with non-unique combinations of the `key` and
   # `comment_block` columns. This means that the same data collected from
-  # two different files (or the same file) are not retained. This concludes
-  # comment block extraction.
+  # two different files (or the same file) are not retained.
   #
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   block_df <- block_df[!duplicated(block_df[, c("key", "comment_block")]), ]
+
+  # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  # The `data.frame` is sorted into descending order by columns
+  # `text_file_path` and `first_block_line`.
+  #
+  # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-10-21", "0.3.3")
+  # The `data.frame`` of collected blocks is now always sorted by
+  # `text_file_path` and `first_block_line`. The order of results was this
+  # also before, but now it has been made explicit in code and documentation.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-10-21", "0.3.3")
   bdf_order <- order(
     block_df[["text_file_path"]],
     block_df[["first_block_line"]]
   )
   block_df <- block_df[bdf_order, ]
+
+  # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  # This concludes comment block extraction.
+  # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   return(block_df)
 }
 

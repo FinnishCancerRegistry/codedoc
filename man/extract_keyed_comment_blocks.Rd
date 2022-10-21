@@ -165,21 +165,13 @@ separator
 Finally, duplicate rows in the \code{data.frame} of comment blocks are removed,
 where duplicates those with non-unique combinations of the \code{key} and
 \code{comment_block} columns. This means that the same data collected from
-two different files (or the same file) are not retained. This concludes
-comment block extraction.
+two different files (or the same file) are not retained.
+
+The \code{data.frame} is sorted into descending order by columns
+\code{text_file_path} and \code{first_block_line}.
+
+This concludes comment block extraction.
 }
-\section{Functions}{
-
-
-Function \verb{[codedoc::extract_keyed_comment_blocks]} is intended for the
-end-user. It passes \code{"user_input"} to \verb{[dbc::report_to_assertion]}.
-
-
-
-Function \verb{[codedoc::extract_keyed_comment_blocks]} is intended for the
-end-user. It passes \code{"user_input"} to \verb{[dbc::report_to_assertion]}.
-}
-
 \examples{
 
 block_df <- codedoc::extract_keyed_comment_blocks(

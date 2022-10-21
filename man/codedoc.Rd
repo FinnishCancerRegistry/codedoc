@@ -10,6 +10,21 @@ from the midst of your code and process them into documentation.
 }
 \section{News}{
 
+\subsection{News for version 0.3.3}{
+\subsection{Object codedoc::extract_keyed_comment_blocks news:}{
+
+The \verb{data.frame`` of collected blocks is now always sorted by }text_file_path\code{and}first_block_line`. The order of results was this
+also before, but now it has been made explicit in code and documentation.
+}
+
+\subsection{Object codedoc::extract_keyed_comment_blocks_ news:}{
+
+\verb{[codedoc:extract_keyed_comment_blocks_]} no longer usable and always
+raises an error. Use \verb{[codedoc:extract_keyed_comment_blocks]}.
+}
+
+}
+
 \subsection{News for version 0.3.2}{
 \subsection{Object codedoc::extract_keyed_comment_blocks news:}{
 
@@ -49,7 +64,7 @@ output (but they are included in \code{NEWS.md}).
 }
 
 \subsection{News for version 0.3.0}{
-\subsection{Object codedoc::extract_keyed_comment_blocks_ news:}{
+\subsection{Object codedoc::extract_keyed_comment_blocks news:}{
 
 \verb{[codedoc:extract_keyed_comment_blocks]} gained arg \code{assertion_type}.
 }
