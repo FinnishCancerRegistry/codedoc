@@ -158,6 +158,7 @@ extract_keyed_comment_blocks <- function(
     clean_comment_lines = clean_comment_lines,
     detect_allowed_keys = detect_allowed_keys,
     readLines_arg_list = readLines_arg_list,
+    sort_by = sort_by,
     string_interpolation_eval_env = string_interpolation_eval_env,
     insert = TRUE,
     interpolate = TRUE,
@@ -455,8 +456,12 @@ extract_keyed_comment_blocks__ <- function(
   # User can now easily sort output `block_df` by columns of their choice via
   # new arg `sort_by`.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-02-01", "0.3.4")
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-02-01", "0.3.5")
+  # `sort_by` arg now actually works.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-02-01", "0.3.5")
   
-  bdf_order <- do.call(order, block_df[, sort_by])
+  bdf_order_cols <- as.list(block_df[, sort_by, drop = FALSE])
+  bdf_order <- do.call(order, bdf_order_cols, quote = TRUE)
   block_df <- block_df[bdf_order, ]
 
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__

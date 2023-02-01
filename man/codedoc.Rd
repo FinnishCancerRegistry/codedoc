@@ -10,6 +10,14 @@ from the midst of your code and process them into documentation.
 }
 \section{News}{
 
+\subsection{News for version 0.3.5}{
+\subsection{Object codedoc::extract_keyed_comment_blocks news:}{
+
+\code{sort_by} arg now actually works.
+}
+
+}
+
 \subsection{News for version 0.3.4}{
 \subsection{Object codedoc::extract_keyed_comment_blocks news:}{
 
