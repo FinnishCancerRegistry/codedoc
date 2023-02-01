@@ -13,7 +13,8 @@ from the midst of your code and process them into documentation.
 \subsection{News for version 0.3.3}{
 \subsection{Object codedoc::extract_keyed_comment_blocks news:}{
 
-The \verb{data.frame`` of collected blocks is now always sorted by }text_file_path\code{and}first_block_line`. The order of results was this
+The \code{data.frame} of collected blocks is now always sorted by
+\code{text_file_path} and \code{first_block_line}. The order of results was this
 also before, but now it has been made explicit in code and documentation.
 }
 

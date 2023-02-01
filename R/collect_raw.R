@@ -413,7 +413,7 @@ extract_keyed_comment_blocks__ <- function(
   #
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-10-21", "0.3.3")
-  # The `data.frame`` of collected blocks is now always sorted by
+  # The `data.frame` of collected blocks is now always sorted by
   # `text_file_path` and `first_block_line`. The order of results was this
   # also before, but now it has been made explicit in code and documentation.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-10-21", "0.3.3")

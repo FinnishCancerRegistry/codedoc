@@ -4,7 +4,7 @@
 
 ### Object codedoc::extract_keyed_comment_blocks news:
 
-The `data.frame`` of collected blocks is now always sorted by
+The `data.frame` of collected blocks is now always sorted by
 `text_file_path` and `first_block_line`. The order of results was this
 also before, but now it has been made explicit in code and documentation.
 
