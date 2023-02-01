@@ -10,6 +10,7 @@ extract_keyed_comment_blocks(
   detect_comment_lines = "^\\\\s*[#*]\\\\s*",
   clean_comment_lines = "^\\\\s*[#*]\\\\s*",
   detect_allowed_keys = "",
+  sort_by = NULL,
   readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L),
   assertion_type = "input"
@@ -76,6 +77,16 @@ this filtering does not affect which comment blocks are read into R; instead
 it affects which are processed (inserting + interpolation) and which keys are
 returned in output. therefore, comment blocks that need to be inserted into
 the ones you want to retain in output are kept for the insertion phase.}
+
+\item{sort_by}{\verb{[NULL, character]} (default \code{NULL})
+
+Names of columns by which to sort output \code{block_df}.
+Each column name must be one of the following:
+c("text_file_path", "key", "first_block_line", "last_block_line",  "comment_block")
+\itemize{
+\item \code{NULL}: Use \code{c("text_file_path", "first_block_line")}.
+\item \code{character}: Sort output \code{block_df} by these columns.
+}}
 
 \item{readLines_arg_list}{\verb{[list]}
 (optional, default \code{list(warn = FALSE)})
@@ -168,7 +179,7 @@ where duplicates those with non-unique combinations of the \code{key} and
 two different files (or the same file) are not retained.
 
 The \code{data.frame} is sorted into descending order by columns
-\code{text_file_path} and \code{first_block_line}.
+given via arg \code{sort_by}.
 
 This concludes comment block extraction.
 }

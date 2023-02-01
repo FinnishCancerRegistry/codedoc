@@ -10,6 +10,15 @@ from the midst of your code and process them into documentation.
 }
 \section{News}{
 
+\subsection{News for version 0.3.4}{
+\subsection{Object codedoc::extract_keyed_comment_blocks news:}{
+
+User can now easily sort output \code{block_df} by columns of their choice via
+new arg \code{sort_by}.
+}
+
+}
+
 \subsection{News for version 0.3.3}{
 \subsection{Object codedoc::extract_keyed_comment_blocks news:}{
 

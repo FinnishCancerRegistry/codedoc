@@ -63,6 +63,7 @@ extract_keyed_comment_blocks_assertions__ <- function(
   detect_comment_lines,
   clean_comment_lines,
   detect_allowed_keys,
+  sort_by,
   readLines_arg_list,
   string_interpolation_eval_env,
   assertion_type,
@@ -99,6 +100,22 @@ extract_keyed_comment_blocks_assertions__ <- function(
     call = call,
     assertion_type = assertion_type
   )
+  dbc::assert_is_one_of(
+    sort_by,
+    funs = list(
+      dbc::report_is_NULL,
+      dbc::report_is_character_nonNA_vector
+    ),
+    call = call,
+    assertion_type = assertion_type
+  )
+  if (is.character(sort_by)) {
+    dbc::assert_vector_elems_are_in_set(
+      sort_by,
+      set = names(empty_comment_block_df())
+    )
+  }
+
   dbc::assert_is_environment(string_interpolation_eval_env, call = call,
                              assertion_type = assertion_type)
   dbc::assert_is_list(readLines_arg_list, call = call,
@@ -113,6 +130,7 @@ extract_keyed_comment_blocks <- function(
   detect_comment_lines = "^\\s*[#*]\\s*",
   clean_comment_lines  = "^\\s*[#*]\\s*",
   detect_allowed_keys  = "",
+  sort_by = NULL,
   readLines_arg_list   = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L),
   assertion_type = "input"
@@ -227,6 +245,7 @@ extract_keyed_comment_blocks__ <- function(
   detect_comment_lines = "^\\s*[#*]\\s*",
   clean_comment_lines = "^\\s*[#*]\\s*",
   detect_allowed_keys = "",
+  sort_by = NULL,
   readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L),
   insert = TRUE,
@@ -240,6 +259,7 @@ extract_keyed_comment_blocks__ <- function(
     detect_comment_lines,
     clean_comment_lines,
     detect_allowed_keys,
+    sort_by,
     readLines_arg_list,
     string_interpolation_eval_env,
     assertion_type = assertion_type,
@@ -289,6 +309,20 @@ extract_keyed_comment_blocks__ <- function(
     clean_comment_lines <- function(x) {
       sub(clean_comment_lines_regex, "", x, perl = TRUE)
     }
+  }
+
+  if (is.null(sort_by)) {
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @param sort_by `[NULL, character]` (default `NULL`)
+    #
+    # Names of columns by which to sort output `block_df`.
+    # Each column name must be one of the following:
+    # ${deparse(names(codedoc:::empty_comment_block_df()))}
+    #
+    # - `NULL`: Use `c("text_file_path", "first_block_line")`.
+    # - `character`: Sort output `block_df` by these columns.
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    sort_by <- c("text_file_path", "first_block_line")
   }
 
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
@@ -409,7 +443,7 @@ extract_keyed_comment_blocks__ <- function(
 
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   # The `data.frame` is sorted into descending order by columns
-  # `text_file_path` and `first_block_line`.
+  # given via arg `sort_by`.
   #
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-10-21", "0.3.3")
@@ -417,10 +451,12 @@ extract_keyed_comment_blocks__ <- function(
   # `text_file_path` and `first_block_line`. The order of results was this
   # also before, but now it has been made explicit in code and documentation.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-10-21", "0.3.3")
-  bdf_order <- order(
-    block_df[["text_file_path"]],
-    block_df[["first_block_line"]]
-  )
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-02-01", "0.3.4")
+  # User can now easily sort output `block_df` by columns of their choice via
+  # new arg `sort_by`.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-02-01", "0.3.4")
+  
+  bdf_order <- do.call(order, block_df[, sort_by])
   block_df <- block_df[bdf_order, ]
 
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
