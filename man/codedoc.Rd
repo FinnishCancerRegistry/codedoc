@@ -10,6 +10,15 @@ from the midst of your code and process them into documentation.
 }
 \section{News}{
 
+\subsection{News for version 0.3.6}{
+\subsection{Object codedoc::extract_keyed_comment_blocks_ news:}{
+
+\verb{[codedoc:extract_keyed_comment_blocks_]} has been permanently removed.
+Use \verb{[codedoc:extract_keyed_comment_blocks]}.
+}
+
+}
+
 \subsection{News for version 0.3.5}{
 \subsection{Object codedoc::extract_keyed_comment_blocks news:}{
 
