@@ -573,6 +573,7 @@ codedoc_insert_comment_blocks <- function(
     required_names = c("comment_block", "key")
   )
   dbc::assert_prod_input_is_logical_nonNA_vector(subset)
+  dbc::assert_prod_input_is_of_length(subset, expected_length = nrow(block_df))
   re <- codedoc_insert_comment_block_regex()
   block_df[["comment_block"]][subset] <- lapply(
     block_df[["comment_block"]][subset],
