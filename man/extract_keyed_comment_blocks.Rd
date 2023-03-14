@@ -2,7 +2,6 @@
 % Please edit documentation in R/collect_raw.R
 \name{extract_keyed_comment_blocks}
 \alias{extract_keyed_comment_blocks}
-\alias{extract_keyed_comment_blocks_}
 \title{Read codedoc-formatted Code Comments}
 \usage{
 extract_keyed_comment_blocks(
@@ -14,15 +13,6 @@ extract_keyed_comment_blocks(
   readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L),
   assertion_type = "input"
-)
-
-extract_keyed_comment_blocks_(
-  text_file_paths = NULL,
-  detect_comment_lines = "^\\\\s*[#*]\\\\s*",
-  clean_comment_lines = "^\\\\s*[#*]\\\\s*",
-  detect_allowed_keys = "",
-  readLines_arg_list = list(warn = FALSE),
-  string_interpolation_eval_env = parent.frame(1L)
 )
 }
 \arguments{
@@ -97,9 +87,9 @@ an element of \code{text_file_paths}}
 \item{string_interpolation_eval_env}{\verb{[environment]}
 (optional, default \code{parent.frame(1L)})
 
-environment where string interpolation expressions are evaluated. by default
-this is the environment where \code{extract_keyed_comment_blocks} or
-\code{extract_keyed_comment_blocks_} is called. see Details for more information.}
+Environment where string interpolation expressions are evaluated. By default
+this is the environment where \code{extract_keyed_comment_blocks} is called.
+See Details for more information.}
 
 \item{assertion_type}{see \verb{[dbc::report_to_assertion]}}
 }

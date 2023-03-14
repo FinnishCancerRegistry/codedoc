@@ -23,9 +23,9 @@ detect_codedoc_key_lines <- function(x) {
 #' @param string_interpolation_eval_env `[environment]`
 #' (optional, default `parent.frame(1L)`)
 #'
-#' environment where string interpolation expressions are evaluated. by default
-#' this is the environment where `extract_keyed_comment_blocks` or
-#' `extract_keyed_comment_blocks_` is called. see Details for more information.
+#' Environment where string interpolation expressions are evaluated. By default
+#' this is the environment where `extract_keyed_comment_blocks` is called.
+#' See Details for more information.
 #' @eval codedoc::codedoc_lines(
 #'   detect_allowed_keys = "codedoc:::extract_keyed_comment_blocks__"
 #' )
@@ -165,22 +165,6 @@ extract_keyed_comment_blocks <- function(
     assertion_type = assertion_type,
     call = match.call()
   )
-}
-
-
-#' @rdname extract_keyed_comment_blocks
-#' @export
-extract_keyed_comment_blocks_ <- function(
-  text_file_paths = NULL,
-  detect_comment_lines = "^\\s*[#*]\\s*",
-  clean_comment_lines = "^\\s*[#*]\\s*",
-  detect_allowed_keys = "",
-  readLines_arg_list = list(warn = FALSE),
-  string_interpolation_eval_env = parent.frame(1L)
-) {
- 
-  stop("codedoc::extract_keyed_comment_blocks_ has been deprecated.",
-      "Use codedoc::extract_keyed_comment_blocks.")
 }
 
 default_text_file_paths <- function() {
