@@ -33,7 +33,7 @@ extract_keyed_comment_blocks_(
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dir(
 path = getwd(),
-pattern = "((r)|(rmd))$",
+pattern = "[.]((r)|(rmd))$",
 full.names = TRUE,
 recursive = TRUE,
 ignore.case = TRUE

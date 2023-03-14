@@ -2,6 +2,12 @@
 
 ## News for version 0.3.6
 
+### Object codedoc::extract_keyed_comment_blocks news:
+
+`[codedoc:extract_keyed_comment_blocks]` arg `text_file_paths` default
+improved --- now uses `pattern = "[.]((r)|(rmd))$"` in place of
+`pattern = "((r)|(rmd))$"`.
+
 ### Object codedoc::extract_keyed_comment_blocks_ news:
 
 `[codedoc:extract_keyed_comment_blocks_]` has been permanently removed.

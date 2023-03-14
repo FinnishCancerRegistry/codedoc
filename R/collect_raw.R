@@ -188,16 +188,17 @@ default_text_file_paths <- function() {
   # ```r
   # dir(
   #   path = getwd(),
-  #   pattern = "((r)|(rmd))$",
+  #   pattern = "[.]((r)|(rmd))$",
   #   full.names = TRUE,
   #   recursive = TRUE,
   #   ignore.case = TRUE
   # )
   # ```
   # @codedoc_comment_block codedoc:::default_text_file_paths
+
   dir(
     path = getwd(),
-    pattern = "((r)|(rmd))$",
+    pattern = "[.]((r)|(rmd))$",
     full.names = TRUE,
     recursive = TRUE,
     ignore.case = TRUE
@@ -255,6 +256,13 @@ extract_keyed_comment_blocks__ <- function(
     #
     # - `character`: use these text files
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+
+    # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-03-14", "0.3.6")
+    # `[codedoc:extract_keyed_comment_blocks]` arg `text_file_paths` default
+    # improved --- now uses `pattern = "[.]((r)|(rmd))$"` in place of
+    # `pattern = "((r)|(rmd))$"`.
+    # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-03-14", "0.3.6")
+
     text_file_paths <- default_text_file_paths()
   }
 
