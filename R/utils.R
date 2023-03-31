@@ -23,9 +23,13 @@ string_interpolation_regex <- function() {
   "[$][{][^}]*[}]"
 }
 
-string_interpolation <- function(x, env) {
+string_interpolation <- function(x, env, debug_data) {
   dbc::assert_prod_input_is_character_vector(x)
   dbc::assert_prod_input_is_environment(env)
+  dbc::assert_prod_input_is_named_list(debug_data)
+  dbc::assert_prod_input_has_names(
+    debug_data, required_names = c("text_file_path", "first_line_no")
+  )
 
   # @codedoc_comment_block codedoc:::string_interpolation
   #
@@ -48,7 +52,26 @@ string_interpolation <- function(x, env) {
       expr <- sub(pattern = "^[$][{]", replacement = "", x = expr)
       expr <- sub(pattern = "[}]$", replacement = "", x = expr)
       expr <- parse(text = expr)[[1L]]
-      value <- eval(expr, envir = env)
+      # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-03-31", "0.3.7")
+      # `[codedoc:extract_keyed_comment_blocks]` string interpolation improved.
+      # If evaluating an expression results in an error, a more informative
+      # error message is produced than previously. New error message includes
+      # errored expression, original error message,
+      # path to file producing the error and first line number of guilty
+      # part of text.
+      # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-03-31", "0.3.7")
+
+      value <- tryCatch(
+        eval(expr, envir = env),
+        error = function(e) e
+      )
+      if (inherits(value, "error")) {
+        stop("Error in ${} string interpolation: expression resulted in error.",
+             " this was the expression: `", deparse1(expr), "`. ",
+             "this was the error message: ", deparse1(value[["message"]]), ". ",
+             "see file ", debug_data[["text_file_path"]],
+             " starting from line no ", debug_data[["first_line_no"]])
+      }
       # @codedoc_comment_block codedoc:::string_interpolation
       #
       # - if an expression produces an object of length more than one,

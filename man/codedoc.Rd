@@ -10,6 +10,19 @@ from the midst of your code and process them into documentation.
 }
 \section{News}{
 
+\subsection{News for version 0.3.7}{
+\subsection{Object codedoc::extract_keyed_comment_blocks news:}{
+
+\verb{[codedoc:extract_keyed_comment_blocks]} string interpolation improved.
+If evaluating an expression results in an error, a more informative
+error message is produced than previously. New error message includes
+errored expression, original error message,
+path to file producing the error and first line number of guilty
+part of text.
+}
+
+}
+
 \subsection{News for version 0.3.6}{
 \subsection{Object codedoc::extract_keyed_comment_blocks news:}{
 

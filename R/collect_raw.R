@@ -391,13 +391,31 @@ extract_keyed_comment_blocks__ <- function(
     #
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
     block_df[["comment_block"]] <- lapply(
-      block_df[["comment_block"]],
-      string_interpolation,
-      env = string_interpolation_eval_env
+      seq_along(block_df[["comment_block"]]),
+      function(i) {
+        string_interpolation(
+          x = block_df[["comment_block"]][[i]],
+          env = string_interpolation_eval_env,
+          debug_data = list(
+            text_file_path = block_df[["text_file_path"]][i],
+            first_line_no = block_df[["first_block_line"]][i] - 1L
+          )
+        )
+      }
     )
-    block_df[["key"]] <- string_interpolation(
-      block_df[["key"]],
-      env = string_interpolation_eval_env
+    block_df[["key"]] <- vapply(
+      seq_along(block_df[["key"]]),
+      function(i) {
+        string_interpolation(
+          block_df[["key"]][i],
+          env = string_interpolation_eval_env,
+          debug_data = list(
+            text_file_path = block_df[["text_file_path"]][i],
+            first_line_no = block_df[["first_block_line"]][i] - 1L
+          )
+        )
+      },
+      character(1L)
     )
   }
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
