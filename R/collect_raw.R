@@ -127,8 +127,8 @@ extract_keyed_comment_blocks_assertions__ <- function(
 #' @export
 extract_keyed_comment_blocks <- function(
   text_file_paths      = NULL,
-  detect_comment_lines = "^\\s*[#*]\\s*",
-  clean_comment_lines  = "^\\s*[#*]\\s*",
+  detect_comment_lines = "^\\s*[#*]\\s?",
+  clean_comment_lines  = "^\\s*[#*]\\s?",
   detect_allowed_keys  = "",
   sort_by = NULL,
   readLines_arg_list   = list(warn = FALSE),
@@ -151,6 +151,16 @@ extract_keyed_comment_blocks <- function(
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-02-18", "0.3.0")
   # `[codedoc:extract_keyed_comment_blocks]` gained arg `assertion_type`.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-02-18", "0.3.0")
+
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-04-01", "0.3.8")
+  # `[codedoc:extract_keyed_comment_blocks]` default args changed:
+  # `detect_comment_lines = "^\\s*[#*]\\s*"`
+  # -> `detect_comment_lines = "^\\s*[#*]\\s?"`
+  # `clean_comment_lines  = "^\\s*[#*]\\s?"`
+  # -> `clean_comment_lines  = "^\\s*[#*]\\s*"`
+  #
+  # This will improves retaining of indentation in comment blocks.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-04-01", "0.3.8")
 
   extract_keyed_comment_blocks__(
     text_file_paths = text_file_paths,

@@ -10,6 +10,20 @@ from the midst of your code and process them into documentation.
 }
 \section{News}{
 
+\subsection{News for version 0.3.8}{
+\subsection{Object codedoc::extract_keyed_comment_blocks news:}{
+
+\verb{[codedoc:extract_keyed_comment_blocks]} default args changed:
+\code{detect_comment_lines = "^\\\\s*[#*]\\\\s*"}
+-> \code{detect_comment_lines = "^\\\\s*[#*]\\\\s?"}
+\code{clean_comment_lines  = "^\\\\s*[#*]\\\\s?"}
+-> \code{clean_comment_lines  = "^\\\\s*[#*]\\\\s*"}
+
+This will improves retaining of indentation in comment blocks.
+}
+
+}
+
 \subsection{News for version 0.3.7}{
 \subsection{Object codedoc::extract_keyed_comment_blocks news:}{
 

@@ -6,8 +6,8 @@
 \usage{
 extract_keyed_comment_blocks(
   text_file_paths = NULL,
-  detect_comment_lines = "^\\\\s*[#*]\\\\s*",
-  clean_comment_lines = "^\\\\s*[#*]\\\\s*",
+  detect_comment_lines = "^\\\\s*[#*]\\\\s?",
+  clean_comment_lines = "^\\\\s*[#*]\\\\s?",
   detect_allowed_keys = "",
   sort_by = NULL,
   readLines_arg_list = list(warn = FALSE),
@@ -22,11 +22,11 @@ extract_keyed_comment_blocks(
 }
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dir(
-path = getwd(),
-pattern = "[.]((r)|(rmd))$",
-full.names = TRUE,
-recursive = TRUE,
-ignore.case = TRUE
+  path = getwd(),
+  pattern = "[.]((r)|(rmd))$",
+  full.names = TRUE,
+  recursive = TRUE,
+  ignore.case = TRUE
 )
 }\if{html}{\out{</div>}}
 \itemize{
