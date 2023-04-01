@@ -7,4 +7,22 @@
 `codedoc` is designed to aid your code documentation. Extract comments
 from the midst of your code and process them into documentation.
 
+# Recommended installation
+
+```r
+devtools::install_github(
+  "FinnishCancerRegistry/codedoc",
+  ref = readline("enter latest tag on github: ")
+)
+```
+
+# Example
+```r
+block_df <- codedoc::extract_keyed_comment_blocks(
+  text_file_paths = codedoc::example_text_file_path("r_script.R")
+)
+print(block_df)
+```
+
+
 

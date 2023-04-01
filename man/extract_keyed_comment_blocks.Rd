@@ -173,11 +173,3 @@ given via arg \code{sort_by}.
 
 This concludes comment block extraction.
 }
-\examples{
-
-block_df <- codedoc::extract_keyed_comment_blocks(
-  text_file_paths = codedoc::example_text_file_path("r_script.R")
-)
-print(block_df)
-
-}

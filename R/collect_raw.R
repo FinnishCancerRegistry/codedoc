@@ -26,17 +26,14 @@ detect_codedoc_key_lines <- function(x) {
 #' Environment where string interpolation expressions are evaluated. By default
 #' this is the environment where `extract_keyed_comment_blocks` is called.
 #' See Details for more information.
-#' @eval codedoc::codedoc_lines(
-#'   detect_allowed_keys = "codedoc:::extract_keyed_comment_blocks__"
+#' @eval c(
+#'   codedoc::codedoc_lines(
+#'     detect_allowed_keys = "codedoc:::extract_keyed_comment_blocks__"
+#'   ),
+#'   codedoc::codedoc_lines(
+#'     detect_allowed_keys = "examples(codedoc::extract_keyed_comment_blocks)"
+#'   )
 #' )
-#'
-#' @examples
-#'
-#' block_df <- codedoc::extract_keyed_comment_blocks(
-#'   text_file_paths = codedoc::example_text_file_path("r_script.R")
-#' )
-#' print(block_df)
-#'
 #' @name extract_keyed_comment_blocks
 NULL
 
@@ -161,6 +158,18 @@ extract_keyed_comment_blocks <- function(
   #
   # This will improves retaining of indentation in comment blocks.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-04-01", "0.3.8")
+
+  # @codedoc_comment_block examples(codedoc::extract_keyed_comment_blocks)
+  # @examples
+  #
+  # # codedoc::extract_keyed_comment_blocks
+  # @codedoc_comment_block R_package_example(codedoc)
+  # block_df <- codedoc::extract_keyed_comment_blocks(
+  #   text_file_paths = codedoc::example_text_file_path("r_script.R")
+  # )
+  # print(block_df)
+  # @codedoc_comment_block R_package_example(codedoc)
+  # @codedoc_comment_block examples(codedoc::extract_keyed_comment_blocks)
 
   extract_keyed_comment_blocks__(
     text_file_paths = text_file_paths,

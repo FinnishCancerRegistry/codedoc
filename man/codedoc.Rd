@@ -8,6 +8,22 @@
 \code{codedoc} is designed to aid your code documentation. Extract comments
 from the midst of your code and process them into documentation.
 }
+\section{Recommended installation}{
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{devtools::install_github(
+  "FinnishCancerRegistry/codedoc",
+  ref = readline("enter latest tag on github: ")
+)
+}\if{html}{\out{</div>}}
+}
+
+\section{Example}{
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{block_df <- codedoc::extract_keyed_comment_blocks(
+  text_file_paths = codedoc::example_text_file_path("r_script.R")
+)
+print(block_df)
+}\if{html}{\out{</div>}}
+}
+
 \section{News}{
 
 \subsection{News for version 0.3.8}{
