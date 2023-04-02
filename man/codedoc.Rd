@@ -7,6 +7,8 @@
 \description{
 \code{codedoc} is designed to aid your code documentation. Extract comments
 from the midst of your code and process them into documentation.
+
+\href{https://github.com/WetRobot/codedoc/actions/workflows/R-CMD-check.yaml}{\if{html}{\figure{https://github.com/WetRobot/codedoc/actions/workflows/R-CMD-check.yaml/badge.svg}}}
 }
 \section{Recommended installation}{
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{devtools::install_github(

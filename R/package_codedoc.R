@@ -13,6 +13,10 @@ NULL
 # `codedoc` is designed to aid your code documentation. Extract comments
 # from the midst of your code and process them into documentation.
 #
+# <!-- badges: start -->
+# [![R-CMD-check](https://github.com/WetRobot/codedoc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WetRobot/codedoc/actions/workflows/R-CMD-check.yaml)
+# <!-- badges: end -->
+#
 # # Recommended installation
 #
 # ```r
