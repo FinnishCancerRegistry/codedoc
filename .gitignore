@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 inst/doc
-codedoc.code-workspace
+*.code-workspace
+*.Rproj
