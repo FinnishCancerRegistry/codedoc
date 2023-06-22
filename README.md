@@ -9,6 +9,7 @@ from the midst of your code and process them into documentation.
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/WetRobot/codedoc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/WetRobot/codedoc/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 # Recommended installation
