@@ -94,6 +94,13 @@ begin with "news(`
 }
 }
 
+\section{News for version 0.4.0}{
+
+
+\code{codedoc::codedoc_news_df_to_markdown_news} title format changed from
+\verb{### Object x news:} to simply \verb{### x}.
+}
+
 \section{News for version 0.3.1}{
 
 

@@ -384,13 +384,17 @@ codedoc_news_df_to_markdown_news <- function(
   lines <- unlist(lapply(seq_along(version_set), function(version_set_pos) {
     version <- version_set[version_set_pos]
     row_no_set <- which(df[["version"]] == version)
-
-    c(
+ 
+  # @codedoc_comment_block news("codedoc::codedoc_news_df_to_markdown_news", "2023-08-16", "0.4.0")
+  # `codedoc::codedoc_news_df_to_markdown_news` title format changed from
+  # `### Object x news:` to simply `### x`.
+  # @codedoc_comment_block news("codedoc::codedoc_news_df_to_markdown_news", "2023-08-16", "0.4.0")
+  c(
       paste0("## News for version ", version),
       "",
       unlist(lapply(row_no_set, function(row_no) {
         c(
-          paste0("### Object ", df[["object_name"]][row_no], " news:"),
+          paste0("### ", df[["object_name"]][row_no]),
           "",
           df[["comment_block"]][[row_no]],
           ""
