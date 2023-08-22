@@ -1,13 +1,9 @@
-
-
-#' @name codedoc
-#' @docType package
-#' @title codedoc: Functions Document Your Code
 #' @eval c(
 #'   codedoc::codedoc_R_package_description("codedoc"),
 #'   codedoc::codedoc_news_for_R_package()
 #' )
-NULL
+#' @keywords internal
+"_PACKAGE"
 
 # @codedoc_comment_block R_package_description(codedoc)
 # ${desc::desc_get_field("Description")}
