@@ -54,6 +54,18 @@ codedoc_R_package_description <- function(
     extract_arg_list = extract_arg_list,
     assertion_type = assertion_type
   )
+  # @codedoc_comment_block news("codedoc::codedoc_R_package_description", "2023-08-22", "0.4.1")
+  # `[codedoc::codedoc_R_package_description]` now uses field `Description`
+  # from file `DESCRIPTION` if it exists as the, well, description if
+  # `codedoc::codedoc_lines` failed to extract any lines.
+  # @codedoc_comment_block news("codedoc::codedoc_R_package_description", "2023-08-22", "0.4.1")
+  if (length(lines) == 0L && "DESCRIPTION" %in% dir()) {
+    wd <- getwd()
+    dir_nm <- basename(wd)
+    src_dir_path <- normalizePath(paste0(wd, "/.."), winslash = "/")
+    desc <- utils::packageDescription(dir_nm, lib.loc = src_dir_path)
+    lines <- strsplit(desc[["Description"]], "\\n")[[1]]
+  }
   # @codedoc_comment_block news("codedoc::codedoc_R_package_description", "2022-03-03", "0.3.1")
   # `[codedoc::codedoc_R_package_description]` now includes a markdown
   # comment in the `.md` which indicates that the file was generated

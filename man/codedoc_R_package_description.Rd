@@ -31,6 +31,14 @@ Turned into \code{detect_allowed_keys} arg for \verb{[codedoc::codedoc_lines]} v
 Extract \code{codedoc} comment block(s) and turn them into R package
 description help page (roxygen) and a \code{README.md}.
 }
+\section{News for version 0.4.1}{
+
+
+\verb{[codedoc::codedoc_R_package_description]} now uses field \code{Description}
+from file \code{DESCRIPTION} if it exists as the, well, description if
+\code{codedoc::codedoc_lines} failed to extract any lines.
+}
+
 \section{News for version 0.3.1}{
 
 

@@ -5,8 +5,7 @@
 \alias{codedoc}
 \title{codedoc: Functions Document Your Code}
 \description{
-\code{codedoc} is designed to aid your code documentation. Extract comments
-from the midst of your code and process them into documentation.
+Allows generation of documentation from specifically formatted code comments.
 
 \href{https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml}{\if{html}{\figure{https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml/badge.svg}}}
 }
@@ -27,6 +26,16 @@ print(block_df)
 }
 
 \section{News}{
+
+\subsection{News for version 0.4.1}{
+\subsection{codedoc::codedoc_R_package_description}{
+
+\verb{[codedoc::codedoc_R_package_description]} now uses field \code{Description}
+from file \code{DESCRIPTION} if it exists as the, well, description if
+\code{codedoc::codedoc_lines} failed to extract any lines.
+}
+
+}
 
 \subsection{News for version 0.4.0}{
 \subsection{codedoc::codedoc_news_df_to_markdown_news}{
