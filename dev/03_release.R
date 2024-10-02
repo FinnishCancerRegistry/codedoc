@@ -1,11 +1,1 @@
-
-message("which version element to bump?")
-desc::desc_bump_version(
-  which = readline(": ")
-)
-git2r::add(path = "DESCRIPTION")
-git2r::commit(message = paste0("build: v", desc::desc_get_version()))
-
-git2r::tag(name = paste0("v", desc::desc_get_version()))
-system2("git", "push")
-system2("git", c("push", "--tags"))
+source("https://gist.githubusercontent.com/WetRobot/a741c9d2a22fbfb52784369be8354f15/raw/r_pkg_release.R")
