@@ -605,7 +605,7 @@ codedoc_insert_comment_blocks <- function(
   block_df,
   subset
 ) {
-  dbc::assert_prod_input_is_data.frame_with_required_names(
+  dbc::assert_prod_input_is_data_frame_with_required_names(
     block_df,
     required_names = c("comment_block", "key")
   )

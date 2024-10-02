@@ -27,3 +27,8 @@
 # ```
 #
 # @codedoc_comment_block R_package_description(codedoc)
+
+# @codedoc_comment_block news("codedoc", "2024-10-02", "0.5.0")
+# Replaced `dbc::assert_is_data.frame*` -> `dbc::assert_is_data_frame*`.
+# No effect on user, avoids a deprecated feature in `dbc`.
+# @codedoc_comment_block news("codedoc", "2024-10-02", "0.5.0")

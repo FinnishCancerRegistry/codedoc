@@ -28,6 +28,15 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.5.0}{
+\subsection{codedoc}{
+
+Replaced \verb{dbc::assert_is_data.frame*} -> \verb{dbc::assert_is_data_frame*}.
+No effect on user, avoids a deprecated feature in \code{dbc}.
+}
+
+}
+
 \subsection{News for version 0.4.1}{
 \subsection{codedoc::codedoc_R_package_description}{
 

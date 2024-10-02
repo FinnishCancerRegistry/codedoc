@@ -53,7 +53,7 @@ render_codedoc_assertions <- function(
   assertion_type = "input"
 ) {
   call <- dbc::handle_arg_call(call)
-  dbc::assert_is_data.frame_with_required_names(
+  dbc::assert_is_data_frame_with_required_names(
     block_df,
     required_names = c("key", "comment_block", "text_file_path"),
     assertion_type = assertion_type,
