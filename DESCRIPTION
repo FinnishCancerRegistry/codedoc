@@ -1,7 +1,7 @@
 Type: Package
 Package: codedoc
 Title: Generate Code Documentation
-Version: 0.4.1
+Version: 0.5.0
 Author: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Maintainer: Joonas Miettinen <joonas.miettinen@cancer.fi>
 Description: Allows generation of documentation from specifically
@@ -19,5 +19,5 @@ Remotes:
     github::FinnishCancerRegistry/dbc@release
 Encoding: UTF-8
 LazyData: true
-Roxygen:list(markdown = TRUE)
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
