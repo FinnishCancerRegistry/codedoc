@@ -5,3 +5,4 @@
 ^.+code-workspace$
 ^\.github$
 ^dev$
+^\.radian_history$
