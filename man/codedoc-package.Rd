@@ -12,21 +12,43 @@ Allows generation of documentation from specifically formatted code comments.
 }
 \section{Recommended installation}{
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{devtools::install_github(
-  "FinnishCancerRegistry/codedoc",
-  ref = readline("enter latest tag on github: ")
+"FinnishCancerRegistry/codedoc",
+ref = readline("enter latest tag on github: ")
 )
 }\if{html}{\out{</div>}}
 }
 
 \section{Example}{
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{block_df <- codedoc::extract_keyed_comment_blocks(
-  text_file_paths = codedoc::example_text_file_path("r_script.R")
+text_file_paths = codedoc::example_text_file_path("r_script.R")
 )
 print(block_df)
 }\if{html}{\out{</div>}}
 }
 
 \section{News}{
+
+\subsection{News for version 0.6.0}{
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+\code{codedoc::extract_keyed_comment_blocks} default for \code{text_file_paths}
+expanded: Now uses regex
+\code{"[.]((r)|(rmd)|(py)|(sql)|(cpp)|(hpp)|(c)|(h))$"} in \code{dir} call.
+}
+
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+\code{codedoc::extract_keyed_comment_blocks} default for \code{detect_comment_lines}
+is now \code{c(r = "^\\\\s*[#]+\\\\s*", rmd = "^\\\\s*[#]+\\\\s*", py = "^\\\\s*[#]+\\\\s*", sql = "^\\\\s*[-]{2,}\\\\s*")}.
+}
+
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+\code{codedoc::extract_keyed_comment_blocks} default for \code{clean_comment_lines}
+is (usually) what \code{detect_comment_lines} is.
+}
+
+}
 
 \subsection{News for version 0.5.0}{
 \subsection{codedoc}{

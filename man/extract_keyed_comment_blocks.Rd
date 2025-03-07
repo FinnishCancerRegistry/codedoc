@@ -6,8 +6,8 @@
 \usage{
 extract_keyed_comment_blocks(
   text_file_paths = NULL,
-  detect_comment_lines = "^\\\\s*[#*]\\\\s?",
-  clean_comment_lines = "^\\\\s*[#*]\\\\s?",
+  detect_comment_lines = NULL,
+  clean_comment_lines = NULL,
   detect_allowed_keys = "",
   sort_by = NULL,
   readLines_arg_list = list(warn = FALSE),
@@ -22,35 +22,43 @@ extract_keyed_comment_blocks(
 }
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dir(
-  path = getwd(),
-  pattern = "[.]((r)|(rmd))$",
-  full.names = TRUE,
-  recursive = TRUE,
-  ignore.case = TRUE
+path = getwd(),
+pattern = "[.]((r)|(rmd)|(py)|(sql)|(cpp)|(hpp)|(c)|(h))$",
+full.names = TRUE,
+recursive = TRUE,
+ignore.case = TRUE
 )
 }\if{html}{\out{</div>}}
 \itemize{
 \item \code{character}: use these text files
 }}
 
-\item{detect_comment_lines}{\verb{[character, function]}
-(default \code{"^\\\\s*[#*]"})
+\item{detect_comment_lines}{\verb{[NULL, character, function]}
+(default \code{NULL})
 \itemize{
-\item \code{character}: pass this string as arg \code{pattern} to \verb{[grepl]}
-\item \code{function}: a function which takes lines of text as input and outputs a
+\item \code{NULL}: Use these:
+\code{c(r = "^\\\\s*[#]+\\\\s*", rmd = "^\\\\s*[#]+\\\\s*", py = "^\\\\s*[#]+\\\\s*", sql = "^\\\\s*[-]{2,}\\\\s*", cpp = "^\\\\s*[/]{2,}\\\\s*", hpp = "^\\\\s*[/]{2,}\\\\s*", c = "^\\\\s*[/]{2,}\\\\s*", h = "^\\\\s*[/]{2,}\\\\s*")}
+\item \code{character}: One or more regular expressions that a line must match to
+be considered a comment line. You can supply file type-specific regexes
+by using (lowercase) file type names as names of the vector. E.g.
+\code{c(r = "^ *#+ *", sql = "^ *--{2,} *")}.
+\item \code{function}: A function which takes lines of text as input and outputs a
 logical vector of the same length as input which is \code{TRUE} when the line
-is a comment line
+is a comment line. If the function has argument \code{file_type}, the file
+type / file extensions (e.g. \code{"r"}) is supplied to it when called.
 }}
 
-\item{clean_comment_lines}{\verb{[character, function]}
-(default \code{"^\\\\s*[#*]\\\\s*"})
+\item{clean_comment_lines}{\verb{[NULL, character, function]} (default \code{NULL})
 \itemize{
-\item \code{character}: pass this string as arg \code{pattern} to \verb{[sub]} call
-\code{sub(pattern, "", x, perl = TRUE)} where \code{x} are the lines from a
-text file
-\item \code{function}: a function which takes lines of text as input and outputs a
-character vector of the same length as input; this function takes comment
-lines and should strip any comment characters preceding the text itself
+\item \code{NULL}: If \code{detect_comment_lines} was \code{character}, use that.
+Else use these:
+\code{c(r = "^\\\\s*[#]+\\\\s*", rmd = "^\\\\s*[#]+\\\\s*", py = "^\\\\s*[#]+\\\\s*", sql = "^\\\\s*[-]{2,}\\\\s*", cpp = "^\\\\s*[/]{2,}\\\\s*", hpp = "^\\\\s*[/]{2,}\\\\s*", c = "^\\\\s*[/]{2,}\\\\s*", h = "^\\\\s*[/]{2,}\\\\s*")}.
+\item \code{character}: One ore more regexes. Just like with
+\code{detect_comment_lines}, can be file type-specific.
+\item \code{function}: A function which takes lines of text as input and outputs a
+character vector of the same length. This function takes comment
+lines and should strip any comment characters preceding the text itself.
+You can also here use the \code{file_type} argument.
 }}
 
 \item{detect_allowed_keys}{\verb{[character, function]}
@@ -103,9 +111,9 @@ The following steps are performed to extract text data from each given
 \code{text_file_paths} path:
 \itemize{
 \item Each whole text file is read into R using \link{readLines}
-\item Comment lines are identified by calling \code{detect_comment_lines}
+\item Comment lines are identified by calling \code{detect_comment_lines}.
 \item Key lines are identified by calling \code{detect_codedoc_key_lines}
-on identified comment lines
+on identified comment lines.
 \item Keys are collected
 \item The number of appearances of each key is verified to be an even number
 \item Each comment block is collected from the text

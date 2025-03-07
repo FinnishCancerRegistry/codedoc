@@ -73,6 +73,7 @@ extract_keyed_comment_blocks_assertions__ <- function(
   dbc::assert_is_one_of(
     detect_comment_lines,
     funs = list(
+      dbc::report_is_NULL,
       dbc::report_is_function,
       dbc::report_is_character_nonNA_atom
     ),
@@ -82,6 +83,7 @@ extract_keyed_comment_blocks_assertions__ <- function(
   dbc::assert_is_one_of(
     clean_comment_lines,
     funs = list(
+      dbc::report_is_NULL,
       dbc::report_is_function,
       dbc::report_is_character_nonNA_atom
     ),
@@ -124,8 +126,8 @@ extract_keyed_comment_blocks_assertions__ <- function(
 #' @export
 extract_keyed_comment_blocks <- function(
   text_file_paths      = NULL,
-  detect_comment_lines = "^\\s*[#*]\\s?",
-  clean_comment_lines  = "^\\s*[#*]\\s?",
+  detect_comment_lines = NULL,
+  clean_comment_lines  = NULL,
   detect_allowed_keys  = "",
   sort_by = NULL,
   readLines_arg_list   = list(warn = FALSE),
@@ -186,22 +188,35 @@ extract_keyed_comment_blocks <- function(
   )
 }
 
-default_text_file_paths <- function() {
-  # @codedoc_comment_block codedoc:::default_text_file_paths
+text_file_paths_default_regex__ <- function() {
+  re <- paste0(
+    "(", names(detect_comment_lines_default__()), ")",
+    collapse = "|"
+  )
+  re <- paste0("[.](", re, ")$")
+  re
+}
+
+text_file_paths_default__ <- function() {
+  # @codedoc_comment_block codedoc:::text_file_paths_default__
   # ```r
   # dir(
   #   path = getwd(),
-  #   pattern = "[.]((r)|(rmd))$",
+  #   pattern = "${text_file_paths_default_regex__()}",
   #   full.names = TRUE,
   #   recursive = TRUE,
   #   ignore.case = TRUE
   # )
   # ```
-  # @codedoc_comment_block codedoc:::default_text_file_paths
-
+  # @codedoc_comment_block codedoc:::text_file_paths_default__
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-07", "0.6.0")
+  # `codedoc::extract_keyed_comment_blocks` default for `text_file_paths`
+  # expanded: Now uses regex
+  # `"[.]((r)|(rmd)|(py)|(sql)|(cpp)|(hpp)|(c)|(h))$"` in `dir` call.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-07", "0.6.0")
   dir(
     path = getwd(),
-    pattern = "[.]((r)|(rmd))$",
+    pattern = text_file_paths_default_regex__(),
     full.names = TRUE,
     recursive = TRUE,
     ignore.case = TRUE
@@ -224,10 +239,34 @@ empty_comment_block_df <- function() {
   return(df)
 }
 
+detect_comment_lines_default__ <- function() {
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-06", "0.6.0")
+  # `codedoc::extract_keyed_comment_blocks` default for `detect_comment_lines`
+  # is now `c(r = "^\\s*[#]+\\s*", rmd = "^\\s*[#]+\\s*", py = "^\\s*[#]+\\s*", sql = "^\\s*[-]{2,}\\s*")`.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-06", "0.6.0")
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-06", "0.6.0")
+  # `codedoc::extract_keyed_comment_blocks` default for `clean_comment_lines`
+  # is (usually) what `detect_comment_lines` is.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-06", "0.6.0")
+  hash_re <- "^\\s*[#]+\\s*"
+  dash_re <- "^\\s*[-]{2,}\\s*"
+  slash_re <- "^\\s*[/]{2,}\\s*"
+  c(
+    r = hash_re,
+    rmd = hash_re,
+    py = hash_re,
+    sql = dash_re,
+    cpp = slash_re,
+    hpp = slash_re,
+    c = slash_re,
+    h = slash_re
+  )
+}
+
 extract_keyed_comment_blocks__ <- function(
   text_file_paths = NULL,
-  detect_comment_lines = "^\\s*[#*]\\s*",
-  clean_comment_lines = "^\\s*[#*]\\s*",
+  detect_comment_lines = NULL,
+  clean_comment_lines = NULL,
   detect_allowed_keys = "",
   sort_by = NULL,
   readLines_arg_list = list(warn = FALSE),
@@ -255,7 +294,7 @@ extract_keyed_comment_blocks__ <- function(
     # @param text_file_paths `[NULL, character]` (default `NULL`)
     #
     # - `NULL`: collect text file paths using call
-    # @codedoc_insert_comment_block codedoc:::default_text_file_paths
+    # @codedoc_insert_comment_block codedoc:::text_file_paths_default__
     #
     # - `character`: use these text files
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
@@ -266,39 +305,99 @@ extract_keyed_comment_blocks__ <- function(
     # `pattern = "((r)|(rmd))$"`.
     # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-03-14", "0.3.6")
 
-    text_file_paths <- default_text_file_paths()
+    text_file_paths <- text_file_paths_default__()
   }
+  text_file_paths <- fs_file_path_normalise(text_file_paths)
 
+  # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  # @param detect_comment_lines `[NULL, character, function]`
+  # (default `NULL`)
+  #
+  # - `NULL`: Use these:
+  #   `${deparse1(codedoc:::detect_comment_lines_default__())}`
+  # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+  if (is.null(detect_comment_lines)) {
+    detect_comment_lines <- detect_comment_lines_default__()
+  }
+  detect_comment_lines_re <- NULL
   if (is.character(detect_comment_lines)) {
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
-    # @param detect_comment_lines `[character, function]`
-    # (default `"^\\s*[#*]"`)
-    #
-    # - `character`: pass this string as arg `pattern` to `[grepl]`
-    # - `function`: a function which takes lines of text as input and outputs a
+    # - `character`: One or more regular expressions that a line must match to
+    #   be considered a comment line. You can supply file type-specific regexes
+    #   by using (lowercase) file type names as names of the vector. E.g.
+    #   `c(r = "^ *#+ *", sql = "^ *--{2,} *")`.
+    # - `function`: A function which takes lines of text as input and outputs a
     #   logical vector of the same length as input which is `TRUE` when the line
-    #   is a comment line
+    #   is a comment line. If the function has argument `file_type`, the file
+    #   type / file extensions (e.g. `"r"`) is supplied to it when called.
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
-    detect_comment_lines_regex <- detect_comment_lines
-    detect_comment_lines <- function(x) {
-      grepl(detect_comment_lines_regex, x)
+    detect_comment_lines_re <- detect_comment_lines
+    if (is.null(names(detect_comment_lines_re))) {
+      detect_comment_lines <- function(x, file_type = NULL) {
+        # I added file_type = NULL because R CMD CHECK said:
+        # extract_keyed_comment_blocks__: multiple local function definitions
+        # for 'clean_comment_lines' with different formal arguments
+        out <- rep(FALSE, length(x))
+        for (re in detect_comment_lines_re) {
+          out <- out | grepl(re, x)
+        }
+        return(out)
+      }
+    } else {
+      names(detect_comment_lines_re) <- tolower(names(detect_comment_lines_re))
+      detect_comment_lines <- function(x, file_type = NULL) {
+        if (!file_type %in% names(detect_comment_lines_re)) {
+          stop("No regex defined to detect comment lines for file_type = ",
+               deparse1(file_type), ". These file types have a regex:",
+               deparse1(names(detect_comment_lines_re)))
+        }
+        grepl(detect_comment_lines_re[file_type], x)
+      }
+    }
+  }
+  if (is.null(clean_comment_lines)) {
+    if (!is.null(detect_comment_lines_re)) {
+      clean_comment_lines <- detect_comment_lines_re
+    } else {
+      clean_comment_lines <- detect_comment_lines_default__()
     }
   }
   if (is.character(clean_comment_lines)) {
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
-    # @param clean_comment_lines `[character, function]`
-    # (default `"^\\s*[#*]\\s*"`)
+    # @param clean_comment_lines `[NULL, character, function]` (default `NULL`)
     #
-    # - `character`: pass this string as arg `pattern` to `[sub]` call
-    #   `sub(pattern, "", x, perl = TRUE)` where `x` are the lines from a
-    #   text file
-    # - `function`: a function which takes lines of text as input and outputs a
-    #   character vector of the same length as input; this function takes comment
-    #   lines and should strip any comment characters preceding the text itself
+    # - `NULL`: If `detect_comment_lines` was `character`, use that.
+    #   Else use these:
+    #   `${deparse1(codedoc:::detect_comment_lines_default__())}`.
+    # - `character`: One ore more regexes. Just like with
+    #   `detect_comment_lines`, can be file type-specific.
+    # - `function`: A function which takes lines of text as input and outputs a
+    #   character vector of the same length. This function takes comment
+    #   lines and should strip any comment characters preceding the text itself.
+    #   You can also here use the `file_type` argument.
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
-    clean_comment_lines_regex <- clean_comment_lines
-    clean_comment_lines <- function(x) {
-      sub(clean_comment_lines_regex, "", x, perl = TRUE)
+    clean_comment_lines_re <- clean_comment_lines
+    if (is.null(names(clean_comment_lines_re))) {
+      clean_comment_lines <- function(x, file_type = NULL) {
+        # I added file_type = NULL because R CMD CHECK said:
+        # extract_keyed_comment_blocks__: multiple local function definitions
+        # for 'clean_comment_lines' with different formal arguments
+        out <- x
+        for (re in clean_comment_lines_re) {
+          out <- gsub(re, "", x)
+        }
+        return(out)
+      }
+    } else {
+      names(clean_comment_lines_re) <- tolower(names(clean_comment_lines_re))
+      clean_comment_lines <- function(x, file_type = NULL) {
+        if (!file_type %in% names(clean_comment_lines_re)) {
+          stop("No regex defined to clean comment lines for file_type = ",
+               deparse1(file_type), ". These file types have a regex:",
+               deparse1(names(clean_comment_lines_re)))
+        }
+        gsub(clean_comment_lines_re[file_type], "", x)
+      }
     }
   }
 
@@ -467,7 +566,7 @@ extract_keyed_comment_blocks__ <- function(
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-02-01", "0.3.5")
   # `sort_by` arg now actually works.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2023-02-01", "0.3.5")
-  
+
   bdf_order_cols <- as.list(block_df[, sort_by, drop = FALSE])
   bdf_order <- do.call(order, bdf_order_cols, quote = TRUE)
   block_df <- block_df[bdf_order, ]
@@ -480,8 +579,8 @@ extract_keyed_comment_blocks__ <- function(
 
 extract_keyed_comment_blocks_from_one_file <- function(
   text_file_path,
-  detect_comment_lines = function(x) grepl("^\\s*[#*]\\s*", x),
-  clean_comment_lines = function(x) sub("^\\s*[#*]\\s*", "", x),
+  detect_comment_lines,
+  clean_comment_lines,
   readLines_arg_list = list(warn = FALSE)
 ) {
   readLines_arg_list[["con"]] <- text_file_path
@@ -497,12 +596,23 @@ extract_keyed_comment_blocks_from_one_file <- function(
   )
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks_from_one_file
   #
-  # - Comment lines are identified by calling `detect_comment_lines`
+  # - Comment lines are identified by calling `detect_comment_lines`.
   # - Key lines are identified by calling `detect_codedoc_key_lines`
-  #   on identified comment lines
+  #   on identified comment lines.
   #
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks_from_one_file
-  line_df[["is_comment_line"]] <- detect_comment_lines(line_df[["line"]])
+  arg_list <- list(
+    line_df[["line"]]
+  )
+  file_type <- fs_file_type(text_file_path)
+  if ("file_type" %in% names(formals(detect_comment_lines))) {
+    arg_list[["file_type"]] <- file_type
+  }
+  line_df[["is_comment_line"]] <- do.call(
+    detect_comment_lines,
+    arg_list,
+    quote = TRUE
+  )
   line_df[["is_key_line"]] <- line_df[["is_comment_line"]]
   line_df[["is_key_line"]][line_df[["is_comment_line"]]] <-
     detect_codedoc_key_lines(line_df[["line"]][line_df[["is_comment_line"]]])
@@ -573,16 +683,23 @@ extract_keyed_comment_blocks_from_one_file <- function(
          deparse(text_file_path), ": ",
          deparse(misspecified_key_set))
   }
-  block_df[["comment_block"]] <- lapply(1:nrow(block_df), function(key_no) {
-    first_line_pos <- block_df[["first_block_line"]][key_no]
-    last_line_pos <- block_df[["last_block_line"]][key_no]
-    block_line_positions <- first_line_pos:last_line_pos
-    lines <- line_df[["line"]][block_line_positions]
-    lines <- clean_comment_lines(lines)
-    line_is_key_line <- line_df[["is_key_line"]][block_line_positions]
-    lines <- lines[!line_is_key_line]
-    lines
-  })
+  block_df[["comment_block"]] <- lapply(
+    seq_len(nrow(block_df)),
+    function(key_no) {
+      first_line_pos <- block_df[["first_block_line"]][key_no]
+      last_line_pos <- block_df[["last_block_line"]][key_no]
+      block_line_positions <- first_line_pos:last_line_pos
+      lines <- line_df[["line"]][block_line_positions]
+      arg_list <- list(lines)
+      if ("file_type" %in% names(formals(clean_comment_lines))) {
+        arg_list[["file_type"]] <- file_type
+      }
+      lines <- do.call(clean_comment_lines, arg_list, quote = TRUE)
+      line_is_key_line <- line_df[["is_key_line"]][block_line_positions]
+      lines <- lines[!line_is_key_line]
+      lines
+    }
+  )
 
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks_from_one_file
   #
