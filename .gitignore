@@ -6,3 +6,4 @@ inst/doc
 *.code-workspace
 *.Rproj
 .radian_history
+sandbox.R

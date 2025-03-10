@@ -6,3 +6,4 @@
 ^\.github$
 ^dev$
 ^\.radian_history$
+^sandbox.R$
