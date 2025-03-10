@@ -22,11 +22,11 @@ extract_keyed_comment_blocks(
 }
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{dir(
-path = getwd(),
-pattern = "[.]((r)|(rmd)|(py)|(sql)|(cpp)|(hpp)|(c)|(h))$",
-full.names = TRUE,
-recursive = TRUE,
-ignore.case = TRUE
+  path = getwd(),
+  pattern = "[.]((r)|(rmd)|(py)|(sql)|(cpp)|(hpp)|(c)|(h))$",
+  full.names = TRUE,
+  recursive = TRUE,
+  ignore.case = TRUE
 )
 }\if{html}{\out{</div>}}
 \itemize{
@@ -37,7 +37,7 @@ ignore.case = TRUE
 (default \code{NULL})
 \itemize{
 \item \code{NULL}: Use these:
-\code{c(r = "^\\\\s*[#]+\\\\s*", rmd = "^\\\\s*[#]+\\\\s*", py = "^\\\\s*[#]+\\\\s*", sql = "^\\\\s*[-]{2,}\\\\s*", cpp = "^\\\\s*[/]{2,}\\\\s*", hpp = "^\\\\s*[/]{2,}\\\\s*", c = "^\\\\s*[/]{2,}\\\\s*", h = "^\\\\s*[/]{2,}\\\\s*")}
+\code{c(r = "^\\\\s*[#]+\\\\s?", rmd = "^\\\\s*[#]+\\\\s?", py = "^\\\\s*[#]+\\\\s?", sql = "^\\\\s*[-]{2,}\\\\s?", cpp = "^\\\\s*[/]{2,}\\\\s?", hpp = "^\\\\s*[/]{2,}\\\\s?", c = "^\\\\s*[/]{2,}\\\\s?", h = "^\\\\s*[/]{2,}\\\\s?")}
 \item \code{character}: One or more regular expressions that a line must match to
 be considered a comment line. You can supply file type-specific regexes
 by using (lowercase) file type names as names of the vector. E.g.
@@ -52,7 +52,7 @@ type / file extensions (e.g. \code{"r"}) is supplied to it when called.
 \itemize{
 \item \code{NULL}: If \code{detect_comment_lines} was \code{character}, use that.
 Else use these:
-\code{c(r = "^\\\\s*[#]+\\\\s*", rmd = "^\\\\s*[#]+\\\\s*", py = "^\\\\s*[#]+\\\\s*", sql = "^\\\\s*[-]{2,}\\\\s*", cpp = "^\\\\s*[/]{2,}\\\\s*", hpp = "^\\\\s*[/]{2,}\\\\s*", c = "^\\\\s*[/]{2,}\\\\s*", h = "^\\\\s*[/]{2,}\\\\s*")}.
+\code{c(r = "^\\\\s*[#]+\\\\s?", rmd = "^\\\\s*[#]+\\\\s?", py = "^\\\\s*[#]+\\\\s?", sql = "^\\\\s*[-]{2,}\\\\s?", cpp = "^\\\\s*[/]{2,}\\\\s?", hpp = "^\\\\s*[/]{2,}\\\\s?", c = "^\\\\s*[/]{2,}\\\\s?", h = "^\\\\s*[/]{2,}\\\\s?")}.
 \item \code{character}: One ore more regexes. Just like with
 \code{detect_comment_lines}, can be file type-specific.
 \item \code{function}: A function which takes lines of text as input and outputs a

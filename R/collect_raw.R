@@ -247,16 +247,23 @@ empty_comment_block_df <- function() {
 
 detect_comment_lines_default__ <- function() {
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-06", "0.6.0")
-  # `codedoc::extract_keyed_comment_blocks` default for `detect_comment_lines`
-  # is now `c(r = "^\\s*[#]+\\s*", rmd = "^\\s*[#]+\\s*", py = "^\\s*[#]+\\s*", sql = "^\\s*[-]{2,}\\s*")`.
+  # `codedoc::extract_keyed_comment_blocks` now replaces
+  # `detect_comment_lines = NULL` with
+  # `c(r = "^\\s*[#]+\\s?", rmd = "^\\s*[#]+\\s?", py = "^\\s*[#]+\\s?", sql = "^\\s*[-]{2,}\\s?", cpp = "^\\s*[/]{2,}\\s?", hpp = "^\\s*[/]{2,}\\s?", c = "^\\s*[/]{2,}\\s?", h = "^\\s*[/]{2,}\\s?")`.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-06", "0.6.0")
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-06", "0.6.0")
   # `codedoc::extract_keyed_comment_blocks` default for `clean_comment_lines`
   # is (usually) what `detect_comment_lines` is.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-06", "0.6.0")
-  hash_re <- "^\\s*[#]+\\s*"
-  dash_re <- "^\\s*[-]{2,}\\s*"
-  slash_re <- "^\\s*[/]{2,}\\s*"
+  # NOTE: uses \\s? instead of \\s* because we want to allow e.g. this:
+  # - a
+  #   + a1
+  #   + a2
+  # - b
+  #   + b1
+  hash_re <- "^\\s*[#]+\\s?"
+  dash_re <- "^\\s*[-]{2,}\\s?"
+  slash_re <- "^\\s*[/]{2,}\\s?"
   c(
     r = hash_re,
     rmd = hash_re,

@@ -10,8 +10,9 @@ expanded: Now uses regex
 
 ### codedoc::extract_keyed_comment_blocks
 
-`codedoc::extract_keyed_comment_blocks` default for `detect_comment_lines`
-is now `c(r = "^\\s*[#]+\\s*", rmd = "^\\s*[#]+\\s*", py = "^\\s*[#]+\\s*", sql = "^\\s*[-]{2,}\\s*")`.
+`codedoc::extract_keyed_comment_blocks` now replaces
+`detect_comment_lines = NULL` with
+`c(r = "^\\s*[#]+\\s?", rmd = "^\\s*[#]+\\s?", py = "^\\s*[#]+\\s?", sql = "^\\s*[-]{2,}\\s?", cpp = "^\\s*[/]{2,}\\s?", hpp = "^\\s*[/]{2,}\\s?", c = "^\\s*[/]{2,}\\s?", h = "^\\s*[/]{2,}\\s?")`.
 
 ### codedoc::extract_keyed_comment_blocks
 
@@ -226,11 +227,11 @@ Changes to function `[codedoc::extract_keyed_comment_blocks]` arguments:
 
 - `text_file_paths`: allowed to also be `NULL`; default now `NULL`
 - `detect_comment_lines`: allowed to also be `character`; default now
-`"^\\s*[#*]\\s*"`
+  `"^\\s*[#*]\\s*"`
 - `clean_comment_lines`: allowed to also be `character`; default now
-`"^\\s*[#*]\\s*"`
+  `"^\\s*[#*]\\s*"`
 - `detect_allowed_keys`: allowed to also be `character`; default now
-`""`
+  `""`
 
 
 ### codedoc::extract_keyed_comment_blocks_
@@ -239,11 +240,11 @@ Changes to function `[codedoc::extract_keyed_comment_blocks]` arguments:
 
 - `text_file_paths`: allowed to also be `NULL`; default now `NULL`
 - `detect_comment_lines`: allowed to also be `character`; default now
-`"^\\s*[#*]\\s*"`
+  `"^\\s*[#*]\\s*"`
 - `clean_comment_lines`: allowed to also be `character`; default now
-`"^\\s*[#*]\\s*"`
+  `"^\\s*[#*]\\s*"`
 - `detect_allowed_keys`: allowed to also be `character`; default now
-`""`
+  `""`
 
 
 

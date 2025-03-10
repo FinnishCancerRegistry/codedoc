@@ -12,15 +12,15 @@ Allows generation of documentation from specifically formatted code comments.
 }
 \section{Recommended installation}{
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{devtools::install_github(
-"FinnishCancerRegistry/codedoc",
-ref = readline("enter latest tag on github: ")
+  "FinnishCancerRegistry/codedoc",
+  ref = readline("enter latest tag on github: ")
 )
 }\if{html}{\out{</div>}}
 }
 
 \section{Example}{
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{block_df <- codedoc::extract_keyed_comment_blocks(
-text_file_paths = codedoc::example_text_file_path("r_script.R")
+  text_file_paths = codedoc::example_text_file_path("r_script.R")
 )
 print(block_df)
 }\if{html}{\out{</div>}}
@@ -38,8 +38,9 @@ expanded: Now uses regex
 
 \subsection{codedoc::extract_keyed_comment_blocks}{
 
-\code{codedoc::extract_keyed_comment_blocks} default for \code{detect_comment_lines}
-is now \code{c(r = "^\\\\s*[#]+\\\\s*", rmd = "^\\\\s*[#]+\\\\s*", py = "^\\\\s*[#]+\\\\s*", sql = "^\\\\s*[-]{2,}\\\\s*")}.
+\code{codedoc::extract_keyed_comment_blocks} now replaces
+\code{detect_comment_lines = NULL} with
+\code{c(r = "^\\\\s*[#]+\\\\s?", rmd = "^\\\\s*[#]+\\\\s?", py = "^\\\\s*[#]+\\\\s?", sql = "^\\\\s*[-]{2,}\\\\s?", cpp = "^\\\\s*[/]{2,}\\\\s?", hpp = "^\\\\s*[/]{2,}\\\\s?", c = "^\\\\s*[/]{2,}\\\\s?", h = "^\\\\s*[/]{2,}\\\\s?")}.
 }
 
 \subsection{codedoc::extract_keyed_comment_blocks}{

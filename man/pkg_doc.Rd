@@ -75,7 +75,6 @@ Performs the following steps.
 \itemize{
 \item Calls \verb{[codedoc::extract_keyed_comment_blocks]}.
 \item Collect comment block lines whose keys match one of:
-}
 \itemize{
 \item \code{paste0("^", regex, "::")} for arguments --- but you should use roxygen
 block directly unless you have a specific reason.
@@ -86,7 +85,6 @@ These go into either \code{Details} or section \code{Functions}, depending on
 function returns. These appear under the section \code{Value} in the help
 page.
 }
-\itemize{
 \item Call \verb{[codedoc::codedoc_roxygen_news_by_version]} to extract news for
 the function, if any.
 \item If \code{regex} looks something like \code{xx::xx_make_column_xxxx}, matching
