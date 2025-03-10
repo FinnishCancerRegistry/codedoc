@@ -6,7 +6,8 @@
 \alias{codedoc-package}
 \title{codedoc: Generate Code Documentation}
 \description{
-Allows generation of documentation from specifically formatted code comments.
+Allows generation of documentation from specifically
+formatted code comments.
 
 \href{https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml}{\if{html}{\figure{https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml/badge.svg}}}
 }

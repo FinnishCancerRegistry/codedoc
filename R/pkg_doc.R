@@ -276,7 +276,10 @@ pkg_doc_package_description <- function(
   stopifnot(inherits(desc_arg_list, c("NULL", "list")))
   desc_arg_list <- as.list(desc_arg_list)
   if (!"R_package_name" %in% names(desc_arg_list)) {
-    desc_arg_list[["R_package_name"]] <- desc::desc_get_field("Package")
+    desc_arg_list[["R_package_name"]] <- read.dcf(
+      file = "DESCRIPTION",
+      fields = "Package"
+    )[1L, 1L]
   }
 
   #' @param news_arg_list `[NULL, list]` (default `NULL`)

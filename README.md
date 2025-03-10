@@ -4,7 +4,8 @@
 # Package `codedoc`
 
 
-Allows generation of documentation from specifically formatted code comments.
+Allows generation of documentation from specifically
+formatted code comments.
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml)

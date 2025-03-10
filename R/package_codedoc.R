@@ -6,7 +6,7 @@
 "_PACKAGE"
 
 # @codedoc_comment_block R_package_description(codedoc)
-# ${desc::desc_get_field("Description")}
+# ${read.dcf(file = "DESCRIPTION", fields = "Description")[1L, 1L]}
 #
 # <!-- badges: start -->
 # [![R-CMD-check](https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/FinnishCancerRegistry/codedoc/actions/workflows/R-CMD-check.yaml)
