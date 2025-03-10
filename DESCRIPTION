@@ -8,7 +8,8 @@ Description: Allows generation of documentation from specifically
     formatted code comments.
 License: MIT + file LICENSE
 Imports:
-    dbc (>= 0.4.0)
+    dbc (>= 0.4.0),
+    digest (>= 0.6.37)
 Suggests: 
     knitr,
     rmarkdown,

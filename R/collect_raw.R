@@ -214,13 +214,19 @@ text_file_paths_default__ <- function() {
   # expanded: Now uses regex
   # `"[.]((r)|(rmd)|(py)|(sql)|(cpp)|(hpp)|(c)|(h))$"` in `dir` call.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-07", "0.6.0")
-  dir(
+  out <- dir(
     path = getwd(),
     pattern = text_file_paths_default_regex__(),
     full.names = TRUE,
     recursive = TRUE,
     ignore.case = TRUE
   )
+  out <- normalizePath(
+    out,
+    winslash = "/",
+    mustWork = TRUE
+  )
+  return(out)
 }
 
 empty_comment_block_df <- function() {

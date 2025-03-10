@@ -18,6 +18,14 @@ is now `c(r = "^\\s*[#]+\\s*", rmd = "^\\s*[#]+\\s*", py = "^\\s*[#]+\\s*", sql 
 `codedoc::extract_keyed_comment_blocks` default for `clean_comment_lines`
 is (usually) what `detect_comment_lines` is.
 
+### codedoc::pkg_doc_fun
+
+New fun `codedoc::pkg_doc_fun`.
+
+### codedoc::pkg_doc_package_description
+
+New fun `codedoc::pkg_doc_package_description`.
+
 
 ## News for version 0.5.0
 

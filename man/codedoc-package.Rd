@@ -48,6 +48,16 @@ is now \code{c(r = "^\\\\s*[#]+\\\\s*", rmd = "^\\\\s*[#]+\\\\s*", py = "^\\\\s*
 is (usually) what \code{detect_comment_lines} is.
 }
 
+\subsection{codedoc::pkg_doc_fun}{
+
+New fun \code{codedoc::pkg_doc_fun}.
+}
+
+\subsection{codedoc::pkg_doc_package_description}{
+
+New fun \code{codedoc::pkg_doc_package_description}.
+}
+
 }
 
 \subsection{News for version 0.5.0}{
