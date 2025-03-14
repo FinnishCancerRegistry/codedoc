@@ -71,17 +71,26 @@ pkg_doc_codedoc_df__ <- function(
       )
     }
     .__PKG_DOC_ENV__.[["text_file_df"]] <- new_text_file_df
-    pkg_nm <- read.dcf(
-      "DESCRIPTION",
-      fields = "Package"
-    )[1L, 1L]
     extract_arg_list <- as.list(extract_arg_list)
     extract_arg_list[["detect_allowed_keys"]] <- function(x) {
-      grepl(pkg_nm, x)
+      pkg_nm <- read.dcf(
+        "DESCRIPTION",
+        fields = "Package"
+      )[1L, 1L]
+      re_set <- sprintf(
+        c("^%s", "^news[(]\"%s", "^return[(]%s::"),
+        pkg_nm
+      )
+      out <- rep(FALSE, length(x))
+      for (re in re_set) {
+        out <- out | grepl(re, x)
+      }
+      return(out)
     }
     extract_arg_list[["text_file_paths"]] <- text_file_paths
     .__PKG_DOC_ENV__.[["codedoc_df"]] <-
-      do.call(codedoc::extract_keyed_comment_blocks, extract_arg_list)
+      do.call(codedoc::extract_keyed_comment_blocks, extract_arg_list,
+              quote = TRUE)
   }
   return(.__PKG_DOC_ENV__.[["codedoc_df"]])
 }
@@ -159,8 +168,7 @@ pkg_doc_fun <- function(
   #' otherwise.
   df <- pkg_doc_codedoc_df__(
     dir_path = getwd(),
-    text_file_paths = text_file_paths,
-    extract_arg_list = list(detect_allowed_keys = regex)
+    text_file_paths = text_file_paths
   )
   # @codedoc_comment_block codedoc::pkg_doc_fun
   # - Collect comment block lines whose keys match one of:
