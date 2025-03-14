@@ -29,6 +29,15 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.6.1}{
+\subsection{codedoc::pkg_doc_fun}{
+
+\code{codedoc::pkg_doc_fun} now more robust when calling
+\code{codedoc::extract_keyed_comment_blocks}.
+}
+
+}
+
 \subsection{News for version 0.6.0}{
 \subsection{codedoc::extract_keyed_comment_blocks}{
 

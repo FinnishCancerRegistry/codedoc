@@ -81,6 +81,10 @@ pkg_doc_codedoc_df__ <- function(
         c("^%s", "^news[(]\"%s", "^return[(]%s::"),
         pkg_nm
       )
+      # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-14", "0.6.1")
+      # `codedoc::pkg_doc_fun` now more robust when calling
+      # `codedoc::extract_keyed_comment_blocks`.
+      # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-14", "0.6.1")
       out <- rep(FALSE, length(x))
       for (re in re_set) {
         out <- out | grepl(re, x)

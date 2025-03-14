@@ -111,6 +111,13 @@ Calls \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
 }
 
+\section{News for version 0.6.1}{
+
+
+\code{codedoc::pkg_doc_fun} now more robust when calling
+\code{codedoc::extract_keyed_comment_blocks}.
+}
+
 \section{News for version 0.6.0}{
 
 
