@@ -72,6 +72,12 @@ pkg_doc_codedoc_df__ <- function(
     }
     .__PKG_DOC_ENV__.[["text_file_df"]] <- new_text_file_df
     extract_arg_list <- as.list(extract_arg_list)
+    # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-19", "0.6.2")
+    # Fixed `codedoc::pkg_doc_fun` extraction of param docs.
+    # Multi-block docs could be mixed between parameters if they appeared in
+    # a mixed order in text. Now they do not.
+    # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-19", "0.6.2")
+    extract_arg_list[["sort_by"]] <- c("key", "first_block_line")
     extract_arg_list[["detect_allowed_keys"]] <- function(x) {
       pkg_nm <- read.dcf(
         "DESCRIPTION",

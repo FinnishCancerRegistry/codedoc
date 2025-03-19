@@ -29,6 +29,16 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.6.2}{
+\subsection{codedoc::pkg_doc_fun}{
+
+Fixed \code{codedoc::pkg_doc_fun} extraction of param docs.
+Multi-block docs could be mixed between parameters if they appeared in
+a mixed order in text. Now they do not.
+}
+
+}
+
 \subsection{News for version 0.6.1}{
 \subsection{codedoc::pkg_doc_fun}{
 

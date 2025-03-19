@@ -111,6 +111,14 @@ Calls \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
 }
 
+\section{News for version 0.6.2}{
+
+
+Fixed \code{codedoc::pkg_doc_fun} extraction of param docs.
+Multi-block docs could be mixed between parameters if they appeared in
+a mixed order in text. Now they do not.
+}
+
 \section{News for version 0.6.1}{
 
 
