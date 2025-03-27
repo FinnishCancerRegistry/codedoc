@@ -29,6 +29,21 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.6.3}{
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+Fixed assertion on arg \code{detect_comment_lines}. Now allows for length > 1
+\code{character} vectors as documented.
+}
+
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+Fixed assertion on arg \code{clean_comment_lines}. Now allows for length > 1
+\code{character} vectors as documented.
+}
+
+}
+
 \subsection{News for version 0.6.2}{
 \subsection{codedoc::pkg_doc_fun}{
 

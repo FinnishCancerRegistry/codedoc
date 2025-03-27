@@ -41,7 +41,7 @@ extract_keyed_comment_blocks(
 \item \code{character}: One or more regular expressions that a line must match to
 be considered a comment line. You can supply file type-specific regexes
 by using (lowercase) file type names as names of the vector. E.g.
-\code{c(r = "^ *#+ *", sql = "^ *--{2,} *")}.
+\code{c(r = "^ *#+ *", sql = "^ *[-]{2,} *")}.
 \item \code{function}: A function which takes lines of text as input and outputs a
 logical vector of the same length as input which is \code{TRUE} when the line
 is a comment line. If the function has argument \code{file_type}, the file

@@ -70,22 +70,30 @@ extract_keyed_comment_blocks_assertions__ <- function(
 
   assert_arg_text_file_paths(text_file_paths)
 
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-27", "0.6.3")
+  # Fixed assertion on arg `detect_comment_lines`. Now allows for length > 1
+  # `character` vectors as documented.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-27", "0.6.3")
   dbc::assert_is_one_of(
     detect_comment_lines,
     funs = list(
       dbc::report_is_NULL,
       dbc::report_is_function,
-      dbc::report_is_character_nonNA_atom
+      dbc::report_is_character_nonNA_vector
     ),
     call = call,
     assertion_type = assertion_type
   )
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-27", "0.6.3")
+  # Fixed assertion on arg `clean_comment_lines`. Now allows for length > 1
+  # `character` vectors as documented.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-27", "0.6.3")
   dbc::assert_is_one_of(
     clean_comment_lines,
     funs = list(
       dbc::report_is_NULL,
       dbc::report_is_function,
-      dbc::report_is_character_nonNA_atom
+      dbc::report_is_character_nonNA_vector
     ),
     call = call,
     assertion_type = assertion_type
@@ -338,7 +346,7 @@ extract_keyed_comment_blocks__ <- function(
     # - `character`: One or more regular expressions that a line must match to
     #   be considered a comment line. You can supply file type-specific regexes
     #   by using (lowercase) file type names as names of the vector. E.g.
-    #   `c(r = "^ *#+ *", sql = "^ *--{2,} *")`.
+    #   `c(r = "^ *#+ ?", sql = "^ *[-]{2,} ?")`.
     # - `function`: A function which takes lines of text as input and outputs a
     #   logical vector of the same length as input which is `TRUE` when the line
     #   is a comment line. If the function has argument `file_type`, the file
