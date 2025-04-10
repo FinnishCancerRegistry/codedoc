@@ -29,6 +29,17 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.7.0}{
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+\code{codedoc::extract_keyed_comment_blocks} default for \code{text_file_paths}
+improved: It now excludes files under \verb{.../renv/library/} to avoid looking
+through files in installed R packages. That is the typical directory for
+packages installed by package \code{renv}.
+}
+
+}
+
 \subsection{News for version 0.6.3}{
 \subsection{codedoc::extract_keyed_comment_blocks}{
 

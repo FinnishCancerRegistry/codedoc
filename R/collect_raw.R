@@ -208,13 +208,21 @@ text_file_paths_default_regex__ <- function() {
 text_file_paths_default__ <- function() {
   # @codedoc_comment_block codedoc:::text_file_paths_default__
   # ```r
-  # dir(
-  #   path = getwd(),
-  #   pattern = "${text_file_paths_default_regex__()}",
-  #   full.names = TRUE,
-  #   recursive = TRUE,
-  #   ignore.case = TRUE
-  # )
+  # {
+  #   tfp <- dir(
+  #     path = getwd(),
+  #     pattern = "${text_file_paths_default_regex__()}",
+  #     full.names = TRUE,
+  #     recursive = TRUE,
+  #     ignore.case = TRUE
+  #   )
+  #   tfp <- normalizePath(
+  #     path = tfp,
+  #     winslash = "/",
+  #     mustWork = FALSE
+  #   )
+  #   tfp <- tfp[!grepl("/renv/library/", tfp)]
+  # }
   # ```
   # @codedoc_comment_block codedoc:::text_file_paths_default__
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-07", "0.6.0")
@@ -222,18 +230,28 @@ text_file_paths_default__ <- function() {
   # expanded: Now uses regex
   # `"[.]((r)|(rmd)|(py)|(sql)|(cpp)|(hpp)|(c)|(h))$"` in `dir` call.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-03-07", "0.6.0")
-  out <- dir(
-    path = getwd(),
-    pattern = text_file_paths_default_regex__(),
-    full.names = TRUE,
-    recursive = TRUE,
-    ignore.case = TRUE
-  )
-  out <- normalizePath(
-    out,
-    winslash = "/",
-    mustWork = TRUE
-  )
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-04-10", "0.7.0")
+  # `codedoc::extract_keyed_comment_blocks` default for `text_file_paths`
+  # improved: It now excludes files under `.../renv/library/` to avoid looking
+  # through files in installed R packages. That is the typical directory for
+  # packages installed by package `renv`.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-04-10", "0.7.0")
+  out <- {
+    tfp <- dir(
+      path = getwd(),
+      pattern = text_file_paths_default_regex__(),
+      full.names = TRUE,
+      recursive = TRUE,
+      ignore.case = TRUE
+    )
+    tfp <- normalizePath(
+      path = tfp,
+      winslash = "/",
+      mustWork = FALSE
+    )
+    tfp <- tfp[!grepl("/renv/library/", tfp)]
+    tfp
+  }
   return(out)
 }
 
