@@ -221,6 +221,9 @@ text_file_paths_default__ <- function() {
   #     winslash = "/",
   #     mustWork = FALSE
   #   )
+  #   if (git_is_installed__() && git_used_here__()) {
+  #     tfp <- tfp[!git_ignores__(tfp)]
+  #   }
   #   tfp <- tfp[!grepl("/renv/library/", tfp)]
   # }
   # ```
@@ -236,6 +239,11 @@ text_file_paths_default__ <- function() {
   # through files in installed R packages. That is the typical directory for
   # packages installed by package `renv`.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-04-10", "0.7.0")
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-04-16", "0.8.0")
+  # `codedoc::extract_keyed_comment_blocks` default for `text_file_paths`
+  # improved: It now excludes files ignored by `git` if it has been installed on
+  # the system.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-04-16", "0.8.0")
   out <- {
     tfp <- dir(
       path = getwd(),
@@ -250,6 +258,9 @@ text_file_paths_default__ <- function() {
       mustWork = FALSE
     )
     tfp <- tfp[!grepl("/renv/library/", tfp)]
+    if (git_is_installed__() && git_used_here__()) {
+      tfp <- tfp[!git_ignores__(tfp)]
+    }
     tfp
   }
   return(out)

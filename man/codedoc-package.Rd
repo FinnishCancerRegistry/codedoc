@@ -29,6 +29,16 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.8.0}{
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+\code{codedoc::extract_keyed_comment_blocks} default for \code{text_file_paths}
+improved: It now excludes files ignored by \code{git} if it has been installed on
+the system.
+}
+
+}
+
 \subsection{News for version 0.7.0}{
 \subsection{codedoc::extract_keyed_comment_blocks}{
 

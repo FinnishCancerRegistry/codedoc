@@ -34,6 +34,9 @@ extract_keyed_comment_blocks(
     winslash = "/",
     mustWork = FALSE
   )
+  if (git_is_installed__() && git_used_here__()) \{
+    tfp <- tfp[!git_ignores__(tfp)]
+  \}
   tfp <- tfp[!grepl("/renv/library/", tfp)]
 \}
 }\if{html}{\out{</div>}}
