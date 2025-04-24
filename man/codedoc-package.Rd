@@ -29,6 +29,19 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.9.0}{
+\subsection{codedoc::pkg_doc_fun}{
+
+Fix for \code{codedoc::pkg_doc_fun} not being exported.
+}
+
+\subsection{codedoc::pkg_doc_package_description}{
+
+Fix for \code{codedoc::pkg_doc_package_description} not being exported.
+}
+
+}
+
 \subsection{News for version 0.8.0}{
 \subsection{codedoc::extract_keyed_comment_blocks}{
 

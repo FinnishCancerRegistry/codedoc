@@ -105,7 +105,7 @@ pkg_doc_codedoc_df__ <- function(
   return(.__PKG_DOC_ENV__.[["codedoc_df"]])
 }
 
-#' @eval codedoc::pkg_doc_fun("codedoc::pkg_doc_fun", "pkg_doc")
+#' @eval codedoc:::pkg_doc_fun("codedoc::pkg_doc_fun", "pkg_doc")
 pkg_doc_fun <- function(
   regex,
   rdname = NULL,
@@ -114,6 +114,9 @@ pkg_doc_fun <- function(
   # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-10", "0.6.0")
   # New fun `codedoc::pkg_doc_fun`.
   # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-10", "0.6.0")
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-04-24", "0.9.0")
+  # Fix for `codedoc::pkg_doc_fun` not being exported.
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-04-24", "0.9.0")
   dbc::assert_match_regex(
     regex,
     grepl.arg.list = list(pattern = "^[a-zA-Z0-9._-]+::[a-zA-Z0-9._-]+$")
@@ -273,7 +276,7 @@ pkg_doc_fun <- function(
   return(lines)
 }
 
-#' @eval codedoc::pkg_doc_fun("codedoc::pkg_doc_package_description", "pkg_doc")
+#' @eval codedoc:::pkg_doc_fun("codedoc::pkg_doc_package_description", "pkg_doc")
 pkg_doc_package_description <- function(
   text_file_paths = NULL,
   desc_arg_list = NULL,
@@ -282,6 +285,12 @@ pkg_doc_package_description <- function(
   # @codedoc_comment_block news("codedoc::pkg_doc_package_description", "2025-03-10", "0.6.0")
   # New fun `codedoc::pkg_doc_package_description`.
   # @codedoc_comment_block news("codedoc::pkg_doc_package_description", "2025-03-10", "0.6.0")
+  # @codedoc_comment_block news("codedoc::pkg_doc_package_description", "2025-03-10", "0.6.0")
+  # New fun `codedoc::pkg_doc_package_description`.
+  # @codedoc_comment_block news("codedoc::pkg_doc_package_description", "2025-03-10", "0.6.0")
+  # @codedoc_comment_block news("codedoc::pkg_doc_package_description", "2025-04-24", "0.9.0")
+  # Fix for `codedoc::pkg_doc_package_description` not being exported.
+  # @codedoc_comment_block news("codedoc::pkg_doc_package_description", "2025-04-24", "0.9.0")
   # @codedoc_comment_block codedoc::pkg_doc_package_description
   # Calls `codedoc::codedoc_R_package_description` and
   # `codedoc::codedoc_news_for_R_package`.
