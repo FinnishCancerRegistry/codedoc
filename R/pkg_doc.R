@@ -105,18 +105,15 @@ pkg_doc_codedoc_df__ <- function(
   return(.__PKG_DOC_ENV__.[["codedoc_df"]])
 }
 
-#' @eval codedoc:::pkg_doc_fun("codedoc::pkg_doc_fun", "pkg_doc")
-pkg_doc_fun <- function(
+#' @eval codedoc:::pkg_doc_fun("codedoc::pkg_doc_obj", "pkg_doc")
+pkg_doc_obj <- function(
   regex,
   rdname = NULL,
   text_file_paths = NULL
 ) {
-  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-10", "0.6.0")
-  # New fun `codedoc::pkg_doc_fun`.
-  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-10", "0.6.0")
-  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-04-24", "0.9.0")
-  # Fix for `codedoc::pkg_doc_fun` not being exported.
-  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-04-24", "0.9.0")
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-06-18", "0.10.0")
+  # New function `codedoc::pkg_doc_obj`.
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-06-18", "0.10.0")
   dbc::assert_match_regex(
     regex,
     grepl.arg.list = list(pattern = "^[a-zA-Z0-9._-]+::[a-zA-Z0-9._-]+$")
@@ -156,15 +153,15 @@ pkg_doc_fun <- function(
   }
 
 
-  # @codedoc_comment_block codedoc::pkg_doc_fun
-  # Document a function in an R package.
+  # @codedoc_comment_block codedoc::pkg_doc_obj
+  # Document an object in an R package.
   #
   # Performs the following steps.
   # - Calls `[codedoc::extract_keyed_comment_blocks]`.
-  # @codedoc_comment_block codedoc::pkg_doc_fun
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   #' @param text_file_paths `[NULL, character]` (default `NULL`)
   #'
-  #' - `codedoc::pkg_doc_fun`:
+  #' - `codedoc::pkg_doc_obj`:
   #'   Passed to `codedoc::codedoc_lines` and
   #'   `codedoc::codedoc_roxygen_news_by_version` calls.
   #' @param regex `[character]` (no default)
@@ -183,17 +180,17 @@ pkg_doc_fun <- function(
     dir_path = getwd(),
     text_file_paths = text_file_paths
   )
-  # @codedoc_comment_block codedoc::pkg_doc_fun
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   # - Collect comment block lines whose keys match one of:
   #   + `paste0("^", regex, "::")` for arguments --- but you should use roxygen
   #     block directly unless you have a specific reason.
   #   + `paste0("^", regex, "$")` for the description of the function.
   #     These go into either `Details` or section `Functions`, depending on
   #     `rdname`.
-  #   + `paste0("^return[(]", regex, "[)]$")` for docs describing the what the
+  #   + `paste0("^return[(]", regex, "[)]$")` for docs describing what the
   #     function returns. These appear under the section `Value` in the help
   #     page.
-  # @codedoc_comment_block codedoc::pkg_doc_fun
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   regexes <- c(
     "param" = paste0("^", regex, "::"),
     "descr" = paste0("^", regex, "$"),
@@ -215,20 +212,16 @@ pkg_doc_fun <- function(
   })
   names(lines_by_section) <- names(regexes)
 
-  # @codedoc_comment_block codedoc::pkg_doc_fun
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   # - Call `[codedoc::codedoc_roxygen_news_by_version]` to extract news for
   #   the function, if any.
-  # @codedoc_comment_block codedoc::pkg_doc_fun
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   lines_by_section[["news"]] <- codedoc::codedoc_roxygen_news_by_version(
     regex,
     text_file_paths
   )
 
-  # @codedoc_comment_block codedoc::pkg_doc_fun
-  # @codedoc_insert_comment_block explain(codedoc::pkg_doc_fun, maker)
-  # @codedoc_comment_block codedoc::pkg_doc_fun
-
-  # @codedoc_comment_block explain(codedoc::pkg_doc_fun, maker)
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   # - If `regex` looks something like `xx::xx_make_column_xxxx`, matching
   #   regular expression
   #   `^[a-zA-Z0-9._-]+::[a-zA-Z0-9._-]+_make_column_[a-zA-Z0-9._-]+$`,
@@ -236,10 +229,10 @@ pkg_doc_fun <- function(
   #   are assumed to be column names and are documented simply with
   #   ${gsub("`", "", deparse1(doc_fun_col_arg__("some.column")))}.
   #   This means you don't have to document such column arguments separately.
-  # @codedoc_comment_block explain(codedoc::pkg_doc_fun, maker)
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   re_maker <- "^[a-zA-Z0-9._-]+::[a-zA-Z0-9._-]+_make_column_[a-zA-Z0-9._-]+$"
   if (grepl(re_maker, regex)) {
-    fun <- tryCatch(
+    obj <- tryCatch(
       # replace :: -> ::: just in case it is not yet exported.
       eval(parse(text = gsub(":+", ":::", regex))),
       error = function(e) {
@@ -252,28 +245,56 @@ pkg_doc_fun <- function(
         )
       }
     )
-    arg_nms <- names(formals(fun))
-    col_arg_nms <- arg_nms[!grepl("(dataset)|(setting)", arg_nms)]
-    lines_by_section[["param"]] <- c(
-      lines_by_section[["param"]],
-      unlist(lapply(col_arg_nms, doc_fun_col_arg__))
-    )
+    if (is.function(obj)) {
+      arg_nms <- names(formals(obj))
+      col_arg_nms <- arg_nms[!grepl("(dataset)|(setting)", arg_nms)]
+      lines_by_section[["param"]] <- c(
+        lines_by_section[["param"]],
+        unlist(lapply(col_arg_nms, doc_fun_col_arg__))
+      )
+    }
   }
 
-  # @codedoc_comment_block codedoc::pkg_doc_fun
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   # - Finally, collect all docs into one long string vector and add `@export`
   #   to the beginning of the vector.
-  # @codedoc_comment_block codedoc::pkg_doc_fun
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   lines <- c(
     "@export",
     rdname_line,
     "",
     unlist(lines_by_section, use.names = FALSE)
   )
-  # @codedoc_comment_block return(codedoc::pkg_doc_fun)
+  # @codedoc_comment_block return(codedoc::pkg_doc_obj)
   # Returns a `character` vector of lines for further processing by `roxygen2`.
-  # @codedoc_comment_block return(codedoc::pkg_doc_fun)
+  # @codedoc_comment_block return(codedoc::pkg_doc_obj)
   return(lines)
+}
+
+#' @eval codedoc:::pkg_doc_fun("codedoc::pkg_doc_fun", "pkg_doc")
+pkg_doc_fun <- function(
+  regex,
+  rdname = NULL,
+  text_file_paths = NULL
+) {
+  # @codedoc_comment_block codedoc::pkg_doc_obj
+  # Document a function in an R package. Wrapper for
+  # `codedoc::pkg_doc_fun` .
+  # @codedoc_comment_block codedoc::pkg_doc_obj
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-10", "0.6.0")
+  # New fun `codedoc::pkg_doc_fun`.
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-10", "0.6.0")
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-04-24", "0.9.0")
+  # Fix for `codedoc::pkg_doc_fun` not being exported.
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-04-24", "0.9.0")
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-06-18", "0.10.0")
+  # `codedoc::pkg_doc_fun` now a wrapper for `codedoc::pkg_doc_obj`.
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-06-18", "0.10.0")
+  return(codedoc::pkg_doc_obj(
+    regex = regex,
+    rdname = rdname,
+    text_file_paths = text_file_paths
+  ))
 }
 
 #' @eval codedoc:::pkg_doc_fun("codedoc::pkg_doc_package_description", "pkg_doc")

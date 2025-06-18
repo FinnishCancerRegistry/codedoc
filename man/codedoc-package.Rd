@@ -29,6 +29,19 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.10.0}{
+\subsection{codedoc::pkg_doc_fun}{
+
+\code{codedoc::pkg_doc_fun} now a wrapper for \code{codedoc::pkg_doc_obj}.
+}
+
+\subsection{codedoc::pkg_doc_obj}{
+
+New function \code{codedoc::pkg_doc_obj}.
+}
+
+}
+
 \subsection{News for version 0.9.0}{
 \subsection{codedoc::pkg_doc_fun}{
 

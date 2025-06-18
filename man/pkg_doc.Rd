@@ -2,10 +2,13 @@
 % Please edit documentation in R/pkg_doc.R
 \name{pkg_doc}
 \alias{pkg_doc}
+\alias{pkg_doc_obj}
 \alias{pkg_doc_fun}
 \alias{pkg_doc_package_description}
 \title{Document R Package}
 \usage{
+pkg_doc_obj(regex, rdname = NULL, text_file_paths = NULL)
+
 pkg_doc_fun(regex, rdname = NULL, text_file_paths = NULL)
 
 pkg_doc_package_description(
@@ -53,7 +56,7 @@ List of arguments passed to
 \code{codedoc::codedoc_news_for_R_package}.}
 }
 \value{
-\strong{codedoc::pkg_doc_fun}
+\strong{codedoc::pkg_doc_obj}
 
 Returns a \code{character} vector of lines for further processing by \code{roxygen2}.
 
@@ -67,9 +70,9 @@ Tools to document an R package.
 }
 \section{Functions}{
 
-\strong{codedoc::pkg_doc_fun}
+\strong{codedoc::pkg_doc_obj}
 
-Document a function in an R package.
+Document an object in an R package.
 
 Performs the following steps.
 \itemize{
@@ -81,7 +84,7 @@ block directly unless you have a specific reason.
 \item \code{paste0("^", regex, "$")} for the description of the function.
 These go into either \code{Details} or section \code{Functions}, depending on
 \code{rdname}.
-\item \code{paste0("^return[(]", regex, "[)]$")} for docs describing the what the
+\item \code{paste0("^return[(]", regex, "[)]$")} for docs describing what the
 function returns. These appear under the section \code{Value} in the help
 page.
 }
@@ -96,6 +99,8 @@ c("@param some.column (no default)", "", "Column some_column values.").
 This means you don't have to document such column arguments separately.
 \item Finally, collect all docs into one long string vector and add \verb{@export}
 to the beginning of the vector.
+Document a function in an R package. Wrapper for
+\code{codedoc::pkg_doc_fun} .
 }
 
 [)]: R:)
@@ -109,6 +114,16 @@ to the beginning of the vector.
 
 Calls \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
+}
+
+\section{News for version 0.10.0}{
+
+
+New function \code{codedoc::pkg_doc_obj}.
+
+
+
+\code{codedoc::pkg_doc_fun} now a wrapper for \code{codedoc::pkg_doc_obj}.
 }
 
 \section{News for version 0.9.0}{
