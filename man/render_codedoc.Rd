@@ -2,7 +2,6 @@
 % Please edit documentation in R/render.R
 \name{render_codedoc}
 \alias{render_codedoc}
-\alias{render_codedoc_}
 \title{Render Code Documentation}
 \usage{
 render_codedoc(
@@ -11,13 +10,6 @@ render_codedoc(
   writeLines_arg_list = list(),
   render_arg_list = list(),
   assertion_type = "input"
-)
-
-render_codedoc_(
-  block_df,
-  template_file_path = NULL,
-  writeLines_arg_list = list(),
-  render_arg_list = list()
 )
 }
 \arguments{

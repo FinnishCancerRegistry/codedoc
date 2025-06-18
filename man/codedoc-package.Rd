@@ -40,6 +40,11 @@ print(block_df)
 New function \code{codedoc::pkg_doc_obj}.
 }
 
+\subsection{codedoc::render_codedoc_}{
+
+\code{codedoc:render_codedoc_} deleted. Use \code{codedoc:render_codedoc}.
+}
+
 }
 
 \subsection{News for version 0.9.0}{

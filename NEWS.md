@@ -10,6 +10,11 @@
 
 New function `codedoc::pkg_doc_obj`.
 
+### codedoc::render_codedoc_
+
+`codedoc:render_codedoc_` deleted. Use `codedoc:render_codedoc`.
+
+
 ## News for version 0.9.0
 
 ### codedoc::pkg_doc_fun

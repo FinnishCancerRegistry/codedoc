@@ -105,30 +105,6 @@ render_codedoc <- function(
   )
 }
 
-#' @export
-#' @rdname render_codedoc
-render_codedoc_ <- function(
-  block_df,
-  template_file_path = NULL,
-  writeLines_arg_list = list(),
-  render_arg_list = list()
-) {
-  # @codedoc_comment_block news("codedoc::render_codedoc_", "2022-02-18", "0.3.0")
-  # `[codedoc:render_codedoc_]` marked for deprecation.
-  # Use `[codedoc:render_codedoc]`.
-  # @codedoc_comment_block news("codedoc::render_codedoc_", "2022-02-18", "0.3.0")
-  warning("codedoc::render_codedoc_ is deprecated and will be ",
-          "removed in codedoc version 0.4.0, planned for 2022-04-01. ",
-          "Use codedoc::render_codedoc.")
-  render_codedoc__(
-    block_df = block_df,
-    template_file_path = template_file_path,
-    writeLines_arg_list = writeLines_arg_list,
-    render_arg_list = render_arg_list,
-    assertion_type = "prod_input",
-    call = match.call()
-  )
-}
 
 render_codedoc__ <- function(
   block_df,

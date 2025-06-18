@@ -25,3 +25,11 @@
 # `[codedoc:extract_keyed_comment_blocks_]` has been permanently removed.
 # Use `[codedoc:extract_keyed_comment_blocks]`.
 # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks_", "2023-03-14", "0.3.6")
+
+# @codedoc_comment_block news("codedoc::render_codedoc_", "2022-02-18", "0.3.0")
+# `[codedoc:render_codedoc_]` marked for deprecation.
+# Use `[codedoc:render_codedoc]`.
+# @codedoc_comment_block news("codedoc::render_codedoc_", "2022-02-18", "0.3.0")
+# @codedoc_comment_block news("codedoc::render_codedoc_", "2025-06-18", "0.10.0")
+# `codedoc:render_codedoc_` deleted. Use `codedoc:render_codedoc`.
+# @codedoc_comment_block news("codedoc::render_codedoc_", "2025-06-18", "0.10.0")
