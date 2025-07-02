@@ -20,7 +20,8 @@ pkg_doc_package_description(
 \arguments{
 \item{regex}{\verb{[character]} (no default)
 
-Should look like e.g. \code{"mypkg::myfun"}, where you write
+Any regular expression accepted by \code{grepl(perl = TRUE)}.
+E.g. \code{"mypkg::myfun"}, where you write
 \code{codedoc} comment blocks with \code{mypkg::myfun} as/in the keys.
 This is used to detect which \code{codedoc} comment blocks to use in
 generating documents. Passed to \code{codedoc::codedoc_lines} as
