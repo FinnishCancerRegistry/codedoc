@@ -29,6 +29,15 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.10.1}{
+\subsection{codedoc::pkg_doc_obj}{
+
+Expand \code{codedoc::pkg_doc_obj} allowed \code{regex} patterns.
+Now \code{regex} can be any string that \code{grepl(perl = TRUE)} can handle.
+}
+
+}
+
 \subsection{News for version 0.10.0}{
 \subsection{codedoc::pkg_doc_fun}{
 

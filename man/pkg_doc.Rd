@@ -20,7 +20,7 @@ pkg_doc_package_description(
 \arguments{
 \item{regex}{\verb{[character]} (no default)
 
-Must look like e.g. \code{"mypkg::myfun"}, where you write
+Should look like e.g. \code{"mypkg::myfun"}, where you write
 \code{codedoc} comment blocks with \code{mypkg::myfun} as/in the keys.
 This is used to detect which \code{codedoc} comment blocks to use in
 generating documents. Passed to \code{codedoc::codedoc_lines} as
@@ -114,6 +114,13 @@ Document a function in an R package. Wrapper for
 
 Calls \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
+}
+
+\section{News for version 0.10.1}{
+
+
+Expand \code{codedoc::pkg_doc_obj} allowed \code{regex} patterns.
+Now \code{regex} can be any string that \code{grepl(perl = TRUE)} can handle.
 }
 
 \section{News for version 0.10.0}{

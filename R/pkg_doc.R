@@ -114,10 +114,30 @@ pkg_doc_obj <- function(
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-06-18", "0.10.0")
   # New function `codedoc::pkg_doc_obj`.
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-06-18", "0.10.0")
-  dbc::assert_match_regex(
-    regex,
-    grepl.arg.list = list(pattern = "^[a-zA-Z0-9._-]+::[a-zA-Z0-9._-]+$")
-  )
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-02", "0.10.1")
+  # Expand `codedoc::pkg_doc_obj` allowed `regex` patterns.
+  # Now `regex` can be any string that `grepl(perl = TRUE)` can handle.
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-02", "0.10.1")
+  #' @param regex `[character]` (no default)
+  #'
+  #' Any regular expression accepted by `grepl(perl = TRUE)`.
+  #' E.g. `"mypkg::myfun"`, where you write
+  #' `codedoc` comment blocks with `mypkg::myfun` as/in the keys.
+  #' This is used to detect which `codedoc` comment blocks to use in
+  #' generating documents. Passed to `codedoc::codedoc_lines` as
+  #' both `paste0("^", regex, "::")` and `paste0("^", regex, "$")` and to
+  #' `codedoc::codedoc_roxygen_news_by_version` as-is.
+  #' `paste0("^", regex, "::")` is meant for detecting `codedoc` comment
+  #' blocks for arguments, e.g. `mypkgs::myfun::arg` --- but you should simply
+  #' use `roxygen` blocks normally unless there is a special reason to do
+  #' otherwise.
+  dbc::assert_is_character_nonNA_atom(regex)
+  regex_test <- suppressWarnings(tryCatch(
+    grepl(regex, "a", perl = TRUE), error = function(e) e
+  ))
+  if (inherits(regex_test, "error")) {
+    stop("Invalid `regex`: ", regex_test[["message"]])
+  }
   dbc::assert_is_one_of(
     rdname,
     funs = list(dbc::report_is_NULL,
@@ -152,7 +172,6 @@ pkg_doc_obj <- function(
     )
   }
 
-
   # @codedoc_comment_block codedoc::pkg_doc_obj
   # Document an object in an R package.
   #
@@ -164,18 +183,6 @@ pkg_doc_obj <- function(
   #' - `codedoc::pkg_doc_obj`:
   #'   Passed to `codedoc::codedoc_lines` and
   #'   `codedoc::codedoc_roxygen_news_by_version` calls.
-  #' @param regex `[character]` (no default)
-  #'
-  #' Must look like e.g. `"mypkg::myfun"`, where you write
-  #' `codedoc` comment blocks with `mypkg::myfun` as/in the keys.
-  #' This is used to detect which `codedoc` comment blocks to use in
-  #' generating documents. Passed to `codedoc::codedoc_lines` as
-  #' both `paste0("^", regex, "::")` and `paste0("^", regex, "$")` and to
-  #' `codedoc::codedoc_roxygen_news_by_version` as-is.
-  #' `paste0("^", regex, "::")` is meant for detecting `codedoc` comment
-  #' blocks for arguments, e.g. `mypkgs::myfun::arg` --- but you should simply
-  #' use `roxygen` blocks normally unless there is a special reason to do
-  #' otherwise.
   df <- pkg_doc_codedoc_df__(
     dir_path = getwd(),
     text_file_paths = text_file_paths
