@@ -29,6 +29,23 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.10.3}{
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+New argument \code{detect_allowed_keys_grepl_arg_list}.
+}
+
+\subsection{codedoc::pkg_doc_obj}{
+
+\code{codedoc::pkg_doc_obj} argument \code{grepl_arg_list} handling improved:
+\itemize{
+\item By default \code{perl = TRUE} but user can override this.
+\item If user supplies \code{fixed = TRUE}, we always set \code{perl = FALSE}.
+}
+}
+
+}
+
 \subsection{News for version 0.10.2}{
 \subsection{codedoc::pkg_doc_fun}{
 
@@ -46,7 +63,7 @@ print(block_df)
 \subsection{codedoc::pkg_doc_obj}{
 
 Expand \code{codedoc::pkg_doc_obj} allowed \code{regex} patterns.
-Now \code{regex} can be any string that \code{grepl(perl = TRUE)} can handle.
+Now \code{regex} can be any string that \code{grepl} can handle.
 }
 
 }

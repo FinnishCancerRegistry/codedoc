@@ -123,7 +123,7 @@ pkg_doc_obj <- function(
   #'
   #' Additional arguments to pass to `grepl` when detecting which comment
   #' blocks to include based on `key`.
-  #' Arguments `pattern`, `x`, and `perl = TRUE` cannot be changed.
+  #' Arguments `pattern` and `x` cannot be changed.
   #'
   #' - `NULL`: No additional arguments.
   #' - `list`: Pass these.
@@ -132,15 +132,38 @@ pkg_doc_obj <- function(
     funs = list(dbc::report_is_NULL,
                 dbc::report_is_list)
   )
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.3")
+  # `codedoc::pkg_doc_obj` argument `grepl_arg_list` handling improved:
+  # - By default `perl = TRUE` but user can override this.
+  # - If user supplies `fixed = TRUE`, we always set `perl = FALSE`.
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.3")
+  # @codedoc_comment_block codedoc::pkg_doc_obj
+  # Document an object in an R package.
+  #
+  # Performs the following steps.
+  # - Set `grepl_arg_list$perl <- TRUE` and `grepl_arg_list$fixed <- FALSE`
+  #   by default but the user can override these.
+  # - If user supplies `grepl_arg_list$fixed = TRUE` via we always set
+  #   `grepl_arg_list$perl <- FALSE`.
+  # @codedoc_comment_block codedoc::pkg_doc_obj
   grepl_arg_list <- as.list(grepl_arg_list)
+  if (!"perl" %in% names(grepl_arg_list)) {
+    grepl_arg_list[["perl"]] <- TRUE
+  }
+  if (!"fixed" %in% names(grepl_arg_list)) {
+    grepl_arg_list[["fixed"]] <- FALSE
+  }
+  if (grepl_arg_list[["fixed"]] == TRUE) {
+    grepl_arg_list[["perl"]] <- FALSE
+  }
 
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-02", "0.10.1")
   # Expand `codedoc::pkg_doc_obj` allowed `regex` patterns.
-  # Now `regex` can be any string that `grepl(perl = TRUE)` can handle.
+  # Now `regex` can be any string that `grepl` can handle.
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-02", "0.10.1")
   #' @param regex `[character]` (no default)
   #'
-  #' Any regular expression accepted by `grepl(perl = TRUE)`.
+  #' Any regular expression accepted by `grepl`.
   #' E.g. `"mypkg::myfun"`, where you write
   #' `codedoc` comment blocks with `mypkg::myfun` as/in the keys.
   #' This is used to detect which `codedoc` comment blocks to use in
@@ -152,9 +175,9 @@ pkg_doc_obj <- function(
   #' use `roxygen` blocks normally unless there is a special reason to do
   #' otherwise.
   dbc::assert_is_character_nonNA_atom(regex)
+
   grepl_arg_list[["pattern"]] <- regex
   grepl_arg_list[["x"]] <- "test"
-  grepl_arg_list[["perl"]] <- TRUE
   regex_test <- suppressWarnings(tryCatch(
     do.call(grepl, grepl_arg_list), error = function(e) e
   ))
@@ -196,9 +219,6 @@ pkg_doc_obj <- function(
   }
 
   # @codedoc_comment_block codedoc::pkg_doc_obj
-  # Document an object in an R package.
-  #
-  # Performs the following steps.
   # - Calls `[codedoc::extract_keyed_comment_blocks]`.
   # @codedoc_comment_block codedoc::pkg_doc_obj
   #' @param text_file_paths `[NULL, character]` (default `NULL`)
@@ -249,7 +269,8 @@ pkg_doc_obj <- function(
   # @codedoc_comment_block codedoc::pkg_doc_obj
   lines_by_section[["news"]] <- codedoc::codedoc_roxygen_news_by_version(
     regex,
-    text_file_paths
+    text_file_paths,
+    extract_arg_list = list(detect_allowed_keys_grepl_arg_list = grepl_arg_list)
   )
 
   # @codedoc_comment_block codedoc::pkg_doc_obj

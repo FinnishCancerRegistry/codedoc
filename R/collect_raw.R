@@ -140,6 +140,7 @@ extract_keyed_comment_blocks <- function(
   sort_by = NULL,
   readLines_arg_list   = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L),
+  detect_allowed_keys_grepl_arg_list = NULL,
   assertion_type = "input"
 ) {
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2022-02-17", "0.2.15")
@@ -192,7 +193,8 @@ extract_keyed_comment_blocks <- function(
     insert = TRUE,
     interpolate = TRUE,
     assertion_type = assertion_type,
-    call = match.call()
+    call = match.call(),
+    detect_allowed_keys_grepl_arg_list = detect_allowed_keys_grepl_arg_list
   )
 }
 
@@ -324,7 +326,8 @@ extract_keyed_comment_blocks__ <- function(
   insert = TRUE,
   interpolate = TRUE,
   assertion_type = "input",
-  call = NULL
+  call = NULL,
+  detect_allowed_keys_grepl_arg_list = NULL
 ) {
   main_call <- dbc::handle_arg_call(call)
   extract_keyed_comment_blocks_assertions__(
@@ -501,6 +504,30 @@ extract_keyed_comment_blocks__ <- function(
 
   if (is.character(detect_allowed_keys)) {
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @param detect_allowed_keys_grepl_arg_list `[NULL, list]`
+    # (optional, default `NULL`)
+    #
+    # Additional arguments passed to `grepl` when `detect_allowed_keys`
+    # is a regex. By default we set
+    # `detect_allowed_keys_grepl_arg_list$fixed <- FALSE`
+    # but this can be overridden by the user. If `fixed = TRUE`, we override
+    # `detect_allowed_keys_grepl_arg_list$perl <- FALSE`.
+    #
+    # - `NULL`: No additional arguments.
+    # - `list`: These arguments, e.g. `list(fixed = TRUE)`.
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
+    # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-07-03", "0.10.3")
+    # New argument `detect_allowed_keys_grepl_arg_list`.
+    # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2025-07-03", "0.10.3")
+    detect_allowed_keys_grepl_arg_list <- as.list(
+      detect_allowed_keys_grepl_arg_list
+    )
+    if (!"fixed" %in% names(detect_allowed_keys_grepl_arg_list)) {
+      detect_allowed_keys_grepl_arg_list[["fixed"]] <- FALSE
+    } else if (detect_allowed_keys_grepl_arg_list[["fixed"]] == TRUE) {
+      detect_allowed_keys_grepl_arg_list[["perl"]] <- FALSE
+    }
+    # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
     # @param detect_allowed_keys `[character, function]`
     # (optional, default `""`)
     #
@@ -515,9 +542,10 @@ extract_keyed_comment_blocks__ <- function(
     # returned in output. therefore, comment blocks that need to be inserted into
     # the ones you want to retain in output are kept for the insertion phase.
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
-    detect_allowed_keys_regex <- detect_allowed_keys
+    detect_allowed_keys_grepl_arg_list[["pattern"]] <- detect_allowed_keys
     detect_allowed_keys <- function(x) {
-      grepl(detect_allowed_keys_regex, x)
+      detect_allowed_keys_grepl_arg_list[["x"]] <- x
+      do.call(grepl, detect_allowed_keys_grepl_arg_list)
     }
   }
 

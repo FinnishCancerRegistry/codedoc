@@ -30,7 +30,7 @@ pkg_doc_package_description(
 \arguments{
 \item{regex}{\verb{[character]} (no default)
 
-Any regular expression accepted by \code{grepl(perl = TRUE)}.
+Any regular expression accepted by \code{grepl}.
 E.g. \code{"mypkg::myfun"}, where you write
 \code{codedoc} comment blocks with \code{mypkg::myfun} as/in the keys.
 This is used to detect which \code{codedoc} comment blocks to use in
@@ -60,7 +60,7 @@ Overrides \code{text_file_paths} passed to
 
 Additional arguments to pass to \code{grepl} when detecting which comment
 blocks to include based on \code{key}.
-Arguments \code{pattern}, \code{x}, and \code{perl = TRUE} cannot be changed.
+Arguments \code{pattern} and \code{x} cannot be changed.
 \itemize{
 \item \code{NULL}: No additional arguments.
 \item \code{list}: Pass these.
@@ -97,6 +97,10 @@ Document an object in an R package.
 
 Performs the following steps.
 \itemize{
+\item Set \code{grepl_arg_list$perl <- TRUE} and \code{grepl_arg_list$fixed <- FALSE}
+by default but the user can override these.
+\item If user supplies \code{grepl_arg_list$fixed = TRUE} via we always set
+\code{grepl_arg_list$perl <- FALSE}.
 \item Calls \verb{[codedoc::extract_keyed_comment_blocks]}.
 \item Collect comment block lines whose keys match one of:
 \itemize{
@@ -137,6 +141,16 @@ Calls \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
 }
 
+\section{News for version 0.10.3}{
+
+
+\code{codedoc::pkg_doc_obj} argument \code{grepl_arg_list} handling improved:
+\itemize{
+\item By default \code{perl = TRUE} but user can override this.
+\item If user supplies \code{fixed = TRUE}, we always set \code{perl = FALSE}.
+}
+}
+
 \section{News for version 0.10.2}{
 
 
@@ -151,7 +165,7 @@ Calls \code{codedoc::codedoc_R_package_description} and
 
 
 Expand \code{codedoc::pkg_doc_obj} allowed \code{regex} patterns.
-Now \code{regex} can be any string that \code{grepl(perl = TRUE)} can handle.
+Now \code{regex} can be any string that \code{grepl} can handle.
 }
 
 \section{News for version 0.10.0}{

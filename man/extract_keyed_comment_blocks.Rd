@@ -12,6 +12,7 @@ extract_keyed_comment_blocks(
   sort_by = NULL,
   readLines_arg_list = list(warn = FALSE),
   string_interpolation_eval_env = parent.frame(1L),
+  detect_allowed_keys_grepl_arg_list = NULL,
   assertion_type = "input"
 )
 }
@@ -109,6 +110,19 @@ an element of \code{text_file_paths}}
 Environment where string interpolation expressions are evaluated. By default
 this is the environment where \code{extract_keyed_comment_blocks} is called.
 See Details for more information.}
+
+\item{detect_allowed_keys_grepl_arg_list}{\verb{[NULL, list]}
+(optional, default \code{NULL})
+
+Additional arguments passed to \code{grepl} when \code{detect_allowed_keys}
+is a regex. By default we set
+\code{detect_allowed_keys_grepl_arg_list$fixed <- FALSE}
+but this can be overridden by the user. If \code{fixed = TRUE}, we override
+\code{detect_allowed_keys_grepl_arg_list$perl <- FALSE}.
+\itemize{
+\item \code{NULL}: No additional arguments.
+\item \code{list}: These arguments, e.g. \code{list(fixed = TRUE)}.
+}}
 
 \item{assertion_type}{see \verb{[dbc::report_to_assertion]}}
 }
