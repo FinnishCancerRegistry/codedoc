@@ -109,11 +109,31 @@ pkg_doc_codedoc_df__ <- function(
 pkg_doc_obj <- function(
   regex,
   rdname = NULL,
-  text_file_paths = NULL
+  text_file_paths = NULL,
+  grepl_arg_list = NULL
 ) {
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-06-18", "0.10.0")
   # New function `codedoc::pkg_doc_obj`.
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-06-18", "0.10.0")
+
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.2")
+  # `codedoc::pkg_doc_obj` gains new arg `grepl_arg_list`.
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.2")
+  #' @param grepl_arg_list `[NULL, list]` (default `NULL`)
+  #'
+  #' Additional arguments to pass to `grepl` when detecting which comment
+  #' blocks to include based on `key`.
+  #' Arguments `pattern`, `x`, and `perl = TRUE` cannot be changed.
+  #'
+  #' - `NULL`: No additional arguments.
+  #' - `list`: Pass these.
+  dbc::assert_is_one_of(
+    grepl_arg_list,
+    funs = list(dbc::report_is_NULL,
+                dbc::report_is_list)
+  )
+  grepl_arg_list <- as.list(grepl_arg_list)
+
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-02", "0.10.1")
   # Expand `codedoc::pkg_doc_obj` allowed `regex` patterns.
   # Now `regex` can be any string that `grepl(perl = TRUE)` can handle.
@@ -132,8 +152,11 @@ pkg_doc_obj <- function(
   #' use `roxygen` blocks normally unless there is a special reason to do
   #' otherwise.
   dbc::assert_is_character_nonNA_atom(regex)
+  grepl_arg_list[["pattern"]] <- regex
+  grepl_arg_list[["x"]] <- "test"
+  grepl_arg_list[["perl"]] <- TRUE
   regex_test <- suppressWarnings(tryCatch(
-    grepl(regex, "a", perl = TRUE), error = function(e) e
+    do.call(grepl, grepl_arg_list), error = function(e) e
   ))
   if (inherits(regex_test, "error")) {
     stop("Invalid `regex`: ", regex_test[["message"]])
@@ -203,9 +226,10 @@ pkg_doc_obj <- function(
     "descr" = paste0("^", regex, "$"),
     "return" = paste0("^return[(]", regex, "[)]$")
   )
+  grepl_arg_list[["x"]] <- df[["key"]]
   lines_by_section <- lapply(names(regexes), function(nm) {
-    regex <- regexes[nm]
-    lines <- df[["comment_block"]][grepl(regex, df[["key"]], perl = TRUE)]
+    grepl_arg_list[["pattern"]] <- regexes[nm]
+    lines <- df[["comment_block"]][do.call(grepl, grepl_arg_list)]
     if (length(lines) > 0) {
       head <- switch(
         nm,
@@ -282,7 +306,8 @@ pkg_doc_obj <- function(
 pkg_doc_fun <- function(
   regex,
   rdname = NULL,
-  text_file_paths = NULL
+  text_file_paths = NULL,
+  grepl_arg_list = NULL
 ) {
   # @codedoc_comment_block codedoc::pkg_doc_obj
   # Document a function in an R package. Wrapper for
@@ -297,10 +322,14 @@ pkg_doc_fun <- function(
   # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-06-18", "0.10.0")
   # `codedoc::pkg_doc_fun` now a wrapper for `codedoc::pkg_doc_obj`.
   # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-06-18", "0.10.0")
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-07-03", "0.10.2")
+  # `codedoc::pkg_doc_fun` gains new arg `grepl_arg_list`.
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-07-03", "0.10.2")
   return(codedoc::pkg_doc_obj(
     regex = regex,
     rdname = rdname,
-    text_file_paths = text_file_paths
+    text_file_paths = text_file_paths,
+    grepl_arg_list = grepl_arg_list
   ))
 }
 

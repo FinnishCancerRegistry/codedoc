@@ -29,6 +29,19 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.10.2}{
+\subsection{codedoc::pkg_doc_fun}{
+
+\code{codedoc::pkg_doc_fun} gains new arg \code{grepl_arg_list}.
+}
+
+\subsection{codedoc::pkg_doc_obj}{
+
+\code{codedoc::pkg_doc_obj} gains new arg \code{grepl_arg_list}.
+}
+
+}
+
 \subsection{News for version 0.10.1}{
 \subsection{codedoc::pkg_doc_obj}{
 

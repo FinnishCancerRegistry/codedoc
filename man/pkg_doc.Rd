@@ -7,9 +7,19 @@
 \alias{pkg_doc_package_description}
 \title{Document R Package}
 \usage{
-pkg_doc_obj(regex, rdname = NULL, text_file_paths = NULL)
+pkg_doc_obj(
+  regex,
+  rdname = NULL,
+  text_file_paths = NULL,
+  grepl_arg_list = NULL
+)
 
-pkg_doc_fun(regex, rdname = NULL, text_file_paths = NULL)
+pkg_doc_fun(
+  regex,
+  rdname = NULL,
+  text_file_paths = NULL,
+  grepl_arg_list = NULL
+)
 
 pkg_doc_package_description(
   text_file_paths = NULL,
@@ -44,6 +54,16 @@ otherwise.}
 Overrides \code{text_file_paths} passed to
 \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
+}}
+
+\item{grepl_arg_list}{\verb{[NULL, list]} (default \code{NULL})
+
+Additional arguments to pass to \code{grepl} when detecting which comment
+blocks to include based on \code{key}.
+Arguments \code{pattern}, \code{x}, and \code{perl = TRUE} cannot be changed.
+\itemize{
+\item \code{NULL}: No additional arguments.
+\item \code{list}: Pass these.
 }}
 
 \item{desc_arg_list}{\verb{[NULL, list]} (default \code{NULL})
@@ -115,6 +135,16 @@ Document a function in an R package. Wrapper for
 
 Calls \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
+}
+
+\section{News for version 0.10.2}{
+
+
+\code{codedoc::pkg_doc_obj} gains new arg \code{grepl_arg_list}.
+
+
+
+\code{codedoc::pkg_doc_fun} gains new arg \code{grepl_arg_list}.
 }
 
 \section{News for version 0.10.1}{
