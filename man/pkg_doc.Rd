@@ -7,19 +7,9 @@
 \alias{pkg_doc_package_description}
 \title{Document R Package}
 \usage{
-pkg_doc_obj(
-  regex,
-  rdname = NULL,
-  text_file_paths = NULL,
-  grepl_arg_list = NULL
-)
+pkg_doc_obj(regex, rdname = NULL, text_file_paths = NULL)
 
-pkg_doc_fun(
-  regex,
-  rdname = NULL,
-  text_file_paths = NULL,
-  grepl_arg_list = NULL
-)
+pkg_doc_fun(regex, rdname = NULL, text_file_paths = NULL)
 
 pkg_doc_package_description(
   text_file_paths = NULL,
@@ -30,17 +20,8 @@ pkg_doc_package_description(
 \arguments{
 \item{regex}{\verb{[character]} (no default)
 
-Any regular expression accepted by \code{grepl}.
-E.g. \code{"mypkg::myfun"}, where you write
-\code{codedoc} comment blocks with \code{mypkg::myfun} as/in the keys.
-This is used to detect which \code{codedoc} comment blocks to use in
-generating documents. Passed to \code{codedoc::codedoc_lines} as
-both \code{paste0("^", regex, "::")} and \code{paste0("^", regex, "$")} and to
-\code{codedoc::codedoc_roxygen_news_by_version} as-is.
-\code{paste0("^", regex, "::")} is meant for detecting \code{codedoc} comment
-blocks for arguments, e.g. \verb{mypkgs::myfun::arg} --- but you should simply
-use \code{roxygen} blocks normally unless there is a special reason to do
-otherwise.}
+Any regular expression accepted by \code{grepl} that contains \code{"::"} or \code{":::"}.
+E.g. \code{"mypkg::myfun"}.}
 
 \item{rdname}{\verb{[NULL, character]} (default \code{NULL})
 \itemize{
@@ -54,16 +35,6 @@ otherwise.}
 Overrides \code{text_file_paths} passed to
 \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
-}}
-
-\item{grepl_arg_list}{\verb{[NULL, list]} (default \code{NULL})
-
-Additional arguments to pass to \code{grepl} when detecting which comment
-blocks to include based on \code{key}.
-Arguments \code{pattern} and \code{x} cannot be changed.
-\itemize{
-\item \code{NULL}: No additional arguments.
-\item \code{list}: Pass these.
 }}
 
 \item{desc_arg_list}{\verb{[NULL, list]} (default \code{NULL})
@@ -93,25 +64,20 @@ Tools to document an R package.
 
 \strong{codedoc::pkg_doc_obj}
 
-Document an object in an R package.
-
-Performs the following steps.
+Document an object in an R package. Performs the following steps:
 \itemize{
-\item Set \code{grepl_arg_list$perl <- TRUE} and \code{grepl_arg_list$fixed <- FALSE}
-by default but the user can override these.
-\item If user supplies \code{grepl_arg_list$fixed = TRUE} via we always set
-\code{grepl_arg_list$perl <- FALSE}.
 \item Calls \verb{[codedoc::extract_keyed_comment_blocks]}.
 \item Collect comment block lines whose keys match one of:
 \itemize{
-\item \code{paste0("^", regex, "::")} for arguments --- but you should use roxygen
+\item \code{"^\%s::"} for arguments --- but you should use roxygen
 block directly unless you have a specific reason.
-\item \code{paste0("^", regex, "$")} for the description of the function.
+\item \code{"^\%s$"} for the description of the function.
 These go into either \code{Details} or section \code{Functions}, depending on
 \code{rdname}.
-\item \code{paste0("^return[(]", regex, "[)]$")} for docs describing what the
+\item \code{"^return[(]\%s[)]$"} for docs describing what the
 function returns. These appear under the section \code{Value} in the help
 page.
+\item \code{"^examples[(]\%s[)]$"} for the Examples section.
 }
 \item Call \verb{[codedoc::codedoc_roxygen_news_by_version]} to extract news for
 the function, if any.
@@ -129,6 +95,8 @@ Document a function in an R package. Wrapper for
 }
 
 [)]: R:)
+\link{(}: R:(
+[)]: R:)
 [codedoc::codedoc_roxygen_news_by_version]: R:codedoc::codedoc_roxygen_news_by_version
 [a-zA-Z0-9.\emph{-]: R:a-zA-Z0-9.}-
 [a-zA-Z0-9.\emph{-]: R:a-zA-Z0-9.}-
@@ -139,6 +107,20 @@ Document a function in an R package. Wrapper for
 
 Calls \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
+}
+
+\section{News for version 0.10.4}{
+
+
+Add handling for examples. E.g. key \code{examples(mypkg::myfun)}.
+
+\code{codedoc::pkg_doc_obj} argument \code{grepl_arg_list} removed because it was
+not worth the trouble. To have a fixed expression, instead of passing
+\code{fixed = TRUE} one can do \code{"\\\\Qmypkg::myobj\\\\E"}.
+
+
+
+\code{codedoc::pkg_doc_fun} arg \code{grepl_arg_list} removed.
 }
 
 \section{News for version 0.10.3}{

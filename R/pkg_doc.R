@@ -83,10 +83,7 @@ pkg_doc_codedoc_df__ <- function(
         "DESCRIPTION",
         fields = "Package"
       )[1L, 1L]
-      re_set <- sprintf(
-        c("^%s", "^news[(]\"%s", "^return[(]%s::"),
-        pkg_nm
-      )
+      re_set <- pkg_doc_obj_regex_set__(pkg_nm, "package")
       # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-14", "0.6.1")
       # `codedoc::pkg_doc_fun` now more robust when calling
       # `codedoc::extract_keyed_comment_blocks`.
@@ -105,12 +102,80 @@ pkg_doc_codedoc_df__ <- function(
   return(.__PKG_DOC_ENV__.[["codedoc_df"]])
 }
 
+pkg_doc_obj_regex_set__ <- function(regex, type) {
+  dbc::assert_prod_input_atom_is_in_set(
+    type,
+    set = c("package", "full")
+  )
+  patterns <- switch(
+    type,
+    full = c(
+      # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.4")
+      # Add handling for examples. E.g. key `examples(mypkg::myfun)`.
+      # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.4")
+      # @codedoc_comment_block codedoc:::pkg_doc_obj_regex_set__
+      # - Collect comment block lines whose keys match one of:
+      #   + `"^%s::"` for arguments --- but you should use roxygen
+      #     block directly unless you have a specific reason.
+      #   + `"^%s$"` for the description of the function.
+      #     These go into either `Details` or section `Functions`, depending on
+      #     `rdname`.
+      #   + `"^return[(]%s[)]$"` for docs describing what the
+      #     function returns. These appear under the section `Value` in the help
+      #     page.
+      #   + `"^examples[(]%s[)]$"` for the Examples section.
+      # @codedoc_comment_block codedoc:::pkg_doc_obj_regex_set__
+      param = "^%s::",
+      descr = "^%s$",
+      return = "^return[(]%s[)]$",
+      examples = "^examples[(]%s[)]$"
+      # dont need one for news because that is handled separately for now
+    ),
+    package = c(
+      general = "^%s",
+      news = "^news[(]\"%s",
+      return = "^return[(]%s::",
+      examples = "^examples[(]%s::"
+    )
+  )
+  out <- sprintf(patterns, regex)
+  names(out) <- names(patterns)
+  return(out)
+}
+
+pkg_doc_obj_section_heads__ <- function(regex, has_rdname) {
+  out <- list(
+    param = NULL,
+    descr = "@details",
+    return = "@return",
+    examples = "@examples"
+  )
+  if (has_rdname) {
+    out <- list(
+      param = NULL,
+      descr = c(
+        "@section Functions:",
+        paste0("**", regex, "**")
+      ),
+      return = c(
+        "@return",
+        paste0("**", regex, "**")
+      ),
+      examples = c(
+        "@examples",
+        "",
+        paste0("# ", regex)
+      )
+    )
+  }
+  return(out)
+}
+
 #' @eval codedoc:::pkg_doc_fun("codedoc::pkg_doc_obj", "pkg_doc")
 pkg_doc_obj <- function(
   regex,
   rdname = NULL,
-  text_file_paths = NULL,
-  grepl_arg_list = NULL
+  text_file_paths = NULL
 ) {
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-06-18", "0.10.0")
   # New function `codedoc::pkg_doc_obj`.
@@ -119,43 +184,16 @@ pkg_doc_obj <- function(
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.2")
   # `codedoc::pkg_doc_obj` gains new arg `grepl_arg_list`.
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.2")
-  #' @param grepl_arg_list `[NULL, list]` (default `NULL`)
-  #'
-  #' Additional arguments to pass to `grepl` when detecting which comment
-  #' blocks to include based on `key`.
-  #' Arguments `pattern` and `x` cannot be changed.
-  #'
-  #' - `NULL`: No additional arguments.
-  #' - `list`: Pass these.
-  dbc::assert_is_one_of(
-    grepl_arg_list,
-    funs = list(dbc::report_is_NULL,
-                dbc::report_is_list)
-  )
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.3")
   # `codedoc::pkg_doc_obj` argument `grepl_arg_list` handling improved:
   # - By default `perl = TRUE` but user can override this.
   # - If user supplies `fixed = TRUE`, we always set `perl = FALSE`.
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-03", "0.10.3")
-  # @codedoc_comment_block codedoc::pkg_doc_obj
-  # Document an object in an R package.
-  #
-  # Performs the following steps.
-  # - Set `grepl_arg_list$perl <- TRUE` and `grepl_arg_list$fixed <- FALSE`
-  #   by default but the user can override these.
-  # - If user supplies `grepl_arg_list$fixed = TRUE` via we always set
-  #   `grepl_arg_list$perl <- FALSE`.
-  # @codedoc_comment_block codedoc::pkg_doc_obj
-  grepl_arg_list <- as.list(grepl_arg_list)
-  if (!"perl" %in% names(grepl_arg_list)) {
-    grepl_arg_list[["perl"]] <- TRUE
-  }
-  if (!"fixed" %in% names(grepl_arg_list)) {
-    grepl_arg_list[["fixed"]] <- FALSE
-  }
-  if (grepl_arg_list[["fixed"]] == TRUE) {
-    grepl_arg_list[["perl"]] <- FALSE
-  }
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-04", "0.10.4")
+  # `codedoc::pkg_doc_obj` argument `grepl_arg_list` removed because it was
+  # not worth the trouble. To have a fixed expression, instead of passing
+  # `fixed = TRUE` one can do `"\\Qmypkg::myobj\\E"`.
+  # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-04", "0.10.4")
 
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-02", "0.10.1")
   # Expand `codedoc::pkg_doc_obj` allowed `regex` patterns.
@@ -163,21 +201,17 @@ pkg_doc_obj <- function(
   # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-07-02", "0.10.1")
   #' @param regex `[character]` (no default)
   #'
-  #' Any regular expression accepted by `grepl`.
-  #' E.g. `"mypkg::myfun"`, where you write
-  #' `codedoc` comment blocks with `mypkg::myfun` as/in the keys.
-  #' This is used to detect which `codedoc` comment blocks to use in
-  #' generating documents. Passed to `codedoc::codedoc_lines` as
-  #' both `paste0("^", regex, "::")` and `paste0("^", regex, "$")` and to
-  #' `codedoc::codedoc_roxygen_news_by_version` as-is.
-  #' `paste0("^", regex, "::")` is meant for detecting `codedoc` comment
-  #' blocks for arguments, e.g. `mypkgs::myfun::arg` --- but you should simply
-  #' use `roxygen` blocks normally unless there is a special reason to do
-  #' otherwise.
+  #' Any regular expression accepted by `grepl` that contains `"::"` or `":::"`.
+  #' E.g. `"mypkg::myfun"`.
   dbc::assert_is_character_nonNA_atom(regex)
+  dbc::assert_match_regex(regex, grepl.arg.list = list(pattern = ":{2,3}"))
 
-  grepl_arg_list[["pattern"]] <- regex
-  grepl_arg_list[["x"]] <- "test"
+  grepl_arg_list <- list(
+    pattern = regex,
+    x = "test",
+    perl = TRUE,
+    fixed = FALSE
+  )
   regex_test <- suppressWarnings(tryCatch(
     do.call(grepl, grepl_arg_list), error = function(e) e
   ))
@@ -196,29 +230,17 @@ pkg_doc_obj <- function(
   )
 
   rdname_line <- NULL
-  section_heads <- list(
-    descr = "@details",
-    return = "@return"
-  )
   if (!is.null(rdname)) {
     #' @param rdname `[NULL, character]` (default `NULL`)
     #'
     #' - `NULL`: No effect on generated docs.
     #' - `character`: Generate additional line `paste0("@rdname ", rdname)`.
     rdname_line <- paste0("@rdname ", rdname)
-    section_heads <- list(
-      descr = c(
-        "@section Functions:",
-        paste0("**", regex, "**")
-      ),
-      return = c(
-        "@return",
-        paste0("**", regex, "**")
-      )
-    )
   }
 
   # @codedoc_comment_block codedoc::pkg_doc_obj
+  # Document an object in an R package. Performs the following steps:
+  #
   # - Calls `[codedoc::extract_keyed_comment_blocks]`.
   # @codedoc_comment_block codedoc::pkg_doc_obj
   #' @param text_file_paths `[NULL, character]` (default `NULL`)
@@ -231,32 +253,42 @@ pkg_doc_obj <- function(
     text_file_paths = text_file_paths
   )
   # @codedoc_comment_block codedoc::pkg_doc_obj
-  # - Collect comment block lines whose keys match one of:
-  #   + `paste0("^", regex, "::")` for arguments --- but you should use roxygen
-  #     block directly unless you have a specific reason.
-  #   + `paste0("^", regex, "$")` for the description of the function.
-  #     These go into either `Details` or section `Functions`, depending on
-  #     `rdname`.
-  #   + `paste0("^return[(]", regex, "[)]$")` for docs describing what the
-  #     function returns. These appear under the section `Value` in the help
-  #     page.
+  # @codedoc_insert_comment_block codedoc:::pkg_doc_obj_regex_set__
   # @codedoc_comment_block codedoc::pkg_doc_obj
-  regexes <- c(
-    "param" = paste0("^", regex, "::"),
-    "descr" = paste0("^", regex, "$"),
-    "return" = paste0("^return[(]", regex, "[)]$")
+  regexes <- pkg_doc_obj_regex_set__(
+    regex = regex,
+    type = "full"
   )
   grepl_arg_list[["x"]] <- df[["key"]]
+  section_heads <- local({
+    # proper name in section. instead of showing e.g.
+    # regex = "\\Qmypkg::[.myclass\\E" in docs, we want to show
+    # "mypkg::[.myclass". so we figure out the name of the package and the
+    # object.
+    section_gal <- grepl_arg_list
+    section_gal[["pattern"]] <- sprintf(
+      "((^)|[(\"])%s(($)|[\")])",
+      regex
+    )
+    keys <- df[["key"]][
+      df[["key"]] == section_gal[["pattern"]] |
+        do.call(grepl, section_gal)
+    ]
+    pkg_obj_nm_pairs <- unique(gsub("(^.*[(\"])|([)\"].*$)", "", keys))
+    if (length(pkg_obj_nm_pairs) == 1) {
+      regex <- pkg_obj_nm_pairs
+    }
+    pkg_doc_obj_section_heads__(
+      regex = regex,
+      has_rdname = !is.null(rdname)
+    )
+  })
   lines_by_section <- lapply(names(regexes), function(nm) {
-    grepl_arg_list[["pattern"]] <- regexes[nm]
-    lines <- df[["comment_block"]][do.call(grepl, grepl_arg_list)]
+    section_gal <- grepl_arg_list
+    section_gal[["pattern"]] <- regexes[nm]
+    lines <- unlist(df[["comment_block"]][do.call(grepl, section_gal)])
     if (length(lines) > 0) {
-      head <- switch(
-        nm,
-        param = NULL,
-        descr = section_heads[["descr"]],
-        return = section_heads[["return"]]
-      )
+      head <- section_heads[[nm]]
       lines <- c(head, "", lines, "")
     }
     return(lines)
@@ -327,8 +359,7 @@ pkg_doc_obj <- function(
 pkg_doc_fun <- function(
   regex,
   rdname = NULL,
-  text_file_paths = NULL,
-  grepl_arg_list = NULL
+  text_file_paths = NULL
 ) {
   # @codedoc_comment_block codedoc::pkg_doc_obj
   # Document a function in an R package. Wrapper for
@@ -346,11 +377,13 @@ pkg_doc_fun <- function(
   # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-07-03", "0.10.2")
   # `codedoc::pkg_doc_fun` gains new arg `grepl_arg_list`.
   # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-07-03", "0.10.2")
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-07-04", "0.10.4")
+  # `codedoc::pkg_doc_fun` arg `grepl_arg_list` removed.
+  # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-07-04", "0.10.4")
   return(codedoc::pkg_doc_obj(
     regex = regex,
     rdname = rdname,
-    text_file_paths = text_file_paths,
-    grepl_arg_list = grepl_arg_list
+    text_file_paths = text_file_paths
   ))
 }
 

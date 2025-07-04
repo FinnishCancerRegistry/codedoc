@@ -549,9 +549,8 @@ extract_keyed_comment_blocks__ <- function(
     }
   }
 
-  dbc::assert_prod_interim_is_logical_nonNA_vector(
-    is_allowed_key <- detect_allowed_keys(block_df[["key"]])
-  )
+  is_allowed_key <- detect_allowed_keys(block_df[["key"]])
+  dbc::assert_prod_interim_is_logical_nonNA_vector(is_allowed_key)
   if (insert) {
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
     # @details

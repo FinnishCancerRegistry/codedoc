@@ -29,6 +29,26 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.10.4}{
+\subsection{codedoc::pkg_doc_fun}{
+
+\code{codedoc::pkg_doc_fun} arg \code{grepl_arg_list} removed.
+}
+
+\subsection{codedoc::pkg_doc_obj}{
+
+Add handling for examples. E.g. key \code{examples(mypkg::myfun)}.
+}
+
+\subsection{codedoc::pkg_doc_obj}{
+
+\code{codedoc::pkg_doc_obj} argument \code{grepl_arg_list} removed because it was
+not worth the trouble. To have a fixed expression, instead of passing
+\code{fixed = TRUE} one can do \code{"\\\\Qmypkg::myobj\\\\E"}.
+}
+
+}
+
 \subsection{News for version 0.10.3}{
 \subsection{codedoc::extract_keyed_comment_blocks}{
 
