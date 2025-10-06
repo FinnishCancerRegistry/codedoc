@@ -29,6 +29,16 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.10.5}{
+\subsection{codedoc::pkg_doc_obj}{
+
+Improved inference of object name to use in generated documentation.
+E.g. \code{regex = "\\\\Qmypkg::[.myclass\\\\E"} now reliably appears in docs
+as "mypkg::[.myclass".
+}
+
+}
+
 \subsection{News for version 0.10.4}{
 \subsection{codedoc::pkg_doc_fun}{
 

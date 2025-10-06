@@ -90,8 +90,6 @@ c("@param some.column (no default)", "", "Column some_column values.").
 This means you don't have to document such column arguments separately.
 \item Finally, collect all docs into one long string vector and add \verb{@export}
 to the beginning of the vector.
-Document a function in an R package. Wrapper for
-\code{codedoc::pkg_doc_fun} .
 }
 
 [)]: R:)
@@ -103,10 +101,24 @@ Document a function in an R package. Wrapper for
 [a-zA-Z0-9.\emph{-]: R:a-zA-Z0-9.}-
 
 
+\strong{codedoc::pkg_doc_fun}
+
+Document a function in an R package. Wrapper for
+\code{codedoc::pkg_doc_obj} .
+
+
 \strong{codedoc::pkg_doc_package_description}
 
 Calls \code{codedoc::codedoc_R_package_description} and
 \code{codedoc::codedoc_news_for_R_package}.
+}
+
+\section{News for version 0.10.5}{
+
+
+Improved inference of object name to use in generated documentation.
+E.g. \code{regex = "\\\\Qmypkg::[.myclass\\\\E"} now reliably appears in docs
+as "mypkg::[.myclass".
 }
 
 \section{News for version 0.10.4}{

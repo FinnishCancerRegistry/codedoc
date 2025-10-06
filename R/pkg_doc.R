@@ -143,7 +143,7 @@ pkg_doc_obj_regex_set__ <- function(regex, type) {
   return(out)
 }
 
-pkg_doc_obj_section_heads__ <- function(regex, has_rdname) {
+pkg_doc_obj_section_heads__ <- function(obj_nm, has_rdname) {
   out <- list(
     param = NULL,
     descr = "@details",
@@ -155,16 +155,16 @@ pkg_doc_obj_section_heads__ <- function(regex, has_rdname) {
       param = NULL,
       descr = c(
         "@section Functions:",
-        paste0("**", regex, "**")
+        paste0("**", obj_nm, "**")
       ),
       return = c(
         "@return",
-        paste0("**", regex, "**")
+        paste0("**", obj_nm, "**")
       ),
       examples = c(
         "@examples",
         "",
-        paste0("# ", regex)
+        paste0("# ", obj_nm)
       )
     )
   }
@@ -261,25 +261,32 @@ pkg_doc_obj <- function(
   )
   grepl_arg_list[["x"]] <- df[["key"]]
   section_heads <- local({
-    # proper name in section. instead of showing e.g.
-    # regex = "\\Qmypkg::[.myclass\\E" in docs, we want to show
-    # "mypkg::[.myclass". so we figure out the name of the package and the
-    # object.
+    # instead of showing e.g.
+    # "\\Qmypkg::[.myclass\\E" in docs, we want to show
+    # "mypkg::[.myclass". we look for an exact match in keys or if that fails
+    # try to clean up the regex.
+    # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-10-06", "0.10.5")
+    # Improved inference of object name to use in generated documentation.
+    # E.g. `regex = "\\Qmypkg::[.myclass\\E"` now reliably appears in docs
+    # as "mypkg::[.myclass".
+    # @codedoc_comment_block news("codedoc::pkg_doc_obj", "2025-10-06", "0.10.5")
     section_gal <- grepl_arg_list
     section_gal[["pattern"]] <- sprintf(
-      "((^)|[(\"])%s(($)|[\")])",
+      "(?<=^|\\\")%s(?=$|\\\")",
       regex
     )
-    keys <- df[["key"]][
-      df[["key"]] == section_gal[["pattern"]] |
-        do.call(grepl, section_gal)
-    ]
-    pkg_obj_nm_pairs <- unique(gsub("(^.*[(\"])|([)\"].*$)", "", keys))
-    if (length(pkg_obj_nm_pairs) == 1) {
-      regex <- pkg_obj_nm_pairs
+    obj_nm_set <- setdiff(do.call(regex_extract_first__, section_gal), NA)
+    if (length(obj_nm_set) == 1) {
+      obj_nm <- obj_nm_set
+    } else {
+      obj_nm <- gsub(
+        "(\\\\Q|\\\\E|\\\\)",
+        "",
+        regex
+      )
     }
     pkg_doc_obj_section_heads__(
-      regex = regex,
+      obj_nm = obj_nm,
       has_rdname = !is.null(rdname)
     )
   })
@@ -361,10 +368,10 @@ pkg_doc_fun <- function(
   rdname = NULL,
   text_file_paths = NULL
 ) {
-  # @codedoc_comment_block codedoc::pkg_doc_obj
+  # @codedoc_comment_block codedoc::pkg_doc_fun
   # Document a function in an R package. Wrapper for
-  # `codedoc::pkg_doc_fun` .
-  # @codedoc_comment_block codedoc::pkg_doc_obj
+  # `codedoc::pkg_doc_obj` .
+  # @codedoc_comment_block codedoc::pkg_doc_fun
   # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-10", "0.6.0")
   # New fun `codedoc::pkg_doc_fun`.
   # @codedoc_comment_block news("codedoc::pkg_doc_fun", "2025-03-10", "0.6.0")

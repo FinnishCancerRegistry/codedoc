@@ -17,7 +17,7 @@ testthat::test_that("regexes and section heads are in harmony", {
 
   for (has_rdname in c(TRUE, FALSE)) {
     section_heads <- pkg_doc_obj_section_heads__(
-      regex = "mypkg::myfun",
+      obj_nm = "mypkg::myfun",
       has_rdname = TRUE
     )
     regexes <- pkg_doc_obj_regex_set__(

@@ -1,17 +1,16 @@
-
-
-
-
-
-string_extract_first <- function(x, pattern, ...) {
-  m <- regexpr(text = x, pattern = pattern, ...)
-  regmatches(x = x, m = m)
-}
-string_extract_all <- function(x, pattern, ...) {
-  m <- gregexpr(text = x, pattern = pattern, ...)
-  regmatches(x = x, m = m)
+regex_extract_first__ <- function(x, pattern, perl = TRUE, ...) {
+  m <- regexpr(pattern = pattern, text = x, perl = perl, ...)
+  out <- rep(NA_character_, length(x))
+  has_match <- !m %in% c(-1L, NA_integer_)
+  out[has_match] <- regmatches(x = x, m = m)
+  return(out)
 }
 
+regex_extract_all__ <- function(x, pattern, perl = TRUE, ...) {
+  m <- gregexpr(text = x, pattern = pattern, perl = TRUE, ...)
+  out <- regmatches(x = x, m = m)
+  return(out)
+}
 
 string_interpolation_regex <- function() {
   # @codedoc_comment_block string_interpolation_regex
@@ -37,7 +36,7 @@ string_interpolation <- function(x, env, debug_data) {
   #
   # @codedoc_comment_block codedoc:::string_interpolation
   ip_re <- string_interpolation_regex()
-  ip_exprs <- unique(unlist(string_extract_all(x = x, pattern = ip_re)))
+  ip_exprs <- unique(unlist(regex_extract_all__(x = x, pattern = ip_re)))
   if (length(ip_exprs) == 0L) {
     return(x)
   }
