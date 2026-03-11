@@ -10,7 +10,7 @@ extract_keyed_comment_blocks(
   clean_comment_lines = NULL,
   detect_allowed_keys = "",
   sort_by = NULL,
-  readLines_arg_list = list(warn = FALSE),
+  readLines_arg_list = NULL,
   string_interpolation_eval_env = parent.frame(1L),
   detect_allowed_keys_grepl_arg_list = NULL,
   assertion_type = "input"
@@ -98,11 +98,15 @@ c("text_file_path", "key", "first_block_line", "last_block_line",  "comment_bloc
 \item \code{character}: Sort output \code{block_df} by these columns.
 }}
 
-\item{readLines_arg_list}{\verb{[list]}
-(optional, default \code{list(warn = FALSE)})
+\item{readLines_arg_list}{\verb{[NULL, list]}
+(optional, default \code{NULL})
 
 list of arguments passed to \link{readLines}; \code{con} is always set to
-an element of \code{text_file_paths}}
+an element of \code{text_file_paths}.
+\itemize{
+\item \code{NULL}: Use \code{list(warn = FALSE, encoding = "UTF-8")}.
+\item \code{list}: use these arguments. E.g. \code{list(encoding = "my_weird_encoding")}
+}}
 
 \item{string_interpolation_eval_env}{\verb{[environment]}
 (optional, default \code{parent.frame(1L)})

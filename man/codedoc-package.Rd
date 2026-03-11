@@ -29,6 +29,15 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.11.0}{
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+\code{codedoc::extract_keyed_comment_blocks} argument \code{readLines_arg_list} is now
+by default \code{NULL} which implies \code{list(warn = FALSE, encoding = "UTF-8")}.
+}
+
+}
+
 \subsection{News for version 0.10.5}{
 \subsection{codedoc::pkg_doc_obj}{
 

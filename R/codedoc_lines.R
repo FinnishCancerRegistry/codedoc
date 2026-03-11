@@ -24,13 +24,8 @@ codedoc_lines <- function(
   # @codedoc_comment_block news("codedoc::codedoc_lines", "2022-02-17", "0.2.15")
   # New exported function `[codedoc::codedoc_lines]`.
   # @codedoc_comment_block news("codedoc::codedoc_lines", "2022-02-17", "0.2.15")
-  dbc::assert_is_one_of(
-    extract_arg_list,
-    funs = list(
-      dbc::report_is_NULL,
-      dbc::report_is_list
-    ),
-    assertion_type = assertion_type
+  stopifnot(
+    inherits(extract_arg_list, c("NULL", "list"))
   )
   assert_arg_text_file_paths(text_file_paths, assertion_type = assertion_type)
   extract_arg_list <- as.list(extract_arg_list)

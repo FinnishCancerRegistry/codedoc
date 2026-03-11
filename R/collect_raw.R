@@ -15,11 +15,14 @@ detect_codedoc_key_lines <- function(x) {
 #' @title Read codedoc-formatted Code Comments
 #' @description
 #' Extracts blocks of specifically formatted comments from text file.
-#' @param readLines_arg_list `[list]`
-#' (optional, default `list(warn = FALSE)`)
+#' @param readLines_arg_list `[NULL, list]`
+#' (optional, default `NULL`)
 #'
 #' list of arguments passed to [readLines]; `con` is always set to
-#' an element of `text_file_paths`
+#' an element of `text_file_paths`.
+#'
+#' - `NULL`: Use `list(warn = FALSE, encoding = "UTF-8")`.
+#' - `list`: use these arguments. E.g. `list(encoding = "my_weird_encoding")`
 #' @param string_interpolation_eval_env `[environment]`
 #' (optional, default `parent.frame(1L)`)
 #'
@@ -125,8 +128,13 @@ extract_keyed_comment_blocks_assertions__ <- function(
 
   dbc::assert_is_environment(string_interpolation_eval_env, call = call,
                              assertion_type = assertion_type)
-  dbc::assert_is_list(readLines_arg_list, call = call,
-                      assertion_type = assertion_type)
+  dbc::assert_is_one_of(
+    readLines_arg_list,
+    funs = list(dbc::report_is_NULL,
+                dbc::report_is_list),
+    call = call,
+    assertion_type = assertion_type
+  )
 }
 
 #' @template arg_assertion_type
@@ -138,7 +146,7 @@ extract_keyed_comment_blocks <- function(
   clean_comment_lines  = NULL,
   detect_allowed_keys  = "",
   sort_by = NULL,
-  readLines_arg_list   = list(warn = FALSE),
+  readLines_arg_list   = NULL,
   string_interpolation_eval_env = parent.frame(1L),
   detect_allowed_keys_grepl_arg_list = NULL,
   assertion_type = "input"
@@ -321,7 +329,7 @@ extract_keyed_comment_blocks__ <- function(
   clean_comment_lines = NULL,
   detect_allowed_keys = "",
   sort_by = NULL,
-  readLines_arg_list = list(warn = FALSE),
+  readLines_arg_list = NULL,
   string_interpolation_eval_env = parent.frame(1L),
   insert = TRUE,
   interpolate = TRUE,
@@ -341,6 +349,13 @@ extract_keyed_comment_blocks__ <- function(
     assertion_type = assertion_type,
     call = main_call
   )
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2026-03-11", "0.11.0")
+  # `codedoc::extract_keyed_comment_blocks` argument `readLines_arg_list` is now
+  # by default `NULL` which implies `list(warn = FALSE, encoding = "UTF-8")`.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2026-03-11", "0.11.0")
+  if (is.null(readLines_arg_list)) {
+    readLines_arg_list <- list(warn = FALSE, encoding = "UTF-8")
+  }
 
   if (is.null(text_file_paths)) {
     # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
