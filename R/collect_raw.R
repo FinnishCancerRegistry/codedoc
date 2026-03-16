@@ -353,8 +353,14 @@ extract_keyed_comment_blocks__ <- function(
   # `codedoc::extract_keyed_comment_blocks` argument `readLines_arg_list` is now
   # by default `NULL` which implies `list(warn = FALSE, encoding = "UTF-8")`.
   # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2026-03-11", "0.11.0")
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2026-03-16", "0.12.0")
+  # `codedoc::extract_keyed_comment_blocks` argument `readLines_arg_list` is now
+  # by default `NULL` which implies `list(warn = FALSE)`. I had misunderstood
+  # what `encoding = "UTF-8"` does. If your file is UTF-8 encoded, use
+  # `options(encoding = "UTF-8")`.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2026-03-16", "0.12.0")
   if (is.null(readLines_arg_list)) {
-    readLines_arg_list <- list(warn = FALSE, encoding = "UTF-8")
+    readLines_arg_list <- list(warn = FALSE)
   }
 
   if (is.null(text_file_paths)) {

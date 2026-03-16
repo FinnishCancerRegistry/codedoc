@@ -29,6 +29,17 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.12.0}{
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+\code{codedoc::extract_keyed_comment_blocks} argument \code{readLines_arg_list} is now
+by default \code{NULL} which implies \code{list(warn = FALSE)}. I had misunderstood
+what \code{encoding = "UTF-8"} does. If your file is UTF-8 encoded, use
+\code{options(encoding = "UTF-8")}.
+}
+
+}
+
 \subsection{News for version 0.11.0}{
 \subsection{codedoc::extract_keyed_comment_blocks}{
 
