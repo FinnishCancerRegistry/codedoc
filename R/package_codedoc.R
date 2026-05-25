@@ -32,3 +32,7 @@
 # Replaced `dbc::assert_is_data.frame*` -> `dbc::assert_is_data_frame*`.
 # No effect on user, avoids a deprecated feature in `dbc`.
 # @codedoc_comment_block news("codedoc", "2024-10-02", "0.5.0")
+
+# @codedoc_comment_block news("codedoc", "2026-05-25", "0.12.1")
+# New release to trigger github action. No code changes.
+# @codedoc_comment_block news("codedoc", "2026-05-25", "0.12.1")

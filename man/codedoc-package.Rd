@@ -29,6 +29,14 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.12.1}{
+\subsection{codedoc}{
+
+New release to trigger github action. No code changes.
+}
+
+}
+
 \subsection{News for version 0.12.0}{
 \subsection{codedoc::extract_keyed_comment_blocks}{
 
