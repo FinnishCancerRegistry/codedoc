@@ -51,3 +51,20 @@ testthat::test_that("extract_keyed_comment_blocks works", {
     )
   }
 })
+
+testthat::test_that("extract_keyed_comment_blocks works with zero text files", {
+  result <- codedoc::extract_keyed_comment_blocks(
+    text_file_paths = character(0L)
+  )
+  testthat::expect_true(is.data.frame(result))
+  testthat::expect_identical(nrow(result), 0L)
+  testthat::expect_identical(
+    names(result),
+    names(codedoc:::empty_comment_block_df())
+  )
+  testthat::expect_true(is.character(result[["text_file_path"]]))
+  testthat::expect_true(is.character(result[["key"]]))
+  testthat::expect_true(is.integer(result[["first_block_line"]]))
+  testthat::expect_true(is.integer(result[["last_block_line"]]))
+  testthat::expect_true(is.list(result[["comment_block"]]))
+})
