@@ -511,7 +511,15 @@ extract_keyed_comment_blocks__ <- function(
       readLines_arg_list = readLines_arg_list
     )
   })
-  block_df <- do.call(rbind, block_df)
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2026-11-03", "0.12.2")
+  # `codedoc::extract_keyed_comment_blocks` now returns a `data.frame` with
+  # zero rows when `text_file_paths` is of length zero. Previously it raised
+  # an error.
+  # @codedoc_comment_block news("codedoc::extract_keyed_comment_blocks", "2026-11-03", "0.12.2")
+  # Start with an empty `data.frame` so that `block_df` is a proper `data.frame`
+  # with all expected columns even when `text_file_paths` has length zero
+  # (`do.call(rbind, list())` would be `NULL`).
+  block_df <- do.call(rbind, c(list(empty_comment_block_df()), block_df))
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   # @details
   #
