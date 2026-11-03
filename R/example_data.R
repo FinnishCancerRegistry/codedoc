@@ -1,6 +1,3 @@
-
-
-
 #' @title Example Templates
 #' @description
 #' Retrieve example codedoc templates.
@@ -50,7 +47,9 @@ example_template_file_path <- function(
   )
 
   example_template_file_path <- paste0(
-    example_template_dir_path(), "/", example_template_file_name
+    example_template_dir_path(),
+    "/",
+    example_template_file_name
   )
   return(example_template_file_path)
 }
@@ -65,8 +64,6 @@ example_template_lines <- function(
 ) {
   readLines(example_template_file_path(example_template_file_name))
 }
-
-
 
 
 #' @title Example Text Files

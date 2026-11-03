@@ -1,9 +1,3 @@
-
-
-
-
-
-
 #' @title Render Code Documentation
 #' @description
 #' Render using [rmarkdown::render] a documentation file using extracted
@@ -59,9 +53,11 @@ render_codedoc_assertions <- function(
     assertion_type = assertion_type,
     call = call
   )
-  dbc::assert_is_list(render_arg_list,
-                      assertion_type = assertion_type,
-                      call = call)
+  dbc::assert_is_list(
+    render_arg_list,
+    assertion_type = assertion_type,
+    call = call
+  )
   dbc::assert_vector_elems_are_in_set(
     x = names(render_arg_list),
     set = names(formals(rmarkdown::render)),
@@ -153,7 +149,6 @@ render_codedoc__ <- function(
       "",
       template_lines
     )
-
   } else {
     template_lines <- readLines(template_file_path)
   }
@@ -183,7 +178,6 @@ render_codedoc__ <- function(
       )
       is_template_key_line <- template_lines == key_line_contents
     }
-
   }
 
   writeLines_arg_list[["text"]] <- template_lines
@@ -196,8 +190,11 @@ render_codedoc__ <- function(
     output_dir = getwd(),
     quiet = TRUE,
     envir = new.env(parent = parent.frame(1L)),
-    knit_root_dir = if (is.null(template_file_path)) getwd() else
+    knit_root_dir = if (is.null(template_file_path)) {
+      getwd()
+    } else {
       normalizePath(dirname(template_file_path))
+    }
   )
   # @codedoc_comment_block default_render_arg_list_1
   use_render_arg_list <- default_render_arg_list
@@ -254,10 +251,3 @@ render_codedoc_arg_render_arg_list <- function() {
   )
   return(lines)
 }
-
-
-
-
-
-
-

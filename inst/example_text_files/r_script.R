@@ -1,6 +1,3 @@
-
-
-
 birth_date_to_current_age <- function(birth_date) {
   stopifnot(inherits(birth_date, "Date"))
 
@@ -23,7 +20,6 @@ age_group_breaks <- function() {
   c(0, 20, 40, 65, 80, Inf)
 }
 age_to_age_group <- function(age) {
-
   # comment blocks can be nested
   # @codedoc_comment_block age_group_definitions
   #
@@ -41,7 +37,6 @@ age_to_age_group <- function(age) {
 
 
 age_to_pension_age_indicator <- function(age) {
-
   # comment blocks can be nested
   # @codedoc_comment_block age_group_definitions
   #
@@ -71,7 +66,6 @@ pension_age <- function() {
 }
 
 age_group_to_pension_age_indicator <- function(age_groups) {
-
   # you can insert other comment blocks into another
   #
   # @codedoc_comment_block age_group_to_pension_age_indicator
@@ -91,5 +85,3 @@ age_group_to_pension_age_indicator <- function(age_groups) {
 
   age_group_breaks()[age_groups] >= pension_age()
 }
-
-

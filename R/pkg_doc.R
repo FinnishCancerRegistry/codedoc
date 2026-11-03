@@ -96,8 +96,11 @@ pkg_doc_codedoc_df__ <- function(
     }
     extract_arg_list[["text_file_paths"]] <- text_file_paths
     .__PKG_DOC_ENV__.[["codedoc_df"]] <-
-      do.call(codedoc::extract_keyed_comment_blocks, extract_arg_list,
-              quote = TRUE)
+      do.call(
+        codedoc::extract_keyed_comment_blocks,
+        extract_arg_list,
+        quote = TRUE
+      )
   }
   return(.__PKG_DOC_ENV__.[["codedoc_df"]])
 }
@@ -213,20 +216,19 @@ pkg_doc_obj <- function(
     fixed = FALSE
   )
   regex_test <- suppressWarnings(tryCatch(
-    do.call(grepl, grepl_arg_list), error = function(e) e
+    do.call(grepl, grepl_arg_list),
+    error = function(e) e
   ))
   if (inherits(regex_test, "error")) {
     stop("Invalid `regex`: ", regex_test[["message"]])
   }
   dbc::assert_is_one_of(
     rdname,
-    funs = list(dbc::report_is_NULL,
-                dbc::report_is_character_nonNA_atom)
+    funs = list(dbc::report_is_NULL, dbc::report_is_character_nonNA_atom)
   )
   dbc::assert_is_one_of(
     text_file_paths,
-    funs = list(dbc::report_is_NULL,
-                dbc::report_file_exists)
+    funs = list(dbc::report_is_NULL, dbc::report_file_exists)
   )
 
   rdname_line <- NULL
@@ -328,11 +330,14 @@ pkg_doc_obj <- function(
       eval(parse(text = gsub(":+", ":::", regex))),
       error = function(e) {
         stop(
-          "`regex = ", deparse1(regex), "` looks like a `maker` function, ",
+          "`regex = ",
+          deparse1(regex),
+          "` looks like a `maker` function, ",
           "but that function could not be found with ",
           "`eval(parse(text = regex))`. Is the function name correct? This ",
           "was the error message: \"",
-          paste0(e[["message"]], collapse = " "), "\""
+          paste0(e[["message"]], collapse = " "),
+          "\""
         )
       }
     )
@@ -443,10 +448,16 @@ pkg_doc_package_description <- function(
   desc_arg_list[["text_file_paths"]] <- text_file_paths
   news_arg_list[["text_file_paths"]] <- text_file_paths
 
-  desc <- do.call(codedoc::codedoc_R_package_description, desc_arg_list,
-                  quote = TRUE)
-  news <- do.call(codedoc::codedoc_news_for_R_package, news_arg_list,
-                  quote = TRUE)
+  desc <- do.call(
+    codedoc::codedoc_R_package_description,
+    desc_arg_list,
+    quote = TRUE
+  )
+  news <- do.call(
+    codedoc::codedoc_news_for_R_package,
+    news_arg_list,
+    quote = TRUE
+  )
   # @codedoc_comment_block return(codedoc::pkg_doc_package_description)
   # Returns a `character` vector, the combined outputs of the functions called
   # by this one.

@@ -27,7 +27,8 @@ string_interpolation <- function(x, env, debug_data) {
   dbc::assert_prod_input_is_environment(env)
   dbc::assert_prod_input_is_named_list(debug_data)
   dbc::assert_prod_input_has_names(
-    debug_data, required_names = c("text_file_path", "first_line_no")
+    debug_data,
+    required_names = c("text_file_path", "first_line_no")
   )
 
   # @codedoc_comment_block codedoc:::string_interpolation
@@ -65,11 +66,19 @@ string_interpolation <- function(x, env, debug_data) {
         error = function(e) e
       )
       if (inherits(value, "error")) {
-        stop("Error in ${} string interpolation: expression resulted in error.",
-             " this was the expression: `", deparse1(expr), "`. ",
-             "this was the error message: ", deparse1(value[["message"]]), ". ",
-             "see file ", debug_data[["text_file_path"]],
-             " starting from line no ", debug_data[["first_line_no"]])
+        stop(
+          "Error in ${} string interpolation: expression resulted in error.",
+          " this was the expression: `",
+          deparse1(expr),
+          "`. ",
+          "this was the error message: ",
+          deparse1(value[["message"]]),
+          ". ",
+          "see file ",
+          debug_data[["text_file_path"]],
+          " starting from line no ",
+          debug_data[["first_line_no"]]
+        )
       }
       # @codedoc_comment_block codedoc:::string_interpolation
       #
@@ -112,10 +121,3 @@ full_call <- function(
   full_call[[1L]] <- fun_symbol
   return(full_call)
 }
-
-
-
-
-
-
-

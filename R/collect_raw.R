@@ -1,15 +1,7 @@
-
-
-
-
-
 codedoc_key_line_regex <- function() "(@codedoc_comment_block)"
 detect_codedoc_key_lines <- function(x) {
   grepl(codedoc_key_line_regex(), x)
 }
-
-
-
 
 
 #' @title Read codedoc-formatted Code Comments
@@ -126,12 +118,14 @@ extract_keyed_comment_blocks_assertions__ <- function(
     )
   }
 
-  dbc::assert_is_environment(string_interpolation_eval_env, call = call,
-                             assertion_type = assertion_type)
+  dbc::assert_is_environment(
+    string_interpolation_eval_env,
+    call = call,
+    assertion_type = assertion_type
+  )
   dbc::assert_is_one_of(
     readLines_arg_list,
-    funs = list(dbc::report_is_NULL,
-                dbc::report_is_list),
+    funs = list(dbc::report_is_NULL, dbc::report_is_list),
     call = call,
     assertion_type = assertion_type
   )
@@ -141,12 +135,12 @@ extract_keyed_comment_blocks_assertions__ <- function(
 #' @rdname extract_keyed_comment_blocks
 #' @export
 extract_keyed_comment_blocks <- function(
-  text_file_paths      = NULL,
+  text_file_paths = NULL,
   detect_comment_lines = NULL,
-  clean_comment_lines  = NULL,
-  detect_allowed_keys  = "",
+  clean_comment_lines = NULL,
+  detect_allowed_keys = "",
   sort_by = NULL,
-  readLines_arg_list   = NULL,
+  readLines_arg_list = NULL,
   string_interpolation_eval_env = parent.frame(1L),
   detect_allowed_keys_grepl_arg_list = NULL,
   assertion_type = "input"
@@ -208,7 +202,9 @@ extract_keyed_comment_blocks <- function(
 
 text_file_paths_default_regex__ <- function() {
   re <- paste0(
-    "(", names(detect_comment_lines_default__()), ")",
+    "(",
+    names(detect_comment_lines_default__()),
+    ")",
     collapse = "|"
   )
   re <- paste0("[.](", re, ")$")
@@ -421,9 +417,12 @@ extract_keyed_comment_blocks__ <- function(
       names(detect_comment_lines_re) <- tolower(names(detect_comment_lines_re))
       detect_comment_lines <- function(x, file_type = NULL) {
         if (!file_type %in% names(detect_comment_lines_re)) {
-          stop("No regex defined to detect comment lines for file_type = ",
-               deparse1(file_type), ". These file types have a regex:",
-               deparse1(names(detect_comment_lines_re)))
+          stop(
+            "No regex defined to detect comment lines for file_type = ",
+            deparse1(file_type),
+            ". These file types have a regex:",
+            deparse1(names(detect_comment_lines_re))
+          )
         }
         grepl(detect_comment_lines_re[file_type], x)
       }
@@ -466,9 +465,12 @@ extract_keyed_comment_blocks__ <- function(
       names(clean_comment_lines_re) <- tolower(names(clean_comment_lines_re))
       clean_comment_lines <- function(x, file_type = NULL) {
         if (!file_type %in% names(clean_comment_lines_re)) {
-          stop("No regex defined to clean comment lines for file_type = ",
-               deparse1(file_type), ". These file types have a regex:",
-               deparse1(names(clean_comment_lines_re)))
+          stop(
+            "No regex defined to clean comment lines for file_type = ",
+            deparse1(file_type),
+            ". These file types have a regex:",
+            deparse1(names(clean_comment_lines_re))
+          )
         }
         gsub(clean_comment_lines_re[file_type], "", x)
       }
@@ -760,9 +762,12 @@ extract_keyed_comment_blocks_from_one_file <- function(
   n_by_key <- table(key_line_df[["key"]])
   has_odd_number_of_keys <- n_by_key %% 2L != 0
   if (any(has_odd_number_of_keys)) {
-    stop("Following keys did not appear an even number of times in file ",
-         deparse(text_file_path), ": ",
-         deparse(names(n_by_key)[has_odd_number_of_keys]))
+    stop(
+      "Following keys did not appear an even number of times in file ",
+      deparse(text_file_path),
+      ": ",
+      deparse(names(n_by_key)[has_odd_number_of_keys])
+    )
   }
 
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks_from_one_file
@@ -783,14 +788,19 @@ extract_keyed_comment_blocks_from_one_file <- function(
 
   if (nrow(block_df) == 0L) {
     print(key_line_df)
-    stop("Internal error: nrow(block_df) == 0; if you see this, complain to ",
-         "the package maintainer; key_line_df printed above.")
+    stop(
+      "Internal error: nrow(block_df) == 0; if you see this, complain to ",
+      "the package maintainer; key_line_df printed above."
+    )
   }
   if (any(key_df[["is_misspecified_key"]])) {
     misspecified_key_set <- key_df[["key"]][key_df[["is_misspecified_key"]]]
-    stop("Following keys did not appear an even number of times in file ",
-         deparse(text_file_path), ": ",
-         deparse(misspecified_key_set))
+    stop(
+      "Following keys did not appear an even number of times in file ",
+      deparse(text_file_path),
+      ": ",
+      deparse(misspecified_key_set)
+    )
   }
   block_df[["comment_block"]] <- lapply(
     seq_len(nrow(block_df)),
@@ -820,8 +830,6 @@ extract_keyed_comment_blocks_from_one_file <- function(
   block_df <- block_df[o, ]
   return(block_df)
 }
-
-
 
 
 codedoc_insert_comment_block_regex <- function() {
@@ -860,8 +868,10 @@ codedoc_insert_comment_blocks <- function(
         # @codedoc_comment_block codedoc:::codedoc_insert_comment_blocks
         tick <- tick + 1L
         if (tick == 10L) {
-          stop("hit 10 passes in while loop when inserting comment blocks; ",
-               "do you have self-referencing in a comment block?")
+          stop(
+            "hit 10 passes in while loop when inserting comment blocks; ",
+            "do you have self-referencing in a comment block?"
+          )
         }
         for (i in 1:sum(is_insert_line)) {
           # @codedoc_comment_block codedoc:::codedoc_insert_comment_blocks
@@ -879,9 +889,13 @@ codedoc_insert_comment_blocks <- function(
           wh <- which(is_insert_line)[1L]
           insert_key <- insert_key_by_line[wh]
           if (!insert_key %in% block_df[["key"]]) {
-            stop("found insert key which has no match in collected comment ",
-                 "block keys. invalid key: ", deparse(insert_key),
-                 "; collected keys: ", deparse(block_df[["key"]]))
+            stop(
+              "found insert key which has no match in collected comment ",
+              "block keys. invalid key: ",
+              deparse(insert_key),
+              "; collected keys: ",
+              deparse(block_df[["key"]])
+            )
           }
           # @codedoc_comment_block codedoc:::codedoc_insert_comment_blocks
           #

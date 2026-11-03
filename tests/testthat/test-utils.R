@@ -1,5 +1,4 @@
 testthat::test_that("string_interpolation works", {
-
   neo <- "mr. anderson"
   obs <- string_interpolation(
     "hello ${neo}",
@@ -14,7 +13,6 @@ testthat::test_that("string_interpolation works", {
 })
 
 testthat::test_that("regexes and section heads are in harmony", {
-
   for (has_rdname in c(TRUE, FALSE)) {
     section_heads <- pkg_doc_obj_section_heads__(
       obj_nm = "mypkg::myfun",

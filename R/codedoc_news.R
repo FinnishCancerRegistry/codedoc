@@ -1,4 +1,3 @@
-
 #' @title News from `codedoc` Comment Blocks
 #' @description
 #' These functions can be used to collate news about a versioned project such
@@ -87,8 +86,11 @@ codedoc_news_df <- function(
   # @codedoc_comment_block codedoc::codedoc_news_df::text_file_paths
   assert_arg_text_file_paths(text_file_paths)
   extract_arg_list[["text_file_paths"]] <- text_file_paths
-  news_df <- do.call(codedoc::extract_keyed_comment_blocks, extract_arg_list,
-                     quote = TRUE)
+  news_df <- do.call(
+    codedoc::extract_keyed_comment_blocks,
+    extract_arg_list,
+    quote = TRUE
+  )
   # @codedoc_comment_block codedoc::codedoc_news_df
   #
   # - Each collected key is parsed, yielding parsed language object, e.g.
@@ -123,9 +125,12 @@ codedoc_news_df <- function(
     !is.na(numeric_version(news_df[["version"]]))
   )
   news_df <- news_df[
-    order(news_df[["version"]], news_df[["object_name"]],
-          decreasing = c(TRUE, FALSE), method = "radix"),
-
+    order(
+      news_df[["version"]],
+      news_df[["object_name"]],
+      decreasing = c(TRUE, FALSE),
+      method = "radix"
+    ),
   ]
   # @codedoc_comment_block codedoc::codedoc_news_df
   #
@@ -284,8 +289,11 @@ codedoc_news_df_to_roxygen_news_by_object_name <- function(
       bare_obj_nm <- pkg_obj[2L]
 
       title <- paste0(
-        "@section News for package ", deparse(pkg_nm), " unexported object ",
-        deparse(bare_obj_nm), ":"
+        "@section News for package ",
+        deparse(pkg_nm),
+        " unexported object ",
+        deparse(bare_obj_nm),
+        ":"
       )
     } else if (grepl("::", obj_nm)) {
       pkg_obj <- strsplit(obj_nm, "::")[[1L]]
@@ -293,8 +301,11 @@ codedoc_news_df_to_roxygen_news_by_object_name <- function(
       bare_obj_nm <- pkg_obj[2L]
 
       title <- paste0(
-        "@section News for package ", deparse(pkg_nm), " object ",
-        deparse(bare_obj_nm), ":"
+        "@section News for package ",
+        deparse(pkg_nm),
+        " object ",
+        deparse(bare_obj_nm),
+        ":"
       )
     } else {
       title <- paste0("@section News for object ", deparse(obj_nm), ":")
@@ -304,7 +315,11 @@ codedoc_news_df_to_roxygen_news_by_object_name <- function(
       "",
       unlist(lapply(row_no_set, function(i) {
         version_date <- paste0(
-          "**", df[["version"]][i], " @ ", df[["date"]][i], "**"
+          "**",
+          df[["version"]][i],
+          " @ ",
+          df[["date"]][i],
+          "**"
         )
         c(
           version_date,
@@ -349,7 +364,8 @@ codedoc_roxygen_news_by_object_name <- function(
     assertion_type = assertion_type
   )
   codedoc::codedoc_news_df_to_roxygen_news_by_object_name(
-    df, assertion_type = "input"
+    df,
+    assertion_type = "input"
   )
 }
 
@@ -378,18 +394,20 @@ codedoc_news_df_to_markdown_news <- function(
   # @codedoc_comment_block codedoc::codedoc_news_df_to_markdown_news
 
   assert_arg_df(df)
-  version_set <- sort(numeric_version(unique(df[["version"]])),
-                      decreasing = TRUE)
+  version_set <- sort(
+    numeric_version(unique(df[["version"]])),
+    decreasing = TRUE
+  )
   version_set <- setdiff(as.character(version_set), NA_character_)
   lines <- unlist(lapply(seq_along(version_set), function(version_set_pos) {
     version <- version_set[version_set_pos]
     row_no_set <- which(df[["version"]] == version)
- 
-  # @codedoc_comment_block news("codedoc::codedoc_news_df_to_markdown_news", "2023-08-16", "0.4.0")
-  # `codedoc::codedoc_news_df_to_markdown_news` title format changed from
-  # `### Object x news:` to simply `### x`.
-  # @codedoc_comment_block news("codedoc::codedoc_news_df_to_markdown_news", "2023-08-16", "0.4.0")
-  c(
+
+    # @codedoc_comment_block news("codedoc::codedoc_news_df_to_markdown_news", "2023-08-16", "0.4.0")
+    # `codedoc::codedoc_news_df_to_markdown_news` title format changed from
+    # `### Object x news:` to simply `### x`.
+    # @codedoc_comment_block news("codedoc::codedoc_news_df_to_markdown_news", "2023-08-16", "0.4.0")
+    c(
       paste0("## News for version ", version),
       "",
       unlist(lapply(row_no_set, function(row_no) {
@@ -453,7 +471,8 @@ codedoc_markdown_news <- function(
     assertion_type = assertion_type
   )
   codedoc::codedoc_news_df_to_markdown_news(
-    df, assertion_type = "input"
+    df,
+    assertion_type = "input"
   )
 }
 
@@ -491,7 +510,8 @@ codedoc_news_for_R_package <- function(
     assertion_type = assertion_type
   )
   lines <- codedoc::codedoc_news_df_to_markdown_news(
-    df, assertion_type = "input"
+    df,
+    assertion_type = "input"
   )
   writeLines(lines, "NEWS.md")
 

@@ -1,10 +1,4 @@
-
-
-
-
-
 testthat::test_that("extract_keyed_comment_blocks works", {
-
   result <- codedoc::extract_keyed_comment_blocks(
     text_file_path = codedoc::example_text_file_path("r_script.R")
   )
@@ -41,13 +35,16 @@ testthat::test_that("extract_keyed_comment_blocks works", {
   for (file_type in names(script_paths)) {
     result <- result_by_file_type[[file_type]]
     testthat::expect_equal(
-      result[["first_block_line"]], c(2L, 8L, 15L)
+      result[["first_block_line"]],
+      c(2L, 8L, 15L)
     )
     testthat::expect_equal(
-      result[["last_block_line"]], c(4L, 11L, 18L)
+      result[["last_block_line"]],
+      c(4L, 11L, 18L)
     )
     testthat::expect_equal(
-      result[["key"]], c("block_1", "block_2", "block_2")
+      result[["key"]],
+      c("block_1", "block_2", "block_2")
     )
   }
 })

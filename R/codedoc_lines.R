@@ -1,5 +1,3 @@
-
-
 #' @title `codedoc` Comment Block Lines
 #' @description
 #' Tools to extract comment blocks and return a vector of strings (lines).
@@ -31,8 +29,11 @@ codedoc_lines <- function(
   extract_arg_list <- as.list(extract_arg_list)
   extract_arg_list[["detect_allowed_keys"]] <- detect_allowed_keys
   extract_arg_list[["text_file_paths"]] <- text_file_paths
-  df <- do.call(codedoc::extract_keyed_comment_blocks, extract_arg_list,
-                quote = TRUE)
+  df <- do.call(
+    codedoc::extract_keyed_comment_blocks,
+    extract_arg_list,
+    quote = TRUE
+  )
   unlist(lapply(df[["comment_block"]], function(x) {
     c("", x, "")
   }))

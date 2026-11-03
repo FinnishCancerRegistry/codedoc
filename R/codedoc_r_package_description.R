@@ -1,5 +1,3 @@
-
-
 #' @title `codedoc` to R Package Description
 #' @description
 #' Extract `codedoc` comment block(s) and turn them into R package
@@ -22,7 +20,8 @@ codedoc_R_package_description <- function(
   assertion_type = "input"
 ) {
   dbc::assert_is_character_nonNA_atom(
-    R_package_name, assertion_type = assertion_type
+    R_package_name,
+    assertion_type = assertion_type
   )
   # @codedoc_comment_block codedoc::codedoc_R_package_description__::assertion_type
   # @template arg_assertion_type
@@ -39,7 +38,9 @@ codedoc_R_package_description <- function(
   # ```
   # @codedoc_comment_block codedoc::codedoc_R_package_description__::R_package_name
   detect_allowed_keys <- paste0(
-    "^\\QR_package_description(", R_package_name, ")\\E$"
+    "^\\QR_package_description(",
+    R_package_name,
+    ")\\E$"
   )
   # @codedoc_comment_block codedoc::codedoc_R_package_description__::R_package_name
   # @param text_file_paths `[character]` see `[codedoc::codedoc_lines]`
@@ -92,5 +93,3 @@ codedoc_R_package_description <- function(
     ""
   ))
 }
-
-
