@@ -40,8 +40,11 @@ are
     output_dir = getwd(),
     quiet = TRUE,
     envir = new.env(parent = parent.frame(1L)),
-    knit_root_dir = if (is.null(template_file_path)) getwd() else
+    knit_root_dir = if (is.null(template_file_path)) \{
+      getwd()
+    \} else \{
       normalizePath(dirname(template_file_path))
+    \}
   )
 }\if{html}{\out{</div>}}
 

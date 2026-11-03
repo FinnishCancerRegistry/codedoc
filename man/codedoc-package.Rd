@@ -29,6 +29,16 @@ print(block_df)
 
 \section{News}{
 
+\subsection{News for version 0.12.2}{
+\subsection{codedoc::extract_keyed_comment_blocks}{
+
+\code{codedoc::extract_keyed_comment_blocks} now returns a \code{data.frame} with
+zero rows when \code{text_file_paths} is of length zero. Previously it raised
+an error.
+}
+
+}
+
 \subsection{News for version 0.12.1}{
 \subsection{codedoc}{
 
