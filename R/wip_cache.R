@@ -109,23 +109,42 @@ cache_ram_write__ <- function(text_file_df, codedoc_df) {
   )
   return(invisible(NULL))
 }
-cache_ram_use_is_possible__ <- function(
-  text_file_paths
+cache_ram_use_if_possible__ <- function(
+  text_file_df
 ) {
   cached <- cache_ram_read__()
-  return(
-    inherits(cached, "list") &&
-      all(c("text_file_df", "codedoc_df") %in% names(cached)) &&
-      all(text_file_paths %in% cached[["text_file_df"]][["path"]])
+  intersect_text_file_df <- merge(
+    x = text_file_df[, c("path", "hash")],
+    y = cached[["text_file_df"]][, c("path", "hash")],
+    by = c("path", "hash"),
+    all.x = FALSE,
+    all.y = FALSE
+  )
+  if (nrow(intersect_text_file_df) == nrow(text_file_df)) {
+    return(cached[["codedoc_df"]][
+      cached[["codedoc_df"]][["text_file_path"]] %in% text_file_df[["path"]],
+    ])
+  } else {
+    return(NULL)
+  }
+}
+
+cache_refresh__ <- function(
+  text_file_df,
+  codedoc_df
+) {
+  cache_file_refresh__(text_file_df = text_file_df, codedoc_df = codedoc_df)
+  cache_ram_refresh__()
+}
+cache_text_file_path_hash__ <- function(text_file_path) {
+  digest::digest(
+    file = text_file_path,
+    algo = "md5"
   )
 }
-cache_ram_use_if_possible__ <- function(
+cache_text_df__ <- function(
   text_file_paths
 ) {
-  if (cache_ram_use_is_possible__(text_file_paths)) {
-    cached <- cache_ram_read__()
-    return(cached[["codedoc_df"]][
-      cached[["codedoc_df"]][["text_file_path"]] %in% text_file_paths,
-    ])
-  }
+  hashes <- vapply(text_file_paths, cache_text_file_path_hash__, character(1L))
+  return(data.frame(path = text_file_paths, hash = hashes))
 }
