@@ -25,8 +25,8 @@ testthat::test_that("extract_keyed_comment_blocks works", {
     ),
     full.names = TRUE
   )
-  script_paths <- fs_file_path_normalise(script_paths)
-  names(script_paths) <- fs_file_type(script_paths)
+  script_paths <- fs_file_path_normalise__(script_paths)
+  names(script_paths) <- fs_file_type__(script_paths)
   script_paths <- script_paths[names(script_paths) != "r"]
   result_by_file_type <- lapply(script_paths, function(sp) {
     codedoc::extract_keyed_comment_blocks(

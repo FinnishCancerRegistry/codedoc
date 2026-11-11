@@ -377,7 +377,7 @@ extract_keyed_comment_blocks__ <- function(
 
     text_file_paths <- text_file_paths_default__()
   }
-  text_file_paths <- fs_file_path_normalise(text_file_paths)
+  text_file_paths <- fs_file_path_normalise__(text_file_paths)
 
   # @codedoc_comment_block codedoc:::extract_keyed_comment_blocks__
   # @param detect_comment_lines `[NULL, character, function]`
@@ -715,7 +715,7 @@ extract_keyed_comment_blocks_from_one_file <- function(
   arg_list <- list(
     line_df[["line"]]
   )
-  file_type <- fs_file_type(text_file_path)
+  file_type <- fs_file_type__(text_file_path)
   if ("file_type" %in% names(formals(detect_comment_lines))) {
     arg_list[["file_type"]] <- file_type
   }
