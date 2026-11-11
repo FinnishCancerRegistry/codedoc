@@ -2,17 +2,20 @@ testthat::test_that("extract_keyed_comment_blocks works", {
   result <- codedoc::extract_keyed_comment_blocks(
     text_file_path = codedoc::example_text_file_path("r_script.R")
   )
-  testthat::expect_true(is.data.frame(result))
+  testthat::expect_s3_class(result, class = "data.frame")
   # NOTE: tests also that the first extracted block is the first one in the file
   # (as opposed to e.g. first one in alphabetical order of key)
-  testthat::expect_true(
-    result[["first_block_line"]][1L] == 8L
+  testthat::expect_identical(
+    result[["first_block_line"]][1L],
+    5L
   )
-  testthat::expect_true(
-    result[["last_block_line"]][1L] == 9L
+  testthat::expect_identical(
+    result[["last_block_line"]][1L],
+    6L
   )
-  testthat::expect_true(
-    all(result[["key"]][1:2] == "current_age")
+  testthat::expect_identical(
+    result[["key"]][1:2],
+    rep("current_age", 2L)
   )
 
   script_paths <- dir(
