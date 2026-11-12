@@ -1,37 +1,5 @@
-cache_os_name__ <- function() {
-  # taken from https://www.r-bloggers.com/2015/06/identifying-the-os-from-r/
-  sysinf <- Sys.info()
-  if (!is.null(sysinf)) {
-    os <- sysinf["sysname"]
-    if (os == "Darwin") {
-      os <- "osx"
-    }
-  } else {
-    os <- .Platform$OS.type
-    if (grepl("^darwin", R.version$os)) {
-      os <- "osx"
-    }
-    if (grepl("linux-gnu", R.version$os)) {
-      os <- "linux"
-    }
-  }
-  return(unname(tolower(os)))
-}
-
 cache_dir_path__ <- function() {
-  out <- fs_file_path_normalise__(switch(
-    cache_os_name__(),
-    linux = "~/.cache/R/codedoc",
-    windows = sprintf(
-      "C:/Users/%s/AppData/Local/R/cache/R/codedoc",
-      Sys.getenv("USERNAME")
-    ),
-    macos = "~/Library/Caches/R/codedoc",
-    stop(
-      "internal error: could not detect operating system to determine ",
-      "cache location. please report this to the maintainer."
-    )
-  ))
+  out <- fs_file_path_normalise__(tools::R_user_dir("codedoc", "cache"))
   return(out)
 }
 
